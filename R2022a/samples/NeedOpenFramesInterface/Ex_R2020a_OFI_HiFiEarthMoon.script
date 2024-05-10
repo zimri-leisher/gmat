@@ -1,0 +1,456 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2018-09-02 17:36:06
+
+
+%----------------------------------------
+%---------- User-Modified Default Celestial Bodies
+%----------------------------------------
+
+GMAT Earth.3DModelFile = '.\OFI_Earth.earth';
+GMAT Earth.3DModelScale = 0.001;
+
+GMAT Luna.3DModelFile = '.\OFI_Moon.earth';
+GMAT Luna.3DModelScale = 0.001;
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft DefaultSC;
+GMAT DefaultSC.DateFormat = UTCGregorian;
+GMAT DefaultSC.Epoch = '31 Oct 2015 00:00:28.000';
+GMAT DefaultSC.CoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultSC.DisplayStateType = Keplerian;
+GMAT DefaultSC.SMA = 50000.00000000007;
+GMAT DefaultSC.ECC = 0.024549749005981;
+GMAT DefaultSC.INC = 12.85008005658097;
+GMAT DefaultSC.RAAN = 306.6148021947984;
+GMAT DefaultSC.AOP = 314.1905515359949;
+GMAT DefaultSC.TA = 99.88774933204589;
+GMAT DefaultSC.DryMass = 850;
+GMAT DefaultSC.Cd = 2.2;
+GMAT DefaultSC.Cr = 1.8;
+GMAT DefaultSC.DragArea = 15;
+GMAT DefaultSC.SRPArea = 1;
+GMAT DefaultSC.SPADDragScaleFactor = 1;
+GMAT DefaultSC.SPADSRPScaleFactor = 1;
+GMAT DefaultSC.NAIFId = -10000001;
+GMAT DefaultSC.NAIFIdReferenceFrame = -9000001;
+GMAT DefaultSC.OrbitColor = Red;
+GMAT DefaultSC.TargetColor = Teal;
+GMAT DefaultSC.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
+GMAT DefaultSC.CdSigma = 1e+70;
+GMAT DefaultSC.CrSigma = 1e+70;
+GMAT DefaultSC.Id = 'SatId';
+GMAT DefaultSC.Attitude = CoordinateSystemFixed;
+GMAT DefaultSC.SPADSRPInterpolationMethod = Bilinear;
+GMAT DefaultSC.SPADSRPScaleFactorSigma = 1e+70;
+GMAT DefaultSC.SPADDragInterpolationMethod = Bilinear;
+GMAT DefaultSC.SPADDragScaleFactorSigma = 1e+70;
+GMAT DefaultSC.ModelFile = 'aura.3ds';
+GMAT DefaultSC.ModelOffsetX = 0;
+GMAT DefaultSC.ModelOffsetY = 0;
+GMAT DefaultSC.ModelOffsetZ = 0;
+GMAT DefaultSC.ModelRotationX = 0;
+GMAT DefaultSC.ModelRotationY = 0;
+GMAT DefaultSC.ModelRotationZ = 0;
+GMAT DefaultSC.ModelScale = 0.001;
+GMAT DefaultSC.AttitudeDisplayStateType = 'Quaternion';
+GMAT DefaultSC.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT DefaultSC.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultSC.EulerAngleSequence = '321';
+
+%----------------------------------------
+%---------- GroundStations
+%----------------------------------------
+
+Create GroundStation Wallops;
+GMAT Wallops.OrbitColor = [255 128 128];
+GMAT Wallops.TargetColor = DarkGray;
+GMAT Wallops.CentralBody = Earth;
+GMAT Wallops.StateType = Spherical;
+GMAT Wallops.HorizonReference = Ellipsoid;
+GMAT Wallops.Location1 = 37.940194;
+GMAT Wallops.Location2 = 284.533611;
+GMAT Wallops.Location3 = 0;
+GMAT Wallops.Id = 'WFF';
+GMAT Wallops.IonosphereModel = 'None';
+GMAT Wallops.TroposphereModel = 'None';
+GMAT Wallops.DataSource = 'Constant';
+GMAT Wallops.Temperature = 295.1;
+GMAT Wallops.Pressure = 1013.5;
+GMAT Wallops.Humidity = 55;
+GMAT Wallops.MinimumElevationAngle = 7;
+
+Create GroundStation Keck;
+GMAT Keck.OrbitColor = [255 128 128];
+GMAT Keck.TargetColor = [0 0 64];
+GMAT Keck.CentralBody = Earth;
+GMAT Keck.StateType = Spherical;
+GMAT Keck.HorizonReference = Ellipsoid;
+GMAT Keck.Location1 = 19.82635999999999;
+GMAT Keck.Location2 = 204.52499;
+GMAT Keck.Location3 = 4.18;
+GMAT Keck.Id = 'StationId';
+GMAT Keck.IonosphereModel = 'None';
+GMAT Keck.TroposphereModel = 'None';
+GMAT Keck.DataSource = 'Constant';
+GMAT Keck.Temperature = 295.1;
+GMAT Keck.Pressure = 1013.5;
+GMAT Keck.Humidity = 55;
+GMAT Keck.MinimumElevationAngle = 7;
+
+Create GroundStation Tycho;
+GMAT Tycho.OrbitColor = Thistle;
+GMAT Tycho.TargetColor = DarkGray;
+GMAT Tycho.CentralBody = Luna;
+GMAT Tycho.StateType = Spherical;
+GMAT Tycho.HorizonReference = Sphere;
+GMAT Tycho.Location1 = -43.31;
+GMAT Tycho.Location2 = 348.64;
+GMAT Tycho.Location3 = 0;
+GMAT Tycho.Id = 'StationId';
+GMAT Tycho.IonosphereModel = 'None';
+GMAT Tycho.TroposphereModel = 'None';
+GMAT Tycho.DataSource = 'Constant';
+GMAT Tycho.Temperature = 295.1;
+GMAT Tycho.Pressure = 1013.5;
+GMAT Tycho.Humidity = 55;
+GMAT Tycho.MinimumElevationAngle = 7;
+
+Create GroundStation Compton;
+GMAT Compton.OrbitColor = Thistle;
+GMAT Compton.TargetColor = DarkGray;
+GMAT Compton.CentralBody = Luna;
+GMAT Compton.StateType = Spherical;
+GMAT Compton.HorizonReference = Sphere;
+GMAT Compton.Location1 = 55.3;
+GMAT Compton.Location2 = 103.8;
+GMAT Compton.Location3 = 10;
+GMAT Compton.Id = 'StationId';
+GMAT Compton.IonosphereModel = 'None';
+GMAT Compton.TroposphereModel = 'None';
+GMAT Compton.DataSource = 'Constant';
+GMAT Compton.Temperature = 295.1;
+GMAT Compton.Pressure = 1013.5;
+GMAT Compton.Humidity = 55;
+GMAT Compton.MinimumElevationAngle = 7;
+
+Create GroundStation Copernicus;
+GMAT Copernicus.OrbitColor = Thistle;
+GMAT Copernicus.TargetColor = DarkGray;
+GMAT Copernicus.CentralBody = Luna;
+GMAT Copernicus.StateType = Spherical;
+GMAT Copernicus.HorizonReference = Sphere;
+GMAT Copernicus.Location1 = 9.619999999999999;
+GMAT Copernicus.Location2 = 339.92;
+GMAT Copernicus.Location3 = 0;
+GMAT Copernicus.Id = 'StationId';
+GMAT Copernicus.IonosphereModel = 'None';
+GMAT Copernicus.TroposphereModel = 'None';
+GMAT Copernicus.DataSource = 'Constant';
+GMAT Copernicus.Temperature = 295.1;
+GMAT Copernicus.Pressure = 1013.5;
+GMAT Copernicus.Humidity = 55;
+GMAT Copernicus.MinimumElevationAngle = 7;
+
+Create GroundStation Aitken;
+GMAT Aitken.OrbitColor = [0 0 160];
+GMAT Aitken.TargetColor = DarkGray;
+GMAT Aitken.CentralBody = Luna;
+GMAT Aitken.StateType = Spherical;
+GMAT Aitken.HorizonReference = Sphere;
+GMAT Aitken.Location1 = -16.8;
+GMAT Aitken.Location2 = 173.4;
+GMAT Aitken.Location3 = 0;
+GMAT Aitken.Id = 'StationId';
+GMAT Aitken.IonosphereModel = 'None';
+GMAT Aitken.TroposphereModel = 'None';
+GMAT Aitken.DataSource = 'Constant';
+GMAT Aitken.Temperature = 295.1;
+GMAT Aitken.Pressure = 1013.5;
+GMAT Aitken.Humidity = 55;
+GMAT Aitken.MinimumElevationAngle = 7;
+
+Create GroundStation Schroters_Valley;
+GMAT Schroters_Valley.OrbitColor = Thistle;
+GMAT Schroters_Valley.TargetColor = DarkGray;
+GMAT Schroters_Valley.CentralBody = Luna;
+GMAT Schroters_Valley.StateType = Spherical;
+GMAT Schroters_Valley.HorizonReference = Ellipsoid;
+GMAT Schroters_Valley.Location1 = 26.2;
+GMAT Schroters_Valley.Location2 = 309.2;
+GMAT Schroters_Valley.Location3 = 0;
+GMAT Schroters_Valley.Id = 'StationId';
+GMAT Schroters_Valley.IonosphereModel = 'None';
+GMAT Schroters_Valley.TroposphereModel = 'None';
+GMAT Schroters_Valley.DataSource = 'Constant';
+GMAT Schroters_Valley.Temperature = 295.1;
+GMAT Schroters_Valley.Pressure = 1013.5;
+GMAT Schroters_Valley.Humidity = 55;
+GMAT Schroters_Valley.MinimumElevationAngle = 7;
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel DefaultProp_ForceModel;
+GMAT DefaultProp_ForceModel.CentralBody = Earth;
+GMAT DefaultProp_ForceModel.PrimaryBodies = {Earth};
+GMAT DefaultProp_ForceModel.Drag = None;
+GMAT DefaultProp_ForceModel.SRP = Off;
+GMAT DefaultProp_ForceModel.RelativisticCorrection = Off;
+GMAT DefaultProp_ForceModel.ErrorControl = RSSStep;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Degree = 4;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Order = 4;
+GMAT DefaultProp_ForceModel.GravityField.Earth.StmLimit = 100;
+GMAT DefaultProp_ForceModel.GravityField.Earth.PotentialFile = 'JGM2.cof';
+GMAT DefaultProp_ForceModel.GravityField.Earth.TideModel = 'None';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator DefaultProp;
+GMAT DefaultProp.FM = DefaultProp_ForceModel;
+GMAT DefaultProp.Type = PrinceDormand78;
+GMAT DefaultProp.InitialStepSize = 60;
+GMAT DefaultProp.Accuracy = 9.999999999999999e-12;
+GMAT DefaultProp.MinStep = 0.001;
+GMAT DefaultProp.MaxStep = 10;
+GMAT DefaultProp.MaxStepAttempts = 50;
+GMAT DefaultProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem KeckLocal;
+GMAT KeckLocal.Origin = Keck;
+GMAT KeckLocal.Axes = Topocentric;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OpenFramesInterface OF_Inertial;
+GMAT OF_Inertial.SolverIterations = Current;
+GMAT OF_Inertial.UpperLeft = [ 0.1147058823529412 0 ];
+GMAT OF_Inertial.Size = [ 0.4094117647058824 0.9797619047619047 ];
+GMAT OF_Inertial.RelativeZOrder = 11;
+GMAT OF_Inertial.Maximized = false;
+GMAT OF_Inertial.Add = {DefaultSC, Wallops, Keck, Tycho, Compton, Copernicus, Aitken, Schroters_Valley, Earth, Sun, Luna};
+GMAT OF_Inertial.View = {EarthView, KeckView, WallopsView, MoonView, TychoView, ComptonView, CopernicusView, AitkenView, SchroterValleyView};
+GMAT OF_Inertial.CoordinateSystem = EarthMJ2000Eq;
+GMAT OF_Inertial.DrawObject = [ false true true false false false false false true true true ];
+GMAT OF_Inertial.DrawTrajectory = [ false false false false false false false false true true true ];
+GMAT OF_Inertial.DrawAxes = [ false false false false false false false true true false false ];
+GMAT OF_Inertial.DrawXYPlane = [ false false false false false false false false false false false ];
+GMAT OF_Inertial.DrawLabel = [ false true true true true true true true true true true ];
+GMAT OF_Inertial.DrawUsePropLabel = [ false false false false false false false false false false false ];
+GMAT OF_Inertial.DrawCenterPoint = [ false true true true true true true true true true true ];
+GMAT OF_Inertial.DrawEndPoints = [ false false false false false false false false true true true ];
+GMAT OF_Inertial.DrawVelocity = [ false false false false false false false false false false false ];
+GMAT OF_Inertial.DrawGrid = [ false false false false false false false false false false false ];
+GMAT OF_Inertial.DrawLineWidth = [ 2 2 2 2 2 2 2 2 2 2 2 ];
+GMAT OF_Inertial.DrawMarkerSize = [ 10 10 10 10 10 10 10 10 10 10 10 ];
+GMAT OF_Inertial.DrawFontSize = [ 14 14 14 14 14 14 14 14 14 14 14 ];
+GMAT OF_Inertial.Axes = Off;
+GMAT OF_Inertial.AxesLength = 1;
+GMAT OF_Inertial.AxesLabels = On;
+GMAT OF_Inertial.FrameLabel = Off;
+GMAT OF_Inertial.XYPlane = Off;
+GMAT OF_Inertial.EclipticPlane = Off;
+GMAT OF_Inertial.EnableStars = On;
+GMAT OF_Inertial.StarCatalog = 'inp_StarsHYGv3.txt';
+GMAT OF_Inertial.StarSettings = Monitor;
+GMAT OF_Inertial.StarCount = 40000;
+GMAT OF_Inertial.MinStarMag = -2;
+GMAT OF_Inertial.MaxStarMag = 6;
+GMAT OF_Inertial.MinStarPixels = 1;
+GMAT OF_Inertial.MaxStarPixels = 10;
+GMAT OF_Inertial.MinStarDimRatio = 0.5;
+GMAT OF_Inertial.ShowPlot = true;
+GMAT OF_Inertial.ShowToolbar = true;
+GMAT OF_Inertial.SolverIterLastN = 1;
+GMAT OF_Inertial.ShowVR = false;
+GMAT OF_Inertial.PlaybackTimeScale = 3600;
+GMAT OF_Inertial.MultisampleAntiAliasing = On;
+GMAT OF_Inertial.MSAASamples = 4;
+GMAT OF_Inertial.DrawFontPosition = {'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right'};
+
+%----------------------------------------
+%---------- User Objects
+%----------------------------------------
+
+Create OpenFramesView EarthView;
+GMAT EarthView.ViewFrame = Earth;
+GMAT EarthView.ViewTrajectory = Off;
+GMAT EarthView.InertialFrame = Off;
+GMAT EarthView.SetDefaultLocation = Off;
+GMAT EarthView.SetCurrentLocation = On;
+GMAT EarthView.CurrentEye = [ 0 -116171.9609375 0 ];
+GMAT EarthView.CurrentCenter = [ 0 0 0 ];
+GMAT EarthView.CurrentUp = [ 0 0 1 ];
+GMAT EarthView.FOVy = 45;
+
+Create OpenFramesView WallopsView;
+GMAT WallopsView.ViewFrame = Wallops;
+GMAT WallopsView.ViewTrajectory = Off;
+GMAT WallopsView.InertialFrame = Off;
+GMAT WallopsView.LookAtFrame = Earth;
+GMAT WallopsView.ShortestAngle = Off;
+GMAT WallopsView.SetDefaultLocation = On;
+GMAT WallopsView.DefaultEye = [ 4.64601496 -2.60465988 -3.83410483 ];
+GMAT WallopsView.DefaultCenter = [ 0 0 0 ];
+GMAT WallopsView.DefaultUp = [ -0.34376144 -0.9162139500000001 0.20586419 ];
+GMAT WallopsView.SetCurrentLocation = On;
+GMAT WallopsView.CurrentEye = [ 0 -4691.822733104507 0 ];
+GMAT WallopsView.CurrentCenter = [ 0 0 0 ];
+GMAT WallopsView.CurrentUp = [ 0 0 1 ];
+GMAT WallopsView.FOVy = 45;
+
+Create OpenFramesView KeckView;
+GMAT KeckView.ViewFrame = Keck;
+GMAT KeckView.ViewTrajectory = Off;
+GMAT KeckView.InertialFrame = Off;
+GMAT KeckView.LookAtFrame = Earth;
+GMAT KeckView.ShortestAngle = Off;
+GMAT KeckView.SetDefaultLocation = On;
+GMAT KeckView.DefaultEye = [ -4.16317948 -7.47326055 -20.68977757 ];
+GMAT KeckView.DefaultCenter = [ 0 0 0 ];
+GMAT KeckView.DefaultUp = [ 0.03260576 -0.94210388 0.33373216 ];
+GMAT KeckView.SetCurrentLocation = On;
+GMAT KeckView.CurrentEye = [ -4.16317948 -7.473260549999999 -20.68977757 ];
+GMAT KeckView.CurrentCenter = [ 8.881784197001252e-16 1.77635683940025e-15 3.552713678800501e-15 ];
+GMAT KeckView.CurrentUp = [ 0.03260575958193419 -0.942103875289755 0.3337321569853747 ];
+GMAT KeckView.FOVy = 45;
+
+Create OpenFramesView MoonView;
+GMAT MoonView.ViewFrame = Luna;
+GMAT MoonView.ViewTrajectory = Off;
+GMAT MoonView.InertialFrame = On;
+GMAT MoonView.SetDefaultLocation = Off;
+GMAT MoonView.SetCurrentLocation = On;
+GMAT MoonView.CurrentEye = [ 0 -5047.994140625 0 ];
+GMAT MoonView.CurrentCenter = [ 0 0 0 ];
+GMAT MoonView.CurrentUp = [ 0 0 1 ];
+GMAT MoonView.FOVy = 45;
+
+Create OpenFramesVector KeckUp;
+GMAT KeckUp.VectorColor = [255 0 0];
+GMAT KeckUp.SourceObject = Keck;
+GMAT KeckUp.VectorType = Body-Fixed;
+GMAT KeckUp.BFStartPoint = [ 0 0 0 ];
+GMAT KeckUp.BFDirection = [ 0 0 1 ];
+GMAT KeckUp.VectorLabel = 'Up';
+GMAT KeckUp.VectorLengthType = 'Auto';
+
+Create OpenFramesView CoordinateSystemView2;
+GMAT CoordinateSystemView2.ViewFrame = CoordinateSystem;
+GMAT CoordinateSystemView2.ViewTrajectory = Off;
+GMAT CoordinateSystemView2.InertialFrame = Off;
+GMAT CoordinateSystemView2.SetDefaultLocation = Off;
+GMAT CoordinateSystemView2.SetCurrentLocation = On;
+GMAT CoordinateSystemView2.CurrentEye = [ 0 -200002.484375 0 ];
+GMAT CoordinateSystemView2.CurrentCenter = [ 0 0 0 ];
+GMAT CoordinateSystemView2.CurrentUp = [ 0 0 1 ];
+GMAT CoordinateSystemView2.FOVy = 45;
+
+Create OpenFramesView KeckView1;
+GMAT KeckView1.ViewFrame = Keck;
+GMAT KeckView1.ViewTrajectory = Off;
+GMAT KeckView1.InertialFrame = Off;
+GMAT KeckView1.SetDefaultLocation = Off;
+GMAT KeckView1.SetCurrentLocation = On;
+GMAT KeckView1.CurrentEye = [ 1.940310985546152 3.371626899482158 2.154904907072854 ];
+GMAT KeckView1.CurrentCenter = [ 4.440892098500626e-16 0 -8.881784197001252e-16 ];
+GMAT KeckView1.CurrentUp = [ -0.161016973461013 -0.4640515933091209 0.8710508900200501 ];
+GMAT KeckView1.FOVy = 45;
+
+Create OpenFramesView TychoView;
+GMAT TychoView.ViewFrame = Tycho;
+GMAT TychoView.ViewTrajectory = Off;
+GMAT TychoView.InertialFrame = Off;
+GMAT TychoView.LookAtFrame = Luna;
+GMAT TychoView.ShortestAngle = Off;
+GMAT TychoView.SetDefaultLocation = On;
+GMAT TychoView.DefaultEye = [ 23.02620351 -19.87772852 -81.41167264000001 ];
+GMAT TychoView.DefaultCenter = [ 0 0 0 ];
+GMAT TychoView.DefaultUp = [ -0.09845568 -0.97280148 0.20967538 ];
+GMAT TychoView.SetCurrentLocation = On;
+GMAT TychoView.CurrentEye = [ 23.02620351 -19.87772852 -81.41167264000001 ];
+GMAT TychoView.CurrentCenter = [ 0 7.105427357601002e-15 1.4210854715202e-14 ];
+GMAT TychoView.CurrentUp = [ -0.09845567912992075 -0.9728014778989789 0.2096753772969756 ];
+GMAT TychoView.FOVy = 45;
+
+Create OpenFramesView ComptonView;
+GMAT ComptonView.ViewFrame = Compton;
+GMAT ComptonView.ViewTrajectory = Off;
+GMAT ComptonView.InertialFrame = Off;
+GMAT ComptonView.LookAtFrame = Earth;
+GMAT ComptonView.ShortestAngle = Off;
+GMAT ComptonView.SetDefaultLocation = On;
+GMAT ComptonView.DefaultEye = [ -0.74993033 -47.80128277 13.8195276 ];
+GMAT ComptonView.DefaultCenter = [ -0.77215025 -1.92740499 13.60086668 ];
+GMAT ComptonView.DefaultUp = [ -0.17128719 0.0046131 0.98521034 ];
+GMAT ComptonView.SetCurrentLocation = On;
+GMAT ComptonView.CurrentEye = [ -0.7499303300000001 -47.80128276999999 13.81952760000001 ];
+GMAT ComptonView.CurrentCenter = [ -0.7721502499999995 -1.927404989999985 13.60086667999999 ];
+GMAT ComptonView.CurrentUp = [ -0.1712871903284648 0.004613104937229218 0.9852103418520426 ];
+GMAT ComptonView.FOVy = 45;
+
+Create OpenFramesView CopernicusView;
+GMAT CopernicusView.ViewFrame = Copernicus;
+GMAT CopernicusView.ViewTrajectory = Off;
+GMAT CopernicusView.InertialFrame = Off;
+GMAT CopernicusView.LookAtFrame = Luna;
+GMAT CopernicusView.ShortestAngle = Off;
+GMAT CopernicusView.SetDefaultLocation = On;
+GMAT CopernicusView.DefaultEye = [ 29.53129358 -24.7429463 80.25576244 ];
+GMAT CopernicusView.DefaultCenter = [ 0 0 0 ];
+GMAT CopernicusView.DefaultUp = [ -0.08566994999999999 -0.96054192 -0.26461269 ];
+GMAT CopernicusView.SetCurrentLocation = On;
+GMAT CopernicusView.CurrentEye = [ 29.53129358 -24.7429463 80.25576244000001 ];
+GMAT CopernicusView.CurrentCenter = [ 0 3.552713678800501e-15 0 ];
+GMAT CopernicusView.CurrentUp = [ -0.08566994835445638 -0.9605419233817782 -0.2646126855896724 ];
+GMAT CopernicusView.FOVy = 45;
+
+Create OpenFramesView AitkenView;
+GMAT AitkenView.ViewFrame = Aitken;
+GMAT AitkenView.ViewTrajectory = Off;
+GMAT AitkenView.InertialFrame = Off;
+GMAT AitkenView.LookAtFrame = Luna;
+GMAT AitkenView.ShortestAngle = Off;
+GMAT AitkenView.SetDefaultLocation = On;
+GMAT AitkenView.DefaultEye = [ 143.85360821 -130.7040853 -144.42225732 ];
+GMAT AitkenView.DefaultCenter = [ 7.96362213 1.00654857 6.55056164 ];
+GMAT AitkenView.DefaultUp = [ -0.1168966 -0.79810991 0.59106325 ];
+GMAT AitkenView.SetCurrentLocation = On;
+GMAT AitkenView.CurrentEye = [ 143.8536082100001 -130.7040853000001 -144.42225732 ];
+GMAT AitkenView.CurrentCenter = [ 7.963622130000033 1.00654856999995 6.550561640000012 ];
+GMAT AitkenView.CurrentUp = [ -0.1168965989180733 -0.7981099069325674 0.591063246715168 ];
+GMAT AitkenView.FOVy = 26;
+
+Create OpenFramesView SchroterValleyView;
+GMAT SchroterValleyView.ViewFrame = Schroters_Valley;
+GMAT SchroterValleyView.ViewTrajectory = Off;
+GMAT SchroterValleyView.InertialFrame = Off;
+GMAT SchroterValleyView.LookAtFrame = Luna;
+GMAT SchroterValleyView.ShortestAngle = Off;
+GMAT SchroterValleyView.SetDefaultLocation = Off;
+GMAT SchroterValleyView.SetCurrentLocation = On;
+GMAT SchroterValleyView.CurrentEye = [ 59.150634765625 -455.2442626953125 31.69873046875 ];
+GMAT SchroterValleyView.CurrentCenter = [ 59.150634765625 59.150634765625 31.69873046875 ];
+GMAT SchroterValleyView.CurrentUp = [ 0 0 1 ];
+GMAT SchroterValleyView.FOVy = 45;
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+Propagate DefaultProp(DefaultSC) {DefaultSC.ElapsedDays = 1};

@@ -1,0 +1,539 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2019-06-17
+
+% This script visualizes some GMAT FOV models.
+% Contributed by Thinking Systems, Inc.
+
+%**************************************************************
+%                          DEFAULT SETUP                      *
+%**************************************************************
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft Spacecraft1;
+GMAT Spacecraft1.DateFormat = TAIModJulian;
+GMAT Spacecraft1.Epoch = '21530';
+GMAT Spacecraft1.CoordinateSystem = EarthMJ2000Eq;
+GMAT Spacecraft1.DisplayStateType = Keplerian;
+GMAT Spacecraft1.SMA = 14999.99999999999;
+GMAT Spacecraft1.ECC = 0.02454974900598161;
+GMAT Spacecraft1.INC = 12.85008005658097;
+GMAT Spacecraft1.RAAN = 306.6148021947984;
+GMAT Spacecraft1.AOP = 314.1905515359908;
+GMAT Spacecraft1.TA = 99.88774933205012;
+GMAT Spacecraft1.DryMass = 850;
+GMAT Spacecraft1.Cd = 2.2;
+GMAT Spacecraft1.Cr = 1.8;
+GMAT Spacecraft1.DragArea = 15;
+GMAT Spacecraft1.SRPArea = 1;
+GMAT Spacecraft1.SPADDragScaleFactor = 1;
+GMAT Spacecraft1.SPADSRPScaleFactor = 1;
+GMAT Spacecraft1.NAIFId = -10002001;
+GMAT Spacecraft1.NAIFIdReferenceFrame = -9002001;
+GMAT Spacecraft1.OrbitColor = Green;
+GMAT Spacecraft1.TargetColor = LightGray;
+GMAT Spacecraft1.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
+GMAT Spacecraft1.CdSigma = 1e+70;
+GMAT Spacecraft1.CrSigma = 1e+70;
+GMAT Spacecraft1.Id = 'SatId';
+GMAT Spacecraft1.Attitude = NadirPointing;
+GMAT Spacecraft1.SPADSRPInterpolationMethod = Bilinear;
+GMAT Spacecraft1.SPADSRPScaleFactorSigma = 1e+70;
+GMAT Spacecraft1.SPADDragInterpolationMethod = Bilinear;
+GMAT Spacecraft1.SPADDragScaleFactorSigma = 1e+70;
+GMAT Spacecraft1.AddHardware = {Antenna1};
+GMAT Spacecraft1.ModelFile = 'aura.3ds';
+GMAT Spacecraft1.ModelOffsetX = 0;
+GMAT Spacecraft1.ModelOffsetY = 0;
+GMAT Spacecraft1.ModelOffsetZ = 0;
+GMAT Spacecraft1.ModelRotationX = 0;
+GMAT Spacecraft1.ModelRotationY = 0;
+GMAT Spacecraft1.ModelRotationZ = 0;
+GMAT Spacecraft1.ModelScale = 1;
+GMAT Spacecraft1.AttitudeDisplayStateType = 'Quaternion';
+GMAT Spacecraft1.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT Spacecraft1.EulerAngleSequence = '321';
+GMAT Spacecraft1.AttitudeReferenceBody = Earth;
+GMAT Spacecraft1.AttitudeConstraintType = 'OrbitNormal';
+GMAT Spacecraft1.BodyAlignmentVectorX = 1;
+GMAT Spacecraft1.BodyAlignmentVectorY = 0;
+GMAT Spacecraft1.BodyAlignmentVectorZ = 0;
+GMAT Spacecraft1.BodyConstraintVectorX = 0;
+GMAT Spacecraft1.BodyConstraintVectorY = 0;
+GMAT Spacecraft1.BodyConstraintVectorZ = 1;
+
+Create Spacecraft Spacecraft2;
+GMAT Spacecraft2.DateFormat = TAIModJulian;
+GMAT Spacecraft2.Epoch = '21530';
+GMAT Spacecraft2.CoordinateSystem = EarthMJ2000Eq;
+GMAT Spacecraft2.DisplayStateType = Keplerian;
+GMAT Spacecraft2.SMA = 20000.00000000007;
+GMAT Spacecraft2.ECC = 0.02454974900598024;
+GMAT Spacecraft2.INC = 59.99999999999999;
+GMAT Spacecraft2.RAAN = 306.6148021947984;
+GMAT Spacecraft2.AOP = 314.1905515359961;
+GMAT Spacecraft2.TA = 99.88774933204422;
+GMAT Spacecraft2.DryMass = 850;
+GMAT Spacecraft2.Cd = 2.2;
+GMAT Spacecraft2.Cr = 1.8;
+GMAT Spacecraft2.DragArea = 15;
+GMAT Spacecraft2.SRPArea = 1;
+GMAT Spacecraft2.SPADDragScaleFactor = 1;
+GMAT Spacecraft2.SPADSRPScaleFactor = 1;
+GMAT Spacecraft2.NAIFId = -10003001;
+GMAT Spacecraft2.NAIFIdReferenceFrame = -9003001;
+GMAT Spacecraft2.OrbitColor = Yellow;
+GMAT Spacecraft2.TargetColor = DarkGray;
+GMAT Spacecraft2.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
+GMAT Spacecraft2.CdSigma = 1e+70;
+GMAT Spacecraft2.CrSigma = 1e+70;
+GMAT Spacecraft2.Id = 'SatId';
+GMAT Spacecraft2.Attitude = NadirPointing;
+GMAT Spacecraft2.SPADSRPInterpolationMethod = Bilinear;
+GMAT Spacecraft2.SPADSRPScaleFactorSigma = 1e+70;
+GMAT Spacecraft2.SPADDragInterpolationMethod = Bilinear;
+GMAT Spacecraft2.SPADDragScaleFactorSigma = 1e+70;
+GMAT Spacecraft2.AddHardware = {Antenna1, Antenna2};
+GMAT Spacecraft2.ModelFile = 'aura.3ds';
+GMAT Spacecraft2.ModelOffsetX = 0;
+GMAT Spacecraft2.ModelOffsetY = 0;
+GMAT Spacecraft2.ModelOffsetZ = 0;
+GMAT Spacecraft2.ModelRotationX = 0;
+GMAT Spacecraft2.ModelRotationY = 0;
+GMAT Spacecraft2.ModelRotationZ = 0;
+GMAT Spacecraft2.ModelScale = 1;
+GMAT Spacecraft2.AttitudeDisplayStateType = 'Quaternion';
+GMAT Spacecraft2.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT Spacecraft2.EulerAngleSequence = '321';
+GMAT Spacecraft2.AttitudeReferenceBody = Earth;
+GMAT Spacecraft2.AttitudeConstraintType = 'OrbitNormal';
+GMAT Spacecraft2.BodyAlignmentVectorX = 1;
+GMAT Spacecraft2.BodyAlignmentVectorY = 0;
+GMAT Spacecraft2.BodyAlignmentVectorZ = 0;
+GMAT Spacecraft2.BodyConstraintVectorX = 0;
+GMAT Spacecraft2.BodyConstraintVectorY = 0;
+GMAT Spacecraft2.BodyConstraintVectorZ = 1;
+
+Create Spacecraft Spacecraft3;
+GMAT Spacecraft3.DateFormat = TAIModJulian;
+GMAT Spacecraft3.Epoch = '21530';
+GMAT Spacecraft3.CoordinateSystem = EarthMJ2000Eq;
+GMAT Spacecraft3.DisplayStateType = Keplerian;
+GMAT Spacecraft3.SMA = 83474.31799999969;
+GMAT Spacecraft3.ECC = 0.8965199999999988;
+GMAT Spacecraft3.INC = 0;
+GMAT Spacecraft3.RAAN = 0;
+GMAT Spacecraft3.AOP = 360;
+GMAT Spacecraft3.TA = 179.9999966933489;
+GMAT Spacecraft3.DryMass = 850;
+GMAT Spacecraft3.Cd = 2.2;
+GMAT Spacecraft3.Cr = 1.8;
+GMAT Spacecraft3.DragArea = 15;
+GMAT Spacecraft3.SRPArea = 1;
+GMAT Spacecraft3.SPADDragScaleFactor = 1;
+GMAT Spacecraft3.SPADSRPScaleFactor = 1;
+GMAT Spacecraft3.NAIFId = -123456789;
+GMAT Spacecraft3.NAIFIdReferenceFrame = -123456789;
+GMAT Spacecraft3.OrbitColor = [164 184 78];
+GMAT Spacecraft3.TargetColor = Teal;
+GMAT Spacecraft3.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
+GMAT Spacecraft3.CdSigma = 1e+70;
+GMAT Spacecraft3.CrSigma = 1e+70;
+GMAT Spacecraft3.Id = 'SatId';
+GMAT Spacecraft3.Attitude = NadirPointing;
+GMAT Spacecraft3.SPADSRPInterpolationMethod = Bilinear;
+GMAT Spacecraft3.SPADSRPScaleFactorSigma = 1e+70;
+GMAT Spacecraft3.SPADDragInterpolationMethod = Bilinear;
+GMAT Spacecraft3.SPADDragScaleFactorSigma = 1e+70;
+GMAT Spacecraft3.AddHardware = {Antenna3};
+GMAT Spacecraft3.ModelFile = '../data/vehicle/models/aura.3ds';
+GMAT Spacecraft3.ModelOffsetX = 0;
+GMAT Spacecraft3.ModelOffsetY = 0;
+GMAT Spacecraft3.ModelOffsetZ = 0;
+GMAT Spacecraft3.ModelRotationX = 0;
+GMAT Spacecraft3.ModelRotationY = 0;
+GMAT Spacecraft3.ModelRotationZ = 0;
+GMAT Spacecraft3.ModelScale = 1;
+GMAT Spacecraft3.AttitudeDisplayStateType = 'Quaternion';
+GMAT Spacecraft3.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT Spacecraft3.EulerAngleSequence = '321';
+GMAT Spacecraft3.AttitudeReferenceBody = Earth;
+GMAT Spacecraft3.AttitudeConstraintType = 'OrbitNormal';
+GMAT Spacecraft3.BodyAlignmentVectorX = 1;
+GMAT Spacecraft3.BodyAlignmentVectorY = 0;
+GMAT Spacecraft3.BodyAlignmentVectorZ = 0;
+GMAT Spacecraft3.BodyConstraintVectorX = 0;
+GMAT Spacecraft3.BodyConstraintVectorY = 0;
+GMAT Spacecraft3.BodyConstraintVectorZ = 1;
+
+%----------------------------------------
+%---------- Hardware Components
+%----------------------------------------
+
+Create Antenna Antenna1;
+GMAT Antenna1.FieldOfView = coneFOV;
+GMAT Antenna1.DirectionX = 1;
+GMAT Antenna1.DirectionY = 0;
+GMAT Antenna1.DirectionZ = 0;
+GMAT Antenna1.SecondDirectionX = 0;
+GMAT Antenna1.SecondDirectionY = 1;
+GMAT Antenna1.SecondDirectionZ = 0;
+GMAT Antenna1.HWOriginInBCSX = 100;
+GMAT Antenna1.HWOriginInBCSY = -100;
+GMAT Antenna1.HWOriginInBCSZ = 0;
+
+Create Antenna Antenna2;
+GMAT Antenna2.FieldOfView = rectFOV;
+GMAT Antenna2.DirectionX = 1;
+GMAT Antenna2.DirectionY = 0;
+GMAT Antenna2.DirectionZ = 0;
+GMAT Antenna2.SecondDirectionX = 0;
+GMAT Antenna2.SecondDirectionY = 0;
+GMAT Antenna2.SecondDirectionZ = 1;
+GMAT Antenna2.HWOriginInBCSX = 100;
+GMAT Antenna2.HWOriginInBCSY = -200;
+GMAT Antenna2.HWOriginInBCSZ = 0;
+
+Create Antenna Antenna3;
+GMAT Antenna3.FieldOfView = ArrowFOV;
+GMAT Antenna3.DirectionX = 1;
+GMAT Antenna3.DirectionY = 0;
+GMAT Antenna3.DirectionZ = 0;
+GMAT Antenna3.SecondDirectionX = 0;
+GMAT Antenna3.SecondDirectionY = 0;
+GMAT Antenna3.SecondDirectionZ = 1;
+GMAT Antenna3.HWOriginInBCSX = 100;
+GMAT Antenna3.HWOriginInBCSY = 0;
+GMAT Antenna3.HWOriginInBCSZ = 0;
+
+Create Antenna StationAntenna1;
+GMAT StationAntenna1.FieldOfView = TenDegEl;
+GMAT StationAntenna1.DirectionX = 0;
+GMAT StationAntenna1.DirectionY = 0;
+GMAT StationAntenna1.DirectionZ = 1;
+GMAT StationAntenna1.SecondDirectionX = 1;
+GMAT StationAntenna1.SecondDirectionY = 0;
+GMAT StationAntenna1.SecondDirectionZ = 0;
+GMAT StationAntenna1.HWOriginInBCSX = 0;
+GMAT StationAntenna1.HWOriginInBCSY = 0;
+GMAT StationAntenna1.HWOriginInBCSZ = 0;
+
+Create Antenna TucsonAntenna;
+%GMAT TucsonAntenna.FieldOfView = ArrowFOV;
+GMAT TucsonAntenna.FieldOfView = TucsonMask;
+GMAT TucsonAntenna.DirectionX = 0;
+GMAT TucsonAntenna.DirectionY = 0;
+GMAT TucsonAntenna.DirectionZ = 1;
+GMAT TucsonAntenna.SecondDirectionX = 1;
+GMAT TucsonAntenna.SecondDirectionY = 0;
+GMAT TucsonAntenna.SecondDirectionZ = 0;
+GMAT TucsonAntenna.HWOriginInBCSX = 0;
+GMAT TucsonAntenna.HWOriginInBCSY = 0;
+GMAT TucsonAntenna.HWOriginInBCSZ = 0;
+
+%----------------------------------------
+%---------- FieldOfView Components
+%----------------------------------------
+
+Create ConicalFOV coneFOV;
+GMAT coneFOV.Color = [0 255 0];
+GMAT coneFOV.Alpha = 128;
+GMAT coneFOV.FieldOfViewAngle = 20;
+
+Create RectangularFOV rectFOV;
+GMAT rectFOV.Color = [255 0 0];
+GMAT rectFOV.Alpha = 200;
+GMAT rectFOV.AngleWidth = 10;
+GMAT rectFOV.AngleHeight = 20;
+
+Create CustomFOV ArrowFOV;
+GMAT ArrowFOV.Color = [0 0 255];
+GMAT ArrowFOV.Alpha = 255;
+GMAT ArrowFOV.ConeAngles = [ 15 15 8 15 15 8 15 ];
+GMAT ArrowFOV.ClockAngles = [ 0 90 90.09999999999999 150 210 270 270.1 ];
+
+Create ConicalFOV TenDegEl;
+GMAT TenDegEl.Color = [255 255 0];
+GMAT TenDegEl.Alpha = 64;
+GMAT TenDegEl.FieldOfViewAngle = 80;
+
+Create CustomFOV TucsonMask;
+GMAT TucsonMask.Color = [0 0 255];
+GMAT TucsonMask.Alpha = 45;
+GMAT TucsonMask.ConeAngles = [ 75 75 77 77 75 70 66 66 70 50 45 55 70 70 70 65 75 59.99999999999999 59.99999999999999 59.99999999999999 65 70 70 75 65 ];
+GMAT TucsonMask.ClockAngles = [ 0 20 25 35 45 50 59.99999999999999 70 80 90 92 93 100 120 140 160 180 200 221 240 260 280 300 320 340 ];
+
+%----------------------------------------
+%---------- GroundStations
+%----------------------------------------
+
+Create GroundStation Canberra;
+GMAT Canberra.OrbitColor = Thistle;
+GMAT Canberra.TargetColor = DarkGray;
+GMAT Canberra.CentralBody = Earth;
+GMAT Canberra.StateType = Spherical;
+GMAT Canberra.HorizonReference = Ellipsoid;
+GMAT Canberra.Location1 = -35.46345149652494;
+GMAT Canberra.Location2 = 149.128998;
+GMAT Canberra.Location3 = 0.577;
+GMAT Canberra.Id = 'StationId';
+GMAT Canberra.AddHardware = {StationAntenna1};
+GMAT Canberra.IonosphereModel = 'None';
+GMAT Canberra.TroposphereModel = 'None';
+GMAT Canberra.DataSource = 'Constant';
+GMAT Canberra.Temperature = 295.1;
+GMAT Canberra.Pressure = 1013.5;
+GMAT Canberra.Humidity = 55;
+GMAT Canberra.MinimumElevationAngle = 7;
+
+Create GroundStation Tucson;
+GMAT Tucson.OrbitColor = Thistle;
+GMAT Tucson.TargetColor = DarkGray;
+GMAT Tucson.CentralBody = Earth;
+GMAT Tucson.StateType = Spherical;
+GMAT Tucson.HorizonReference = Sphere;
+GMAT Tucson.Location1 = 32.2226;
+GMAT Tucson.Location2 = 249.0253;
+GMAT Tucson.Location3 = 0.7282;
+GMAT Tucson.Id = 'Tucson';
+GMAT Tucson.AddHardware = {TucsonAntenna};
+GMAT Tucson.IonosphereModel = 'None';
+GMAT Tucson.TroposphereModel = 'None';
+GMAT Tucson.DataSource = 'Constant';
+GMAT Tucson.Temperature = 295.1;
+GMAT Tucson.Pressure = 1013.5;
+GMAT Tucson.Humidity = 55;
+GMAT Tucson.MinimumElevationAngle = 7;
+
+
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel LowEarthProp_ForceModel;
+GMAT LowEarthProp_ForceModel.CentralBody = Earth;
+GMAT LowEarthProp_ForceModel.PrimaryBodies = {Earth};
+GMAT LowEarthProp_ForceModel.PointMasses = {Luna, Sun};
+GMAT LowEarthProp_ForceModel.SRP = On;
+GMAT LowEarthProp_ForceModel.RelativisticCorrection = Off;
+GMAT LowEarthProp_ForceModel.ErrorControl = RSSStep;
+GMAT LowEarthProp_ForceModel.GravityField.Earth.Degree = 10;
+GMAT LowEarthProp_ForceModel.GravityField.Earth.Order = 10;
+GMAT LowEarthProp_ForceModel.GravityField.Earth.StmLimit = 100;
+GMAT LowEarthProp_ForceModel.GravityField.Earth.PotentialFile = 'JGM2.cof';
+GMAT LowEarthProp_ForceModel.GravityField.Earth.TideModel = 'None';
+GMAT LowEarthProp_ForceModel.SRP.Flux = 1367;
+GMAT LowEarthProp_ForceModel.SRP.SRPModel = Spherical;
+GMAT LowEarthProp_ForceModel.SRP.Nominal_Sun = 149597870.691;
+GMAT LowEarthProp_ForceModel.Drag.AtmosphereModel = JacchiaRoberts;
+GMAT LowEarthProp_ForceModel.Drag.HistoricWeatherSource = 'ConstantFluxAndGeoMag';
+GMAT LowEarthProp_ForceModel.Drag.PredictedWeatherSource = 'ConstantFluxAndGeoMag';
+GMAT LowEarthProp_ForceModel.Drag.CSSISpaceWeatherFile = 'SpaceWeather-All-v1.2.txt';
+GMAT LowEarthProp_ForceModel.Drag.SchattenFile = 'SchattenPredict.txt';
+GMAT LowEarthProp_ForceModel.Drag.F107 = 150;
+GMAT LowEarthProp_ForceModel.Drag.F107A = 150;
+GMAT LowEarthProp_ForceModel.Drag.MagneticIndex = 3;
+GMAT LowEarthProp_ForceModel.Drag.SchattenErrorModel = 'Nominal';
+GMAT LowEarthProp_ForceModel.Drag.SchattenTimingModel = 'NominalCycle';
+GMAT LowEarthProp_ForceModel.Drag.DragModel = 'Spherical';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator LowEarthProp;
+GMAT LowEarthProp.FM = LowEarthProp_ForceModel;
+GMAT LowEarthProp.Type = RungeKutta89;
+GMAT LowEarthProp.InitialStepSize = 60;
+GMAT LowEarthProp.Accuracy = 9.999999999999999e-12;
+GMAT LowEarthProp.MinStep = 0.001;
+GMAT LowEarthProp.MaxStep = 2700;
+GMAT LowEarthProp.MaxStepAttempts = 50;
+GMAT LowEarthProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Burns
+%----------------------------------------
+
+Create ImpulsiveBurn DefaultIB;
+GMAT DefaultIB.CoordinateSystem = Local;
+GMAT DefaultIB.Origin = Earth;
+GMAT DefaultIB.Axes = VNB;
+GMAT DefaultIB.Element1 = 0;
+GMAT DefaultIB.Element2 = 0;
+GMAT DefaultIB.Element3 = 0;
+GMAT DefaultIB.DecrementMass = false;
+GMAT DefaultIB.Isp = 300;
+GMAT DefaultIB.GravitationalAccel = 9.81;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OpenFramesView EarthView;
+GMAT EarthView.ViewFrame = Earth;
+GMAT EarthView.ViewTrajectory = Off;
+GMAT EarthView.InertialFrame = On;
+GMAT EarthView.SetDefaultLocation = Off;
+GMAT EarthView.SetCurrentLocation = On;
+GMAT EarthView.CurrentEye = [ -58743.97619659809 -45817.37898907513 -3023.517072508667 ];
+GMAT EarthView.CurrentCenter = [ 0 -7.275957614183426e-12 2.000888343900442e-11 ];
+GMAT EarthView.CurrentUp = [ -0.07379889050516591 0.02883684627882654 0.9968561380946088 ];
+GMAT EarthView.FOVy = 45;
+
+Create OpenFramesView Spacecraft1View;
+GMAT Spacecraft1View.ViewFrame = Spacecraft1;
+GMAT Spacecraft1View.ViewTrajectory = Off;
+GMAT Spacecraft1View.InertialFrame = Off;
+GMAT Spacecraft1View.SetDefaultLocation = On;
+GMAT Spacecraft1View.DefaultEye = [ 101 -100 0 ];
+GMAT Spacecraft1View.DefaultCenter = [ 200 -100 0 ];
+GMAT Spacecraft1View.DefaultUp = [ 0 0 1 ];
+GMAT Spacecraft1View.SetCurrentLocation = On;
+GMAT Spacecraft1View.CurrentEye = [ 0 -5825.9873046875 0 ];
+GMAT Spacecraft1View.CurrentCenter = [ 0 0 0 ];
+GMAT Spacecraft1View.CurrentUp = [ 0 0 1 ];
+GMAT Spacecraft1View.FOVy = 44.99999999999999;
+
+Create OpenFramesView Spacecraft2View;
+GMAT Spacecraft2View.ViewFrame = Spacecraft2;
+GMAT Spacecraft2View.ViewTrajectory = Off;
+GMAT Spacecraft2View.InertialFrame = Off;
+GMAT Spacecraft2View.SetDefaultLocation = On;
+GMAT Spacecraft2View.DefaultEye = [ 101 -200 0 ];
+GMAT Spacecraft2View.DefaultCenter = [ 200 -200 0 ];
+GMAT Spacecraft2View.DefaultUp = [ 0 0 1 ];
+GMAT Spacecraft2View.SetCurrentLocation = On;
+GMAT Spacecraft2View.CurrentEye = [ 0 -919.6425170898438 0 ];
+GMAT Spacecraft2View.CurrentCenter = [ 0 0 0 ];
+GMAT Spacecraft2View.CurrentUp = [ 0 0 1 ];
+GMAT Spacecraft2View.FOVy = 44.99999999999999;
+
+Create OpenFramesView Spacecraft3View;
+GMAT Spacecraft3View.ViewFrame = Spacecraft3;
+GMAT Spacecraft3View.ViewTrajectory = Off;
+GMAT Spacecraft3View.InertialFrame = Off;
+GMAT Spacecraft3View.SetDefaultLocation = On;
+GMAT Spacecraft3View.DefaultEye = [ 101 0 0 ];
+GMAT Spacecraft3View.DefaultCenter = [ 200 0 0 ];
+GMAT Spacecraft3View.DefaultUp = [ 0 0 1 ];
+GMAT Spacecraft3View.SetCurrentLocation = On;
+GMAT Spacecraft3View.CurrentEye = [ 101 0 0 ];
+GMAT Spacecraft3View.CurrentCenter = [ 200 0 0 ];
+GMAT Spacecraft3View.CurrentUp = [ 0 0 1 ];
+GMAT Spacecraft3View.FOVy = 35;
+
+Create OpenFramesView TucsonView;
+GMAT TucsonView.ViewFrame = Tucson;
+GMAT TucsonView.ViewTrajectory = Off;
+GMAT TucsonView.InertialFrame = Off;
+GMAT TucsonView.SetDefaultLocation = Off;
+GMAT TucsonView.SetCurrentLocation = On;
+GMAT TucsonView.CurrentEye = [ -41425.63531906284 30946.17330283025 -35904.45561422588 ];
+GMAT TucsonView.CurrentCenter = [ 59.15063476563955 59.15063476563228 31.69873046875 ];
+GMAT TucsonView.CurrentUp = [ -0.2083783615605611 0.6097985374417912 0.7646726111004554 ];
+GMAT TucsonView.FOVy = 45;
+
+
+%----------------------------------------
+%---------- User Objects
+%----------------------------------------
+
+Create OpenFramesSensorMask SC1FOV;
+GMAT SC1FOV.Source = Spacecraft1;
+GMAT SC1FOV.Hardware = Antenna1;
+GMAT SC1FOV.Label = 'ConeFOV';
+GMAT SC1FOV.LengthType = Manual;
+GMAT SC1FOV.Length = 5000;
+
+Create OpenFramesSensorMask SC2FOV;
+GMAT SC2FOV.Source = Spacecraft2;
+GMAT SC2FOV.Hardware = Antenna2;
+GMAT SC2FOV.Label = 'RectFOV';
+GMAT SC2FOV.LengthType = Manual;
+GMAT SC2FOV.Length = 5000;
+
+Create OpenFramesSensorMask SC3FOV;
+GMAT SC3FOV.Source = Spacecraft3;
+GMAT SC3FOV.Hardware = Antenna3;
+GMAT SC3FOV.Label = 'DefaultSensorMask';
+GMAT SC3FOV.LengthType = Manual;
+GMAT SC3FOV.Length = 5000;
+
+Create OpenFramesSensorMask GS1FOV;
+GMAT GS1FOV.Source = Canberra;
+GMAT GS1FOV.Hardware = StationAntenna1;
+GMAT GS1FOV.Label = 'Station1';
+GMAT GS1FOV.LengthType = Manual;
+GMAT GS1FOV.Length = 2000;
+
+Create OpenFramesSensorMask TucsonFOV;
+GMAT TucsonFOV.Source = Tucson;
+GMAT TucsonFOV.Hardware = TucsonAntenna;
+GMAT TucsonFOV.Label = 'Tucson';
+GMAT TucsonFOV.LengthType = Manual;
+GMAT TucsonFOV.Length = 2000;
+
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OpenFramesInterface OpenFrames1;
+GMAT OpenFrames1.SolverIterations = Current;
+GMAT OpenFrames1.UpperLeft = [ 0.1006655574043261 0.01930758988015979 ];
+GMAT OpenFrames1.Size = [ 0.6 0.8 ];
+GMAT OpenFrames1.RelativeZOrder = 11;
+GMAT OpenFrames1.Maximized = true;
+GMAT OpenFrames1.Add = {Spacecraft1, Spacecraft2, Spacecraft3, Canberra, Tucson, Earth, Sun, Luna};
+GMAT OpenFrames1.View = {EarthView, Spacecraft1View, Spacecraft2View, Spacecraft3View, TucsonView};
+GMAT OpenFrames1.SensorMask = {SC1FOV, SC2FOV, SC3FOV, GS1FOV, TucsonFOV};
+GMAT OpenFrames1.CoordinateSystem = EarthMJ2000Eq;
+GMAT OpenFrames1.DrawObject = [ true true true true true true true true ];
+GMAT OpenFrames1.DrawTrajectory = [ true true true false false true true true ];
+GMAT OpenFrames1.DrawAxes = [ true false false true true false false false ];
+GMAT OpenFrames1.DrawXYPlane = [ false false false false false false false false ];
+GMAT OpenFrames1.DrawLabel = [ true true true true true true true true ];
+GMAT OpenFrames1.DrawUsePropLabel = [ false false false false false false false false ];
+GMAT OpenFrames1.DrawCenterPoint = [ true true true false false false true true ];
+GMAT OpenFrames1.DrawEndPoints = [ true true true false false false true true ];
+GMAT OpenFrames1.DrawVelocity = [ false false false false false false false false ];
+GMAT OpenFrames1.DrawGrid = [ false false false false false false false false ];
+GMAT OpenFrames1.DrawLineWidth = [ 2 2 2 2 2 2 2 2 ];
+GMAT OpenFrames1.DrawMarkerSize = [ 10 10 10 10 10 10 10 10 ];
+GMAT OpenFrames1.DrawFontSize = [ 14 14 14 14 14 14 14 14 ];
+GMAT OpenFrames1.Axes = Off;
+GMAT OpenFrames1.AxesLength = 1;
+GMAT OpenFrames1.AxesLabels = On;
+GMAT OpenFrames1.FrameLabel = Off;
+GMAT OpenFrames1.XYPlane = Off;
+GMAT OpenFrames1.EclipticPlane = Off;
+GMAT OpenFrames1.EnableStars = On;
+GMAT OpenFrames1.StarCatalog = 'inp_StarsHYGv3.txt';
+GMAT OpenFrames1.StarCount = 40000;
+GMAT OpenFrames1.MinStarMag = -2;
+GMAT OpenFrames1.MaxStarMag = 6;
+GMAT OpenFrames1.MinStarPixels = 1;
+GMAT OpenFrames1.MaxStarPixels = 10;
+GMAT OpenFrames1.MinStarDimRatio = 0.5;
+GMAT OpenFrames1.ShowPlot = true;
+GMAT OpenFrames1.ShowToolbar = true;
+GMAT OpenFrames1.SolverIterLastN = 1;
+GMAT OpenFrames1.ShowVR = false;
+GMAT OpenFrames1.PlaybackTimeScale = 3600;
+GMAT OpenFrames1.MultisampleAntiAliasing = On;
+GMAT OpenFrames1.MSAASamples = 2;
+GMAT OpenFrames1.DrawFontPosition = {'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right'};
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+Propagate LowEarthProp(Spacecraft3, Spacecraft1, Spacecraft2) {Spacecraft3.ElapsedDays = 5};

@@ -1,0 +1,30 @@
+<!--
+osgEarth Sample
+
+Demonstrates the use of the night color filter, which only shows a layer in nighttime.  You need to have the sky activated for this shader to work.
+-->
+<map name="readymap.org" type="geocentric">
+    
+  <options>
+    <terrain first_lod="1" normalize_edges="true"/>
+    <cache driver = "filesystem" path = "./OFICache/earth" />
+  </options>
+
+  <elevation name="readymap_elevation" driver="tms">
+    <url>http://readymap.org/readymap/tiles/1.0.0/116/</url>
+  </elevation>
+
+  <image name="readymap_imagery" driver="tms">
+    <url>http://readymap.org/readymap/tiles/1.0.0/7/</url>
+  </image>
+
+  <image name="EarthAtNight" driver="tms">
+    <url>http://readymap.org/readymap/tiles/1.0.0/26/</url>
+    <color_filters>
+      <night/>
+    </color_filters>
+  </image>
+
+  <sky driver="gl" ambient="0.0" sun_visible="false" moon_visible="false" stars_visible="false"/>
+    
+</map>

@@ -1,0 +1,67 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Modify the estimation script to use a smoother to improve the estimates</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="FilterSmoother_GpsPosVec.html" title="Chapter&nbsp;15.&nbsp;Filter and Smoother Orbit Determination using GPS_PosVec Data"><link rel="prev" href="ch15s04.html" title="Review and quality check the filter run"><link rel="next" href="ch15s06.html" title="Review and quality check the smoother run"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">Modify the estimation script to use a smoother to improve the
+    estimates</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="ch15s04.html">Prev</a>&nbsp;</td><th align="center" width="60%">Chapter&nbsp;15.&nbsp;Filter and Smoother Orbit Determination using GPS_PosVec Data</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="ch15s06.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="N15421"></a>Modify the estimation script to use a smoother to improve the
+    estimates</h2></div></div></div><p>Now we are going to add a &ldquo;smoother&rdquo; to our script. A smoother
+    allows us to improve the definitive (estimated) states by running a filter
+    backwards from the last measurement to the first measurement and then
+    &ldquo;fusing&rdquo; the results of the forward filter and backward filter into a new
+    estimate that combines information from both the forward and backward
+    filter. The backward filter is automatically initialized from the last
+    estimated state in the forward filter. A smoother will not improve the
+    accuracy of any predictions made from the last forward filter measurement
+    because the filter and smoother estimates are identical at that time. The
+    primary advantage of a smoother is an improvement in the accuracy of the
+    states during the measurement span, also called the &ldquo;definitive&rdquo;
+    span.</p><p>In GMAT, the filter instance must be attached to the smoother, so
+    the smoother must be run in the same script and mission sequence as the
+    forward filter. We will make the following edits to the filter
+    script.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Open your filter script file.</p></li><li class="listitem"><p>Type or paste the following into the filter script
+        window.</p><p>a. This must be placed outside the &ldquo;mission sequence&rdquo; (before
+        the BeginMissionSequence statement). Put it right under the filter if
+        you wish.</p></li></ol></div><pre class="programlisting">%
+%   Smoother
+%
+
+Create Smoother FPS;
+
+FPS.Filter               = EKF;
+FPS.ShowProgress         = True;
+FPS.ShowAllResiduals     = On;
+FPS.ReportFile           = 'smoother.txt';
+FPS.MatlabFile           = 'smoother.mat';
+</pre><div class="orderedlist"><ol class="orderedlist" start="3" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+        button.</p></li></ol></div><p>There are many different types of smoothers. GMAT implements a
+    &ldquo;Fraser-Potter&rdquo; smoother. Details of this are given in Reference 2. To
+    configure the smoother, we attach the instance of our forward filter,
+    which will now be run backwards in time starting at the measurement end
+    time. Like the filter, we can set flags on the smoother to produce verbose
+    output in the console window and a residual plot from the backward filter
+    (ShowProgress and ShowAllResiduals). We also assign an output file for the
+    smoother report file and a smoother MATLAB data file similar to that we
+    got from the filter.</p><div class="orderedlist"><ol class="orderedlist" start="4" type="1"><li class="listitem"><p>Update the mission sequence as shown below (to add the
+          RunSmoother command), then click on &ldquo;Save,Sync&rdquo;</p></li></ol></div><pre class="programlisting">%
+%   Mission sequence
+%
+
+BeginMissionSequence
+
+EstSat.OrbitErrorCovariance = diag([1e-2 1e-2 1e-2 4e-10 4e-10 4e-10]);
+
+RunEstimator EKF;
+RunSmoother FPS;
+</pre><p>As you can see, the RunSmoother command works just the same way as
+    RunSimulator and RunEstimator.</p><div class="orderedlist"><ol class="orderedlist" start="5" type="1"><li class="listitem"><p>Run the script by clicking on the &ldquo;Save,Sync,Run&rdquo; button,
+          clicking on the blue &ldquo;Run&rdquo; button in the tool bar, or by hitting the
+          F5 key</p></li></ol></div><p>The script should complete in a few seconds. The filter will first
+    run and generate the same output that we have seen already. After the
+    filter runs, the smoother will run. If you watched the filter residual
+    plot window closely, you should see that it actually replotted the
+    residuals running backward (from right to left) when the smoother was
+    running. In addition, you will see a little more output in the console
+    window, this time from the smoother run. We can summarize what happened as
+    follows:</p><div class="orderedlist"><ol class="orderedlist" type="i"><li class="listitem"><p>The filter (in the RunEstimator EKF command) ran forward from
+        the first to last measurement,</p></li><li class="listitem"><p>The smoother (in the RunSmoother FPS) command ran the filter
+        backward from the last measurement to the first measurement,</p></li><li class="listitem"><p>The smoother then ran forward (still in the RunSmoother FPS
+        command) and computed a covariance-weighted average of the forward and
+        backward filter state estimates to obtain the forward smoother
+        estimates.</p></li></ol></div><p>To understand all of this, let&rsquo;s jump to the output directory and
+    review the smoother output file.</p></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="ch15s04.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="FilterSmoother_GpsPosVec.html">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="ch15s06.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">Review and quality check the filter run&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;Review and quality check the smoother run</td></tr></table></div></body></html>

@@ -1,0 +1,19 @@
+
+
+%  Load the propagator from an external file
+#Include './SupportFiles/Ex_IncludeFile.script'
+
+Create Spacecraft DefaultSC;
+
+Create OpenFramesInterface OpenFrames1;
+
+OpenFrames1.Add = {DefaultSC, Earth};
+OpenFrames1.CoordinateSystem = EarthMJ2000Eq;
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+
+Propagate DefaultProp(DefaultSC) {DefaultSC.ElapsedSecs = 12000.0};

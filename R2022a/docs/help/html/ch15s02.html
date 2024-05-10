@@ -1,0 +1,337 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Simulate GPS_PosVec measurements</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="FilterSmoother_GpsPosVec.html" title="Chapter&nbsp;15.&nbsp;Filter and Smoother Orbit Determination using GPS_PosVec Data"><link rel="prev" href="FilterSmoother_GpsPosVec.html" title="Chapter&nbsp;15.&nbsp;Filter and Smoother Orbit Determination using GPS_PosVec Data"><link rel="next" href="ch15s03.html" title="Estimate the orbit"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">Simulate GPS_PosVec measurements</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="FilterSmoother_GpsPosVec.html">Prev</a>&nbsp;</td><th align="center" width="60%">Chapter&nbsp;15.&nbsp;Filter and Smoother Orbit Determination using GPS_PosVec Data</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="ch15s03.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="N151B7"></a>Simulate GPS_PosVec measurements</h2></div></div></div><p>We&rsquo;ll begin by creating objects and configuring a GMAT script to
+    simulate on-board GPS position measurements. Of course, in real life you
+    won&rsquo;t run the simulator for orbit determination (OD), you will use the
+    actual measurements from satellite telemetry.</p><p>Start by opening GMAT.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Find your GMAT installation directory, and in the
+        <span class="emphasis"><em>&lt;GMAT Installation&gt;</em></span>/bin directory, find and
+        double-click on GMAT.exe to start the application.</p></li></ol></div><p>You can dismiss the welcome window that appears. Next we&rsquo;ll start a
+    blank script file.</p><div class="orderedlist"><ol class="orderedlist" start="2" type="1"><li class="listitem"><p>In the GMAT File menu, choose New &gt; Script</p></li></ol></div><p>A script window will open in the GMAT GUI. We will be working in
+    this script window for the rest of this tutorial. We&rsquo;ll begin by creating
+    the Spacecraft object that will be used for simulating the
+    measurements.</p><div class="orderedlist"><ol class="orderedlist" start="3" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script window.</p></li></ol></div><pre class="programlisting">%
+%   Spacecraft
+%
+
+Create Spacecraft SimSat;
+
+SimSat.DateFormat        = UTCGregorian;
+SimSat.Epoch             = '10 Jun 2014 00:00:00.000';
+SimSat.CoordinateSystem  = EarthMJ2000Eq;
+SimSat.DisplayStateType  = Cartesian;
+SimSat.X                 = 576.869556
+SimSat.Y                 = -5701.142761
+SimSat.Z                 = -4170.593691
+SimSat.VX                = -1.76450794
+SimSat.VY                = 4.18128798
+SimSat.VZ                = -5.96578986
+SimSat.DryMass           = 10;
+SimSat.Cd                = 2.2;
+SimSat.Cr                = 1.8;
+SimSat.DragArea          = 10;
+SimSat.SRPArea           = 10;
+SimSat.Id                = 'LEOSat';
+
+%
+%   Mission sequence
+%
+
+BeginMissionSequence
+</pre><div class="orderedlist"><ol class="orderedlist" start="4" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+        button.</p></li><li class="listitem"><p>GMAT will ask if you would like to save the script and make it
+        the active script. Click on &ldquo;Yes&rdquo; and choose a directory to save the
+        script. Let&rsquo;s call it &ldquo;simulate.script&rdquo;.</p><p>a. After saving, the GMAT console window should show the message
+        &ldquo;Successfully interpreted the script&rdquo;</p></li></ol></div><p>Let&rsquo;s take a minute here to understand the relationship between the
+    script and the GUI. Firstly, while GMAT has a sophisticated GUI, most GMAT
+    OD components do not have GUI interfaces and can only be configured
+    through the script. Some OD resources (like the Spacecraft, GroundStation,
+    and ForceModel) do have GUI interfaces, and can be created and configured
+    either through the GUI or the script. The &ldquo;Sync&rdquo; feature is used to
+    &ldquo;synchronize&rdquo; the script object configurations with those in the GUI
+    resources tree. When you hit the &ldquo;Save,Sync&rdquo; or &ldquo;Save,Sync,Run&rdquo; button
+    GMAT will save your script changes, and then update all applicable objects
+    in the GUI Resource tree to reflect any changes you have made to them in
+    the script. You can verify this by double-clicking on any object in the
+    Resource tree after performing a &ldquo;Sync&rdquo; operation. You can do this now for
+    the SimSat spacecraft if you like. The GUI interface for the selected
+    object will display the current settings from your script. You should see
+    that the initial state and spacecraft parameters in the GUI match those
+    assigned in the script. The same is true for the Mission tab of the GUI.
+    We haven&rsquo;t yet configured any steps in the mission sequence, but once we
+    do, they will appear under the Mission tab in the GUI. However, since much
+    of the orbit determination processing is not configurable through the GUI,
+    we will ignore the GUI for the remainder of this tutorial and focus only
+    on using the script editor to accomplish our OD task.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>In this tutorial, avoid using Control-S or the tool bar &ldquo;Save&rdquo;
+      icon to save your script. These operations go the &ldquo;other way&rdquo; from the
+      &ldquo;Save/Sync&rdquo; button. Using Control-S or the Save icon will result in GMAT
+      replacing your script file with code automatically generated by dumping
+      the object configurations into script format. While this in no way
+      affects the functionality of your script, it generally results in a more
+      verbose and &ldquo;uglier&rdquo; presentation of the code. When doing this, GMAT
+      makes a &ldquo;.bak&rdquo; backup version of your original script in the same
+      directory as your script. If you accidentally do this, you can recover
+      your original script from the &ldquo;.bak&rdquo; copy.</p></div><p>The GMAT scripting language is &ldquo;object-oriented&rdquo;, which means that
+    each component in the system is a self-contained object (in GMAT, these
+    are called &ldquo;resources&rdquo;) with a collection of parameters which need to be
+    specified to configure the state of the resource. GMAT has many built-in
+    resources for modeling various aspects of spacecraft mission planning. The
+    names of these resources, their descriptions, and available parameters are
+    found in the &ldquo;Reference Guide&rdquo; section of the User&rsquo;s Guide. In order to
+    use a resource, the user must create an instance of the resource and
+    configure it as desired. The resource name is fixed by GMAT, but the
+    instance name can be chosen by the user, within rules of syntax. In the
+    example above, <span class="guilabel">Spacecraft</span> is the name of the built-in
+    spacecraft resource class, and we here create an instance of a spacecraft
+    and choose to name it SimSat. The user then works with the instance of the
+    resource they have created. Hopefully this paradigm is familiar to you
+    already due to its similarity to other common object-oriented programming
+    languages like Java and Python.</p><p>Before going on and creating the rest of our simulation script, we
+    should take some time to understand a little more about the structure of a
+    GMAT script file. Overall, there are two parts to a GMAT script &ndash; the
+    object configuration section and the mission sequence. In the &ldquo;object
+    configuration&rdquo; section of the script, we create and specify initial
+    configurations for all the GMAT resources (objects) which are required for
+    the task we wish to accomplish. The &ldquo;mission sequence&rdquo; defines the steps
+    that will execute the desired task using the objects we have configured.
+    It could be to propagate a Spacecraft, target a maneuver, or (in our case)
+    to simulate and estimate an orbit. The object configurations must always
+    come before the mission sequence, and the two sections are separated by
+    the BeginMissionSequence keyword. The code steps in the mission sequence
+    will eventually populate the &ldquo;Mission&rdquo; tab in the GUI left sidebar, but we
+    won&rsquo;t be interacting with the GUI for our OD task. For now, we will
+    proceed first with creating all the objects we will need, and fill in the
+    mission sequence later.</p><p>Everything you are instructed to paste in to the script below should
+    be inserted ahead of the BeginMissionSequence line until we get to the
+    section of the exercise where we are working in the mission
+    sequence.</p><p>Let&rsquo;s continue with working on building out the script to simulate
+    GPS position measurement data. The next thing we need to do is to create a
+    GPS receiver for our spacecraft. In GMAT, the GPS receiver object handles
+    the modeling of the GPS measurement data.</p><div class="orderedlist"><ol class="orderedlist" start="6" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script
+          window.</p></li></ol></div><pre class="programlisting">%
+%   Spacecraft hardware
+%
+
+Create Antenna GpsAntenna;
+Create Receiver GpsReceiver;
+
+GpsReceiver.PrimaryAntenna = GpsAntenna;
+GpsReceiver.Id             = 800;
+GpsReceiver.ErrorModels    = {PosVecModel}
+
+Create ErrorModel PosVecModel;
+ 
+PosVecModel.Type       = 'GPS_PosVec'
+PosVecModel.NoiseSigma = 0.010;
+</pre><div class="orderedlist"><ol class="orderedlist" start="7" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>Here we are creating three new objects &ndash; an Antenna, a
+    Receiver, and an ErrorModel. Our GpsReceiver object connects to an Antenna
+    and possesses an Id and an ErrorModel. The Antenna is used to determine
+    the signal path of the GPS measurement, but otherwise has no
+    functionality. The Receiver Id is a unique identifier for the receiver.
+    When you are simulating GPS data, you can choose any value for this and it
+    will be applied to the simulated data, but when using actual GPS
+    spacecraft measurement records, this Id must match the Id on the formatted
+    GMAT input GPS records. The format of GMAT input data records will be
+    described in more detail shortly.</p><p>Lastly, we have created an ErrorModel and attached it to the
+    Receiver. A GMAT ErrorModel is a generic object that describes the
+    properties of the measurements used for OD. Since ErrorModels are generic,
+    we first specify which of GMAT&rsquo;s measurement types we are configuring it
+    for, in this case the GPS_PosVec measurement type. GPS_PosVec is a
+    built-in name that must be used when specifying GPS measurement data.
+    Other measurement types have similar built-in names. Refer to <a class="xref" href="TrackingDataTypes.html" title="Tracking Data Types for Orbit Determination"><span class="refentrytitle">Tracking Data Types for Orbit Determination</span></a> for more details.</p><p>Next, we specify the measurement noise associated with the GPS
+    measurement data. The NoiseSigma represents the 1-sigma noise of the
+    measurement data. Since we are setting up a simulation script, this
+    represents the noise that will be added to the simulated measurements.
+    When we get to the estimation steps, this NoiseSigma will instead be
+    interpreted as the measurement noise assumed to exist in the measurements.
+    Each measurement type in GMAT has different units for NoiseSigma. For the
+    GPS_PosVec measurements, the units are kilometers, so here we are
+    specifying a 1-sigma measurement noise of 10 meters. When working with
+    real spacecraft GPS measurement data, some analysis is usually required to
+    determine an appropriate value of the noise.</p><p>Note that we attach our instance of the ErrorModel (PosVecModel) to
+    the GPS receiver, not ErrorModel itself. Again, this fits the common
+    object-oriented programming paradigm. We must now also attach the receiver
+    we have created to our spacecraft.</p><div class="orderedlist"><ol class="orderedlist" start="8" type="1"><li class="listitem"><p>In the script, go back to the spacecraft parameter
+          configuration section and add the following at the bottom of the
+          spacecraft parameters list.</p></li></ol></div><pre class="programlisting">SimSat.AddHardware       = {GpsReceiver, GpsAntenna};
+</pre><div class="orderedlist"><ol class="orderedlist" start="9" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>Although it&rsquo;s not strictly necessary, it&rsquo;s convenient to
+    keep all the spacecraft parameters grouped together. Here we attach the
+    receiver and antenna (and implicitly as well the receiver GPS measurement
+    error model) to our spacecraft, for use when we run the simulation.</p><p>Our goal here is to simulate some GPS measurement data for later use
+    in an estimation run. GMAT handles measurement data through the
+    TrackingFileSet resource.</p><div class="orderedlist"><ol class="orderedlist" start="10" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script
+          window.</p></li></ol></div><pre class="programlisting">%
+%   Tracking file sets
+%
+
+Create TrackingFileSet SimData;
+
+SimData.AddTrackingConfig = {{SimSat.GpsReceiver}, 'GPS_PosVec'};
+SimData.FileName          = {'gps_posvec.gmd'};
+</pre><div class="orderedlist"><ol class="orderedlist" start="11" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>Here we create an instance of a tracking file set that
+    will write out the simulated measurements. For GPS_PosVec measurement
+    data, we only need to specify two things &ndash; the tracking configuration (or
+    measurement path) for the simulated data, and the name of the output file
+    that will contain the simulated measurements. The inner curly braces of
+    the AddTrackingConfig parameter specify the measurement path for the
+    simulated data. GPS_PosVec data, while in reality derived from measuring
+    the location of the spacecraft relative to multiple GPS satellites,
+    consists only of X, Y, and Z estimates of the spacecraft state, so our
+    simulation case only requires us to specify which GPS receiver is to be
+    used in the simulation. Recall that the ErrorModel attached to this
+    receiver will provide the measurement noise to be applied in the
+    simulation. Outside the inner curly braces, we specify that the
+    measurement data we wish to simulate is the GPS_PosVec measurement type.
+    Other measurement types typically have more complicated measurement paths
+    and require more parameters of the tracking file set. You can refer to the
+    User&rsquo;s Guide for examples.</p><p>The tracking file set FileName specifies the output file for
+    simulated measurements. Here we just specify a file name (without a full
+    path). In this instance, GMAT will by default write the file into the
+    <span class="emphasis"><em>&lt;GMAT Installation&gt;</em></span>/output directory. If you
+    want to write the file to a different directory, specify the full path for
+    the file.</p><p>By the way, if after hitting &ldquo;Save,Sync&rdquo; you ever see a message
+    indicating a syntax or script error, stop and check your work. All of the
+    code we are adding as we go should always parse successfully.</p><p>Next we need to create a force model that we wish to use for this
+    orbit simulation.</p><div class="orderedlist"><ol class="orderedlist" start="12" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script
+          window.</p></li></ol></div><pre class="programlisting">%
+%   Force model
+%
+
+Create ForceModel FM;
+
+FM.CentralBody                       = Earth;
+FM.PrimaryBodies                     = {Earth};
+FM.GravityField.Earth.Degree         = 8;
+FM.GravityField.Earth.Order          = 8;
+FM.GravityField.Earth.PotentialFile  = 'JGM2.cof';
+FM.SRP                               = On;
+FM.Drag.AtmosphereModel              = 'JacchiaRoberts';
+FM.Drag.CSSISpaceWeatherFile         = 'SpaceWeather-All-v1.2.txt'
+FM.Drag.HistoricWeatherSource        = 'CSSISpaceWeatherFile';
+FM.ErrorControl                      = None;
+</pre><div class="orderedlist"><ol class="orderedlist" start="13" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>FM is an instance of a ForceModel that includes Earth 8x8
+    gravity modeling, atmospheric drag using the Jacchia-Roberts atmospheric
+    density model, and solar radiation pressure. We configure the force model
+    to use the CSSI-formatted space weather file for atmospheric density
+    modeling. This file contains daily solar flux and 3-hourly planetary
+    geomagnetic indices. In this case, since we have not specified a full
+    path, we will just use the default copy of the file, located in the
+    <span class="emphasis"><em>&lt;GMAT Installation&gt;</em></span>/data/atmosphere/earth
+    directory. If you want to use a different version of the file, you can
+    specify the full path. Using a daily updated version of this file is a
+    best practice for orbit determination of low-earth satellites affected by
+    drag.</p><p>It&rsquo;s worth mentioning that the setting <code class="literal">FM.ErrorControl =
+    None</code> forces GMAT to use fixed-step integration when propagating
+    the orbit. This is currently required for orbit determination using
+    GMAT.</p><p>We&rsquo;re almost there, just a few more objects to create. We&rsquo;ll
+    configure the propagator now.</p><div class="orderedlist"><ol class="orderedlist" start="14" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script
+          window.</p></li></ol></div><pre class="programlisting">%
+%   Propagator
+%
+
+Create Propagator Prop;
+
+Prop.FM              = FM;
+Prop.Type            = 'RungeKutta89';
+Prop.InitialStepSize = 60;
+Prop.MinStep         = 0;
+Prop.MaxStep         = 60;
+</pre><div class="orderedlist"><ol class="orderedlist" start="15" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>Our instance FM of the ForceModel is assigned for use by
+    the propagator. Since on the force model we specified fixed-step
+    integration (<code class="literal">FM.ErrorControl = None</code>) for the orbit, on
+    the propagator we must specify the step size for integration. Here we use
+    a 60-second step size, which is typical for low-earth orbiting satellites.
+    We are also using a high-order numerical integrator (the RungeKutta89
+    propagator), which makes it safer to use a 60-second step size. The
+    appropriate step size to use will vary by the mission orbit type,
+    integrator choice, and force modeling. Note that to configure a 60-second
+    fixed integration step size, you must specify 60 seconds on both the
+    InitialStepSize and MaxStep parameters, while setting MinStep to
+    zero.</p><p>We&rsquo;re almost there now! One more object to configure and then we&rsquo;ll
+    go on to the mission sequence required to run the simulation. Before we do
+    that, we have to lastly create the simulator resource.</p><div class="orderedlist"><ol class="orderedlist" start="16" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script
+          window.</p></li></ol></div><pre class="programlisting">%
+%    Simulator
+%
+
+Create Simulator Sim;
+
+Sim.AddData              = {SimData};
+Sim.EpochFormat          = 'UTCGregorian';
+Sim.InitialEpoch         = '10 Jun 2014 00:00:00.000';
+Sim.FinalEpoch           = '11 Jun 2014 00:00:00.000'; 
+Sim.MeasurementTimeStep  = 600;
+Sim.Propagator           = Prop;
+Sim.AddNoise             = On;
+</pre><div class="orderedlist"><ol class="orderedlist" start="17" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>The simulator object will execute the measurement
+    simulation using all of the objects we have configured thus far. On the
+    AddData parameter, we assign the tracking file set, which specifies the
+    measurement paths for data simulation. This links the simulator to the
+    spacecraft, GPS receiver, measurement model, and output file for simulated
+    measurements. The simulator also specifies the start (InitialEpoch) and
+    end (FinalEpoch) times of the data simulation span, and the interval
+    (MeasurementTimeStep) at which observation records will be simulated.
+    Since the simulator will be responsible for propagating the spacecraft
+    over the simulation span, we assign our propagator (and its attached force
+    model) to the simulator as well. Finally, we can choose whether to add
+    noise to the simulated measurements. If AddNoise is set to Off, the noise
+    sigma specified on the spacecraft GPS receiver error model will ignored
+    and the simulated measurements will be &ldquo;perfect&rdquo;.</p><p>We now have all the resources that we need for a properly configured
+    simulation and are nearly ready to execute the simulation. It&rsquo;s now time
+    to build the mission sequence that will perform the simulation using the
+    objects we have created. In this case, only one line of code is
+    needed.</p><div class="orderedlist"><ol class="orderedlist" start="18" type="1"><li class="listitem"><p>Update the mission sequence as shown below, then click on
+          &ldquo;Save,Sync&rdquo;</p></li></ol></div><pre class="programlisting">%
+%   Mission sequence
+%
+
+BeginMissionSequence
+
+RunSimulator Sim;
+</pre><p>The RunSimulator command has one argument &ndash; the name of the
+    simulator instance to execute. This command instructs GMAT to generate the
+    simulated measurements using the measurement strands, propagator,
+    spacecraft, and error models attached to the simulator and its associated
+    objects.</p><p>That&rsquo;s it for building our simulation script &ndash; it&rsquo;s now finally time
+    to run it.</p><div class="orderedlist"><ol class="orderedlist" start="19" type="1"><li class="listitem"><p>At the bottom of the script window, click on the
+          &ldquo;Save,Sync,Run&rdquo; button. Alternately, you can execute a GMAT script
+          by clicking on the blue &ldquo;Run&rdquo; error in the tool bar, or by hitting
+          the F5 key.</p></li></ol></div><p>The script will run very quickly &ndash; it should finish in a
+    few seconds. In the console window (the text output area just below the
+    script editor), the message &ldquo;Mission run completed&rdquo; should appear. You
+    will also see a warning stating, &ldquo;The orbit state transition matrix does
+    not currently contain SRP contributions from shadow partial derivatives
+    when using Spherical SRP&rdquo;. This message is normal when using SRP modeling
+    and warns the user that GMAT is ignoring a small correction in the SRP
+    calculation that we won&rsquo;t worry about for this exercise.</p><p>The only other output from the run is the simulated measurement
+    file. Recall that on our tracking file set, we set &lsquo;gps_posvec.gmd&rsquo; as the
+    simulated data file name. Since we didn&rsquo;t specify a full path for the
+    file, GMAT has created this file in its default location, the
+    <span class="emphasis"><em>&lt;GMAT Installation&gt;</em></span>/output directory. Take a
+    look in your output directory and locate the new file.</p><p>Open the gps_posvec.gmd file in a text editor. You will see content
+    similar to the following. Because we configured the simulator to add
+    random noise to the measurements, the data in your file will differ
+    slightly from these values.</p><pre class="programlisting">% GMAT Internal Measurement Data File
+
+26818.5004050925930316268847    GPS_PosVec    9014    800    5.4582066502576909e+03    1.7472147130503795e+03    -4.1695115857105557e+03
+26818.5073495370382845110637    GPS_PosVec    9014    800    2.3029538831047935e+03    -1.4045595913124220e+02    -6.7023373462614209e+03
+26818.5142939814798994164372    GPS_PosVec    9014    800    -1.8916402292545524e+03    -1.6523319919249177e+03    -6.6283229876018404e+03
+26818.5212384259251523006163    GPS_PosVec    9014    800    -5.4440068853410785e+03    -2.1862351512631685e+03    -3.9759522335154807e+03
+26818.5281828703704051847946    GPS_PosVec    9014    800    -6.8837933807039817e+03    -1.6533743904192625e+03    2.2781349057542749e+02
+</pre><p>This is an example of a GMAT measurement data (or GMD) file. The
+    file format is very similar for all the measurement types that GMAT
+    processes, and consists of a series of time ordered ASCII records with
+    space-delimited data fields. This format is described in <a class="xref" href="TrackingDataTypes.html" title="Tracking Data Types for Orbit Determination"><span class="refentrytitle">Tracking Data Types for Orbit Determination</span></a> for all of the supported measurement types.
+    For convenience, the format for GPS_PosVec data is reproduced
+    below.</p><div class="informaltable"><table border="1"><colgroup><col width="50%"><col width="50%"></colgroup><tbody><tr><td>Field</td><td>Description</td></tr><tr><td>1</td><td>TAI Modified Julian Date of time of observation</td></tr><tr><td>2</td><td>Observation type name &ndash; GPS_PosVec</td></tr><tr><td>3</td><td>Observation type index number (9014 for GPS_PosVec
+            data)</td></tr><tr><td>4</td><td>GPS receiver ID</td></tr><tr><td>5</td><td>Earth-fixed position X component (km)</td></tr><tr><td>6</td><td>Earth-fixed position Y component (km)</td></tr><tr><td>7</td><td>Earth-fixed position Z component (km)</td></tr></tbody></table></div><p>Notice that the receiver ID in the simulated records matches the Id
+    we assigned our GpsReceiver object in the script. The X, Y, and Z
+    components shown are simply the predicted (propagated) X, Y, and Z
+    position of the spacecraft in the Earth-fixed reference frame, with 10
+    meters of random noise (as specified on the PosVecModel error model)
+    added. This completes the task of simulating some on-board GPS position
+    estimates.</p><p>In the next section, we&rsquo;ll go on to creating a script that uses this
+    data to estimate the orbit of the spacecraft.</p></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="FilterSmoother_GpsPosVec.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="FilterSmoother_GpsPosVec.html">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="ch15s03.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">Chapter&nbsp;15.&nbsp;Filter and Smoother Orbit Determination using GPS_PosVec Data&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;Estimate the orbit</td></tr></table></div></body></html>

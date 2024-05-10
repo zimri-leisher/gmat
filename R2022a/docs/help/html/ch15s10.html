@@ -1,0 +1,91 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Appendix A. Generate an ephemeris while running the filter and smoother</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="FilterSmoother_GpsPosVec.html" title="Chapter&nbsp;15.&nbsp;Filter and Smoother Orbit Determination using GPS_PosVec Data"><link rel="prev" href="ch15s09.html" title="References"><link rel="next" href="ch15s11.html" title="Appendix B. Run the script from the command-line"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">Appendix A. Generate an ephemeris while running the filter and
+    smoother</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="ch15s09.html">Prev</a>&nbsp;</td><th align="center" width="60%">Chapter&nbsp;15.&nbsp;Filter and Smoother Orbit Determination using GPS_PosVec Data</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="ch15s11.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="N15570"></a>Appendix A. Generate an ephemeris while running the filter and
+    smoother</h2></div></div></div><p>While just knowing the end state of the filter run is useful, flight
+    dynamics operations often requires a complete ephemeris file of the past
+    (&ldquo;definitive&rdquo;) and future predicted orbit to assist in generation of
+    various reports and analysis required for spacecraft mission operations.
+    In this section, we will show how to modify the filter/smoother script to
+    generate an ephemeris file during both the filter and smoother run.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>If you don&rsquo;t already have it open, start GMAT and load the
+        filter.script script file.</p></li><li class="listitem"><p>Paste the following code into your script before the
+        BeginMissionSequence command, then click on &ldquo;Save,Sync&rdquo;.</p></li></ol></div><pre class="programlisting">%
+%   Create ephemeris files
+%
+
+Create EphemerisFile FilterEphem;
+
+FilterEphem.Spacecraft          = EstSat;
+FilterEphem.Filename            = 'filter.e';
+FilterEphem.FileFormat          = 'STK-TimePosVel';
+FilterEphem.IncludeCovariance   = 'Position';
+FilterEphem.CoordinateSystem    = EarthMJ2000Eq;
+FilterEphem.WriteEphemeris      = False;
+
+Create EphemerisFile SmootherEphem;
+
+SmootherEphem.Spacecraft        = EstSat;
+SmootherEphem.Filename          = 'smoother.e';
+SmootherEphem.FileFormat        = 'STK-TimePosVel';
+SmootherEphem.IncludeCovariance = 'Position';
+SmootherEphem.CoordinateSystem  = EarthMJ2000Eq;
+SmootherEphem.WriteEphemeris    = False;
+</pre><p>Here we create two instances of the EphemerisFile resource &ndash; one for
+    the filter and one for the smoother. We attach the EstSat satellite to the
+    ephemeris object, and specify the ephemeris format to be an STK-format
+    ephemeris. Since the filter creates states at each measurement time, and
+    the measurement times are generally not at a uniform time interval across
+    the filter span, the filter can only use ephemeris formats that support a
+    variable time step between states. In this example, we also choose to
+    include the covariance in the STK ephemeris (not all formats support this
+    option), and we specify a coordinate system for the output
+    ephemeris.</p><p>The WriteEphemeris parameter tells GMAT whether to output states
+    from the attached spacecraft to the configured ephemeris file. We set it
+    to False here to suppress output to the ephemeris file for now. The reason
+    for this will become clear shortly.</p><div class="orderedlist"><ol class="orderedlist" start="3" type="1"><li class="listitem"><p>Update the mission sequence as shown below, then click on
+        &ldquo;Save,Sync&rdquo;.</p></li></ol></div><pre class="programlisting">%
+%   Mission sequence
+%
+
+BeginMissionSequence
+
+EstSat.OrbitErrorCovariance = diag([1e-2 1e-2 1e-2 4e-10 4e-10 4e-10]);
+
+Toggle FilterEphem On;
+RunEstimator EKF;
+Toggle FilterEphem Off;
+
+Toggle SmootherEphem On;
+RunSmoother FPS;
+Toggle SmootherEphem Off;
+</pre><p>The Toggle command is used to activate and suppress output to
+    each ephemeris file at the appropriate time. Before running the EKF, we
+    turn on output to the filter ephemeris file. At this point in the script,
+    output to the smoother ephemeris file remains off, due to the setting of
+    the WriteEphemeris parameter on the SmootherEphem resource. We then run
+    the filter with output to the filter ephemeris turned on. While the filter
+    runs, each filter estimated state is written to the filter ephemeris via
+    the EstSat spacecraft that is attached to the filter ephemeris resource.
+    If at this point, the output to the smoother ephemeris were also enabled,
+    output would also be written to the smoother ephemeris, since EstSat is
+    also attached to the SmootherEphem resource. This would cause a problem
+    when the smoother runs next and again writes states to the smoother
+    ephemeris file.</p><p>When the filter run completes, output to the filter ephemeris is
+    turned off, and output to the smoother ephemeris is now turned on. The
+    smoother is then run. During the smoother run, output states from EstSat
+    will now go exclusively to the smoother ephemeris file. </p><div class="orderedlist"><ol class="orderedlist" start="4" type="1"><li class="listitem"><p>Run the script by clicking on the &ldquo;Save,Sync,Run&rdquo; button,
+          clicking on the blue &ldquo;Run&rdquo; error in the tool bar, or by hitting the
+          F5 key.</p></li></ol></div><p>The filter and smoother will run just the same as we have seen
+    previously. When the run completes the two ephemeris files, filter.e and
+    smoother.e, can be found in the GMAT output directory. In this case, the
+    files will cover only the span of the filter and smoother estimation arcs.
+    GMAT can also generate a prediction past the end time of the tracking
+    data.</p><div class="orderedlist"><ol class="orderedlist" start="5" type="1"><li class="listitem"><p>Add the following line of code to the configuration of the
+        smoother object. Update the mission sequence as shown below, then
+        click on &ldquo;Save,Sync&rdquo;.</p></li></ol></div><pre class="programlisting">FPS.PredictTimeSpan      = 86400;
+</pre><div class="orderedlist"><ol class="orderedlist" start="6" type="1"><li class="listitem"><p>Run the script by clicking on the &ldquo;Save,Sync,Run&rdquo; button,
+          clicking on the blue &ldquo;Run&rdquo; error in the tool bar, or by hitting the
+          F5 key.</p></li></ol></div><p>This parameter instructs the smoother to generate an
+    86400-second (1-day) prediction past the end time (last observation) of
+    the data. Examine the smoother ephemeris file after the run completes to
+    see the extra prediction span in the file. The same parameter is also
+    available for the filter, if you wish to add a prediction to the
+    filter.</p></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="ch15s09.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="FilterSmoother_GpsPosVec.html">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="ch15s11.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">References&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;Appendix B. Run the script from the command-line</td></tr></table></div></body></html>

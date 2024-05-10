@@ -1,0 +1,248 @@
+%
+%   Ex_R2022a_Alpha_ExternalForceModel.script
+%
+%   Propagate three spacecraft for a day, the first using a GMAT 2-body forcemodel,
+%   the second using only an external 2-body model written in Python, and a third
+%   which uses a GMAT 2-body forcemodel and with an anti-velocity force applied via
+%   an external python script.
+%
+%
+%   NOTE: The ExternalForceModel is an alpha feature and should not be used for
+%   any mission critical operations. The capability is still under development and
+%   testing and its components are subject to change in future releases. To enable
+%   the alpha plugin, uncomment the plugin line in the GMAT startup file that matches
+%   the version of python used by the GMAT python interface and run GMAT.
+%
+%   This plugin expands the capability of GMAT Force models by allowing the use of 
+%   external, python-defined force models, in GMAT integrators. Python scripts must
+%   be added to the Python userfunctions folder, and the GMAT python interface must
+%   be configured, as instructed in the GMAT User Guide. The plugin has three parameters
+%   that may be configured on a GMAT force model resource. These are listed below:
+%
+%
+%   ForceModel.External - This specifies the python script from which to get dynamics
+%      data. The python script must be in the ../userfunctions/python folder. The name
+%      should not include the *.py suffix.
+%   ForceModel.External.ExcludeOtherForces - May be set to true or false. When true, 
+%      GMAT will only use the external python force models for integration, excluding
+%      any GMAT forces defined in the ForceModel. If false, the force will be applied
+%      in addition to any other forces defined within the ForceModel. 
+%   ForceModel.External.EntryPoint - This specifies the name of the function within the
+%      Python script for GMAT to call. The default value for this is GetForces().
+%
+%   To create forces compatible with this plugin, GMAT will expect the following syntax:
+%
+%   GetForces(s,t,o):
+%      ...
+%      ...
+%      return ds
+%
+%   With the following definitions for the function parameters:
+%      s is the 6-element position and velocity state of the object [X,Y,Z,Vx,Vy,Vz](km,km/s)
+%      t is the current time in days from 05-JAN-1941 12:00:00 TAI 
+%      o is the order of the derivative. Most GMAT integrators use only the 1st order
+%      ds is the derivative of s. For a 1st order this is [Vx,Vy,Vz,Ax,Ay,Az](km/s,km/s^2)
+%
+%
+%   Final notes: 
+%   When using the plugin, the following warning messages are expected 
+%   "PhysicalModel ExternalModel was not set, even though it registered 
+%   support for derivatives of type 3700"
+%   "Failed to build an element (id=3700) of the ODEModel."
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft Sat_GMAT;
+Sat_GMAT.DateFormat = UTCGregorian;
+Sat_GMAT.Epoch = '01 Jan 2020 00:00:00.000';
+Sat_GMAT.CoordinateSystem = EarthMJ2000Eq;
+Sat_GMAT.DisplayStateType = Cartesian;
+Sat_GMAT.X   = 35785.0;
+Sat_GMAT.Y   = 0;
+Sat_GMAT.Z   = 0;
+Sat_GMAT.VX  = 0;
+Sat_GMAT.VY  = 3.3374;
+Sat_GMAT.VZ  = 0;
+Sat_GMAT.DryMass = 100;
+Sat_GMAT.Cd = 2.25;
+Sat_GMAT.Cr = 1.21;
+Sat_GMAT.DragArea = 4;
+Sat_GMAT.SRPArea = 4;
+
+Create Spacecraft Sat_ExternalModel;
+Sat_ExternalModel = Sat_GMAT;
+Sat_ExternalModel.OrbitColor = 'Green';
+
+
+Create Spacecraft Sat_AntiVelocity_ExternalModel;
+Sat_AntiVelocity_ExternalModel = Sat_GMAT;
+Sat_AntiVelocity_ExternalModel.OrbitColor = 'White';
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+% GMAT_ForceModel is just a basic 2-body scenario using GMAT
+Create ForceModel GMAT_ForceModel;
+GMAT_ForceModel.CentralBody = Earth;
+GMAT_ForceModel.PrimaryBodies = {Earth};
+GMAT_ForceModel.Drag = None;
+GMAT_ForceModel.SRP = Off;
+GMAT_ForceModel.RelativisticCorrection = Off;
+GMAT_ForceModel.ErrorControl = RSSStep;
+GMAT_ForceModel.GravityField.Earth.Degree = 0;
+GMAT_ForceModel.GravityField.Earth.Order = 0;
+GMAT_ForceModel.GravityField.Earth.PotentialFile = 'JGM2.cof';
+GMAT_ForceModel.GravityField.Earth.TideModel = 'None';
+
+% ExternalForceModel is a basic 2-body scenario defined in Python
+Create ForceModel ExternalForceModel;
+ExternalForceModel.External = SimpleExternalForceModel;
+ExternalForceModel.External.ExcludeOtherForces = true;
+
+% ExternalForceModel is a basic 2-body scenario using GMAT with 
+% an anti-velocity acceleration applied via Python
+Create ForceModel AntiVelocityForceModel;
+AntiVelocityForceModel.CentralBody = Earth;
+AntiVelocityForceModel.PrimaryBodies = {Earth};
+AntiVelocityForceModel.Drag = None;
+AntiVelocityForceModel.SRP = Off;
+AntiVelocityForceModel.RelativisticCorrection = Off;
+AntiVelocityForceModel.ErrorControl = RSSStep;
+AntiVelocityForceModel.GravityField.Earth.Degree = 0;
+AntiVelocityForceModel.GravityField.Earth.Order = 0;
+AntiVelocityForceModel.GravityField.Earth.PotentialFile = 'JGM2.cof';
+AntiVelocityForceModel.GravityField.Earth.TideModel = 'None';
+AntiVelocityForceModel.External = SimpleExternalForceModel;
+AntiVelocityForceModel.External.ExcludeOtherForces = false;
+AntiVelocityForceModel.External.EntryPoint = GetDelayForce;
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator BasicPropagator;
+BasicPropagator.FM = GMAT_ForceModel;
+BasicPropagator.Type = PrinceDormand78;
+BasicPropagator.InitialStepSize = 30;
+BasicPropagator.Accuracy = 1e-012;
+BasicPropagator.MinStep = 1;
+BasicPropagator.MaxStep = 30;
+BasicPropagator.MaxStepAttempts = 50;
+BasicPropagator.StopIfAccuracyIsViolated = false;
+
+Create Propagator ExternalPropagator;
+ExternalPropagator.FM = ExternalForceModel;
+ExternalPropagator.Type = PrinceDormand78;
+ExternalPropagator.InitialStepSize = 30;
+ExternalPropagator.Accuracy = 1e-012;
+ExternalPropagator.MinStep = 1;
+ExternalPropagator.MaxStep = 30;
+ExternalPropagator.MaxStepAttempts = 50;
+ExternalPropagator.StopIfAccuracyIsViolated = false;
+
+Create Propagator AntiVelocityPropagator;
+AntiVelocityPropagator.FM = AntiVelocityForceModel;
+AntiVelocityPropagator.Type = PrinceDormand78;
+AntiVelocityPropagator.InitialStepSize = 30;
+AntiVelocityPropagator.Accuracy = 1e-012;
+AntiVelocityPropagator.MinStep = 1;
+AntiVelocityPropagator.MaxStep = 30;
+AntiVelocityPropagator.MaxStepAttempts = 50;
+AntiVelocityPropagator.StopIfAccuracyIsViolated = false;
+
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create ReportFile GEO_Report
+GEO_Report.Filename = MySimpleReport.txt;
+GEO_Report.ColumnWidth = 20;
+GEO_Report.Add={Sat_GMAT.X, Sat_GMAT.Y, Sat_GMAT.Z, Sat_GMAT.VX, Sat_GMAT.VY, Sat_GMAT.VZ}
+GEO_Report.Add={Sat_ExternalModel.X, Sat_ExternalModel.Y, Sat_ExternalModel.Z, ...
+	Sat_ExternalModel.VX, Sat_ExternalModel.VY, Sat_ExternalModel.VZ}
+GEO_Report.Add={Sat_AntiVelocity_ExternalModel.X, Sat_AntiVelocity_ExternalModel.Y, ...
+	Sat_AntiVelocity_ExternalModel.Z, Sat_AntiVelocity_ExternalModel.VX, ...
+	Sat_AntiVelocity_ExternalModel.VY, Sat_AntiVelocity_ExternalModel.VZ}
+
+Create OpenFramesInterface OFI_EarthMJ2000Eq;
+OFI_EarthMJ2000Eq.SolverIterations = Current;
+OFI_EarthMJ2000Eq.UpperLeft = [ 0.1 0.0 ];
+OFI_EarthMJ2000Eq.Size = [ 0.8 0.8 ];
+OFI_EarthMJ2000Eq.RelativeZOrder = 50;
+OFI_EarthMJ2000Eq.Maximized = false;
+OFI_EarthMJ2000Eq.Add = {Sat_GMAT, Sat_ExternalModel, Sat_AntiVelocity_ExternalModel, Earth};
+OFI_EarthMJ2000Eq.View = {CoordinateSystemView1};
+OFI_EarthMJ2000Eq.CoordinateSystem = EarthMJ2000Eq;
+OFI_EarthMJ2000Eq.DrawObject = [ true true ];
+OFI_EarthMJ2000Eq.DrawTrajectory = [ true true ];
+OFI_EarthMJ2000Eq.DrawAxes = [ false false ];
+OFI_EarthMJ2000Eq.DrawXYPlane = [ false false ];
+OFI_EarthMJ2000Eq.DrawLabel = [ true true ];
+OFI_EarthMJ2000Eq.DrawUsePropLabel = [ false false ];
+OFI_EarthMJ2000Eq.DrawCenterPoint = [ true false ];
+OFI_EarthMJ2000Eq.DrawEndPoints = [ true false ];
+OFI_EarthMJ2000Eq.DrawVelocity = [ false false ];
+OFI_EarthMJ2000Eq.DrawGrid = [ false false ];
+OFI_EarthMJ2000Eq.DrawLineWidth = [ 2 2 ];
+OFI_EarthMJ2000Eq.DrawMarkerSize = [ 10 10 ];
+OFI_EarthMJ2000Eq.DrawFontSize = [ 14 14 ];
+OFI_EarthMJ2000Eq.Axes = Off;
+OFI_EarthMJ2000Eq.FrameLabel = Off;
+OFI_EarthMJ2000Eq.XYPlane = On;
+OFI_EarthMJ2000Eq.EclipticPlane = Off;
+OFI_EarthMJ2000Eq.EnableStars = On;
+OFI_EarthMJ2000Eq.StarCatalog = 'inp_StarsHYGv3.txt';
+OFI_EarthMJ2000Eq.StarCount = 40000;
+OFI_EarthMJ2000Eq.MinStarMag = -2;
+OFI_EarthMJ2000Eq.MaxStarMag = 6;
+OFI_EarthMJ2000Eq.MinStarPixels = 1;
+OFI_EarthMJ2000Eq.MaxStarPixels = 10;
+OFI_EarthMJ2000Eq.MinStarDimRatio = 0.5;
+OFI_EarthMJ2000Eq.ShowPlot = true;
+OFI_EarthMJ2000Eq.ShowToolbar = true;
+OFI_EarthMJ2000Eq.SolverIterLastN = 0;
+OFI_EarthMJ2000Eq.ShowVR = false;
+OFI_EarthMJ2000Eq.PlaybackTimeScale = 3600;
+OFI_EarthMJ2000Eq.MultisampleAntiAliasing = On;
+OFI_EarthMJ2000Eq.MSAASamples = 2;
+OFI_EarthMJ2000Eq.DrawFontPosition = {'Top-Right', 'Top-Right'};
+
+%----------------------------------------
+%---------- User Objects
+%----------------------------------------
+
+Create OpenFramesView CoordinateSystemView1;
+CoordinateSystemView1.ViewFrame = CoordinateSystem;
+CoordinateSystemView1.ViewTrajectory = Off;
+CoordinateSystemView1.InertialFrame = Off;
+CoordinateSystemView1.SetDefaultLocation = On;
+CoordinateSystemView1.DefaultEye = [ 0 0 100000 ];
+CoordinateSystemView1.DefaultCenter = [ 0 0 0 ];
+CoordinateSystemView1.DefaultUp = [ 0 0 1 ];
+CoordinateSystemView1.SetCurrentLocation = On;
+CoordinateSystemView1.CurrentEye = [ 0 0 100000 ];
+CoordinateSystemView1.CurrentCenter = [ 0 0 0 ];
+CoordinateSystemView1.CurrentUp = [ 0 0 1 ];
+CoordinateSystemView1.FOVy = 45;
+
+% -------------------------------------------------------------------------
+% ---------------------------  Begin Mission Sequence ---------------------
+% -------------------------------------------------------------------------
+
+BeginMissionSequence;
+
+Propagate BasicPropagator(Sat_GMAT) {Sat_GMAT.ElapsedSecs = 86400};
+Propagate ExternalPropagator(Sat_ExternalModel) {Sat_ExternalModel.ElapsedSecs = 86400};
+Propagate AntiVelocityPropagator(Sat_AntiVelocity_ExternalModel) ...
+	{Sat_AntiVelocity_ExternalModel.ElapsedSecs = 86400};
+
+Write Sat_GMAT.X Sat_GMAT.Y Sat_GMAT.Z Sat_GMAT.VX Sat_GMAT.VY Sat_GMAT.VZ
+Write Sat_ExternalModel.X Sat_ExternalModel.Y Sat_ExternalModel.Z Sat_ExternalModel.VX ...
+	Sat_ExternalModel.VY Sat_ExternalModel.VZ
+Write Sat_AntiVelocity_ExternalModel.X Sat_AntiVelocity_ExternalModel.Y ...
+	Sat_AntiVelocity_ExternalModel.Z Sat_AntiVelocity_ExternalModel.VX ...
+	Sat_AntiVelocity_ExternalModel.VY Sat_AntiVelocity_ExternalModel.VZ

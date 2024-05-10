@@ -1,0 +1,196 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2018-01-13 02:42:04
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft DefaultSC;
+GMAT DefaultSC.DateFormat = UTCGregorian;
+GMAT DefaultSC.Epoch = '21 Aug 2017 16:20:00.000';
+GMAT DefaultSC.CoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultSC.DisplayStateType = Keplerian;
+GMAT DefaultSC.SMA = 7191.938817629039;
+GMAT DefaultSC.ECC = 0.0245497490059824;
+GMAT DefaultSC.INC = 40.00000000000006;
+GMAT DefaultSC.RAAN = 360;
+GMAT DefaultSC.AOP = 260.8053537307938;
+GMAT DefaultSC.TA = 99.8877493320455;
+GMAT DefaultSC.DryMass = 850;
+GMAT DefaultSC.Cd = 2.2;
+GMAT DefaultSC.Cr = 1.8;
+GMAT DefaultSC.DragArea = 15;
+GMAT DefaultSC.SRPArea = 1;
+GMAT DefaultSC.NAIFId = -10000001;
+GMAT DefaultSC.NAIFIdReferenceFrame = -9000001;
+GMAT DefaultSC.OrbitColor = Red;
+GMAT DefaultSC.TargetColor = Teal;
+GMAT DefaultSC.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
+GMAT DefaultSC.CdSigma = 1e+70;
+GMAT DefaultSC.CrSigma = 1e+70;
+GMAT DefaultSC.Id = 'SatId';
+GMAT DefaultSC.Attitude = CoordinateSystemFixed;
+GMAT DefaultSC.SPADSRPScaleFactor = 1;
+GMAT DefaultSC.ModelFile = 'aura.3ds';
+GMAT DefaultSC.ModelOffsetX = 0;
+GMAT DefaultSC.ModelOffsetY = 0;
+GMAT DefaultSC.ModelOffsetZ = 0;
+GMAT DefaultSC.ModelRotationX = 0;
+GMAT DefaultSC.ModelRotationY = 0;
+GMAT DefaultSC.ModelRotationZ = 0;
+GMAT DefaultSC.ModelScale = 1;
+GMAT DefaultSC.AttitudeDisplayStateType = 'Quaternion';
+GMAT DefaultSC.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT DefaultSC.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultSC.EulerAngleSequence = '321';
+
+%----------------------------------------
+%---------- GroundStations
+%----------------------------------------
+
+Create GroundStation CasperWY;
+GMAT CasperWY.OrbitColor = Thistle;
+GMAT CasperWY.TargetColor = DarkGray;
+GMAT CasperWY.CentralBody = Earth;
+GMAT CasperWY.StateType = Spherical;
+GMAT CasperWY.HorizonReference = Ellipsoid;
+GMAT CasperWY.Location1 = 42.8397222;
+GMAT CasperWY.Location2 = 253.67638889;
+GMAT CasperWY.Location3 = 1.57;
+GMAT CasperWY.Id = 'CasperWY';
+GMAT CasperWY.IonosphereModel = 'None';
+GMAT CasperWY.TroposphereModel = 'None';
+GMAT CasperWY.DataSource = 'Constant';
+GMAT CasperWY.Temperature = 295.1;
+GMAT CasperWY.Pressure = 1013.5;
+GMAT CasperWY.Humidity = 55;
+GMAT CasperWY.MinimumElevationAngle = 7;
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel DefaultProp_ForceModel;
+GMAT DefaultProp_ForceModel.CentralBody = Earth;
+GMAT DefaultProp_ForceModel.PrimaryBodies = {Earth};
+GMAT DefaultProp_ForceModel.Drag = None;
+GMAT DefaultProp_ForceModel.SRP = Off;
+GMAT DefaultProp_ForceModel.RelativisticCorrection = Off;
+GMAT DefaultProp_ForceModel.ErrorControl = RSSStep;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Degree = 4;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Order = 4;
+GMAT DefaultProp_ForceModel.GravityField.Earth.StmLimit = 100;
+GMAT DefaultProp_ForceModel.GravityField.Earth.PotentialFile = 'JGM2.cof';
+GMAT DefaultProp_ForceModel.GravityField.Earth.TideModel = 'None';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator DefaultProp;
+GMAT DefaultProp.FM = DefaultProp_ForceModel;
+GMAT DefaultProp.Type = RungeKutta89;
+GMAT DefaultProp.InitialStepSize = 60;
+GMAT DefaultProp.Accuracy = 9.999999999999999e-12;
+GMAT DefaultProp.MinStep = 0.001;
+GMAT DefaultProp.MaxStep = 2700;
+GMAT DefaultProp.MaxStepAttempts = 50;
+GMAT DefaultProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem CasperMJ2000Eq;
+GMAT CasperMJ2000Eq.Origin = CasperWY;
+GMAT CasperMJ2000Eq.Axes = Topocentric;
+
+Create CoordinateSystem MoonBodyFixed;
+GMAT MoonBodyFixed.Origin = Luna;
+GMAT MoonBodyFixed.Axes = BodyFixed;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OpenFramesInterface CasperWYView;
+GMAT CasperWYView.SolverIterations = Current;
+GMAT CasperWYView.UpperLeft = [ 0.0888235294117647 0.05476190476190476 ];
+GMAT CasperWYView.Size = [ 0.2964705882352941 0.7261904761904762 ];
+GMAT CasperWYView.RelativeZOrder = 18;
+GMAT CasperWYView.Maximized = false;
+GMAT CasperWYView.Add = {DefaultSC, Earth, Sun, Luna};
+GMAT CasperWYView.View = {Casper_WY, Casper_to_Sun};
+GMAT CasperWYView.CoordinateSystem = CasperMJ2000Eq;
+GMAT CasperWYView.DrawObject = [ false true true true ];
+GMAT CasperWYView.DrawTrajectory = [ true false false false ];
+GMAT CasperWYView.DrawAxes = [ false false false false ];
+GMAT CasperWYView.DrawXYPlane = [ false false false false ];
+GMAT CasperWYView.DrawLabel = [ true true false false ];
+GMAT CasperWYView.DrawUsePropLabel = [ false false false false ];
+GMAT CasperWYView.DrawCenterPoint = [ true false false false ];
+GMAT CasperWYView.DrawEndPoints = [ false false false false ];
+GMAT CasperWYView.DrawVelocity = [ false false false false ];
+GMAT CasperWYView.DrawGrid = [ false false false false ];
+GMAT CasperWYView.DrawLineWidth = [ 2 2 2 2 ];
+GMAT CasperWYView.DrawMarkerSize = [ 10 10 10 10 ];
+GMAT CasperWYView.Axes = Off;
+GMAT CasperWYView.AxesLabels = On;
+GMAT CasperWYView.FrameLabel = Off;
+GMAT CasperWYView.XYPlane = Off;
+GMAT CasperWYView.EclipticPlane = Off;
+GMAT CasperWYView.EnableStars = On;
+GMAT CasperWYView.StarSettings = Virtual Reality;
+GMAT CasperWYView.StarCount = 40000;
+GMAT CasperWYView.MinStarMag = -2;
+GMAT CasperWYView.MaxStarMag = 6;
+GMAT CasperWYView.MinStarPixels = 1;
+GMAT CasperWYView.MaxStarPixels = 10;
+GMAT CasperWYView.MinStarDimRatio = 0.5;
+GMAT CasperWYView.ShowPlot = true;
+GMAT CasperWYView.ShowToolbar = true;
+GMAT CasperWYView.SolverIterLastN = 1;
+GMAT CasperWYView.ShowVR = true;
+GMAT CasperWYView.PlaybackTimeScale = 512;
+GMAT CasperWYView.MultisampleAntiAliasing = On;
+GMAT CasperWYView.MSAASamples = 2;
+
+%----------------------------------------
+%---------- User Objects
+%----------------------------------------
+
+Create OpenFramesView Casper_WY;
+GMAT Casper_WY.ViewFrame = CoordinateSystem;
+GMAT Casper_WY.ViewTrajectory = Off;
+GMAT Casper_WY.InertialFrame = Off;
+GMAT Casper_WY.SetDefaultLocation = On;
+GMAT Casper_WY.DefaultEye = [ 0 -100 0 ];
+GMAT Casper_WY.DefaultCenter = [ 0 0 0 ];
+GMAT Casper_WY.DefaultUp = [ 0 0 1 ];
+GMAT Casper_WY.SetCurrentLocation = On;
+GMAT Casper_WY.CurrentEye = [ -8.551898861027393 -99.62360386107699 1.415125295498195 ];
+GMAT Casper_WY.CurrentCenter = [ 0 4.263256414560601e-14 7.549516567451064e-15 ];
+GMAT Casper_WY.CurrentUp = [ -0.01000585709375433 0.0150613203221529 0.9998365063619017 ];
+
+Create OpenFramesView Casper_to_Sun;
+GMAT Casper_to_Sun.ViewFrame = CoordinateSystem;
+GMAT Casper_to_Sun.ViewTrajectory = Off;
+GMAT Casper_to_Sun.InertialFrame = On;
+GMAT Casper_to_Sun.LookAtFrame = Sun;
+GMAT Casper_to_Sun.ShortestAngle = Off;
+GMAT Casper_to_Sun.SetDefaultLocation = Off;
+GMAT Casper_to_Sun.SetCurrentLocation = On;
+GMAT Casper_to_Sun.CurrentEye = [ 0 -2.613126039505005 0 ];
+GMAT Casper_to_Sun.CurrentCenter = [ 0 0 0 ];
+GMAT Casper_to_Sun.CurrentUp = [ 0 0 1 ];
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+Propagate DefaultProp(DefaultSC) {DefaultSC.ElapsedSecs = 10200};

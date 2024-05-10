@@ -1,0 +1,88 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2010-09-05 10:28:31
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft DefaultSC;
+GMAT DefaultSC.DateFormat = UTCGregorian;
+GMAT DefaultSC.Epoch = '01 Jul 2000 11:59:28.000';
+GMAT DefaultSC.SMA = 8999.999999999995;
+GMAT DefaultSC.ECC = 0.02454974900598272;
+GMAT DefaultSC.INC = 12.85008005658097;
+GMAT DefaultSC.RAAN = 306.6148021947984;
+GMAT DefaultSC.AOP = 314.1905515359913;
+GMAT DefaultSC.TA = 99.88774933204955;
+GMAT DefaultSC.Attitude = CoordinateSystemFixed;
+GMAT DefaultSC.AttitudeDisplayStateType = 'EulerAngles';
+GMAT DefaultSC.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT DefaultSC.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultSC.EulerAngleSequence = '321';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create ForceModel DefaultProp_ForceModel;
+
+Create Propagator DefaultProp;
+GMAT DefaultProp.FM = DefaultProp_ForceModel;
+GMAT DefaultProp.MaxStep = 1;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OpenFramesInterface EarthView;
+
+GMAT EarthView.SolverIterations = Current;
+GMAT EarthView.UpperLeft = [ 0.1 0.05 ];
+GMAT EarthView.Size = [ 0.8 0.9 ];
+GMAT EarthView.Maximized = false;
+GMAT EarthView.Add = {DefaultSC, Earth};
+GMAT EarthView.DrawObject = [ true true ];
+
+GMAT EarthView.View = {CoordinateSystemView1, EarthView1, DefaultSCView1};
+GMAT EarthView.CoordinateSystem = EarthMJ2000Eq;
+
+%----------------------------------------
+%---------- View Objects
+%----------------------------------------
+
+Create OpenFramesView CoordinateSystemView1;
+GMAT CoordinateSystemView1.ViewFrame = CoordinateSystem;
+GMAT CoordinateSystemView1.ViewTrajectory = Off;
+GMAT CoordinateSystemView1.InertialFrame = Off;
+GMAT CoordinateSystemView1.SetDefaultLocation = Off;
+GMAT CoordinateSystemView1.SetCurrentLocation = On;
+GMAT CoordinateSystemView1.CurrentEye = [ 15000 15000 0 ];
+GMAT CoordinateSystemView1.CurrentCenter = [ 0 0 0 ];
+GMAT CoordinateSystemView1.CurrentUp = [ 0 0 1 ];
+
+Create OpenFramesView EarthView1;
+GMAT EarthView1.ViewFrame = Earth;
+GMAT EarthView1.ViewTrajectory = Off;
+GMAT EarthView1.InertialFrame = Off;
+GMAT EarthView1.SetDefaultLocation = Off;
+GMAT EarthView1.SetCurrentLocation = Off;
+
+Create OpenFramesView DefaultSCView1;
+GMAT DefaultSCView1.ViewFrame = DefaultSC;
+GMAT DefaultSCView1.ViewTrajectory = Off;
+GMAT DefaultSCView1.InertialFrame = Off;
+GMAT DefaultSCView1.SetDefaultLocation = Off;
+GMAT DefaultSCView1.SetCurrentLocation = On;
+GMAT DefaultSCView1.CurrentEye = [ 600 500 450 ];
+GMAT DefaultSCView1.CurrentCenter = [ 0 0 0 ];
+GMAT DefaultSCView1.CurrentUp = [ 0 0 1 ];
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+
+Propagate 'Prop 10000 s' DefaultProp(DefaultSC) {DefaultSC.ElapsedSecs = 10000.0};

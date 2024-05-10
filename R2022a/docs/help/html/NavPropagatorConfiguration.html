@@ -1,0 +1,187 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Configuration of Propagators for Orbit Determination</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="ch21s03.html" title="System"><link rel="prev" href="TrackingDataTypes.html" title="Tracking Data Types for Orbit Determination"><link rel="next" href="InitialOrbitDetermination.html" title="Initial Orbit Determination"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">Configuration of Propagators for Orbit
+    Determination</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="TrackingDataTypes.html">Prev</a>&nbsp;</td><th align="center" width="60%">System</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="InitialOrbitDetermination.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="NavPropagatorConfiguration"></a><div class="titlepage"></div><a name="N2AA4A" class="indexterm"></a><a name="N2AA4D" class="indexterm"></a><div class="refnamediv"><h2><span class="refentrytitle">Configuration of Propagators for Orbit
+    Determination</span></h2><p>Configuration of Propagators for Orbit Determination &mdash; This section describes some special considerations for
+    configuration of numerical and ephemeris propagators for GMAT's
+    estimators.</p></div><div class="refsection"><a name="Propagator_Estimation_Considerations"></a><h2>Use of Propagators in Estimation</h2><p>As noted elsewhere in this documentation, all estimators
+    (<span class="guilabel">BatchEstimator</span>,
+    <span class="guilabel">ExtendedKalmanFilter</span>, and
+    <span class="guilabel">Smoother</span>) currently require fixed-step integration.
+    The <span class="guilabel">ErrorControl</span> parameter of the force model used by
+    the estimator must be set to 'None'. Step size for fixed-step integration
+    is configured on the propagator <span class="guilabel">InitialStepSize</span> and
+    <span class="guilabel">MaxStep</span> fields. The smaller of the two values
+    assigned to these parameters will be the integration step size. It is
+    usually convenient to set both to the same value, to avoid
+    confusion.</p><p>In the most common case, running estimation for a single spacecraft,
+    the user will configure a single numerical integrator according to the
+    description and examples provided in the documentation for the <a class="xref" href="Propagator.html#Propagator_NumericalPropagator" title="Numerical Propagator">Numerical Propagator</a>
+    resource. The configured propagator is then assigned on the estimator
+    <span class="guilabel">Propagator</span> field. GMAT does permit some unusual
+    configurations that deserve further explanation:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Simultaneous estimation of multiple spacecraft, or estimation
+        using inter-spacecraft tracking, with each spacecraft requiring a
+        unique force model and propagator,</p></li><li class="listitem"><p>Use of ephemeris propagators in estimation.</p></li></ul></div><p>These options are discussed in the next sections.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Ephemeris propagators use interpolation methods to obtain states
+      at times in between those states present on the ephemeris file. These
+      interpolation methods are usually less accurate near the beginning and
+      end of ephemeris files, and near segment boundaries in ephemeris files.
+      For best accuracy, the user should ensure there is ample ephemeris data
+      surrounding the data processing interval to avoid inaccuracy near
+      ephemeris end points or segment boundaries.</p></div></div><div class="refsection"><a name="N2AA8D"></a><h2>Configuring Propagators for Simultaneous Estimation of Multiple
+    Spacecraft</h2><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Simultaneous propagation of multiple spacecraft is only
+        available with the <span class="guilabel">BatchEstimator</span> and
+        <span class="guilabel">Simulator</span> and is currently disallowed for the
+        <span class="guilabel">ExtendedKalmanFilter</span>.</p></div><p>GMAT now supports simultaneous estimation of multiple spacecraft,
+    with or without inter-spacecraft (or crosslink) tracking. An example of
+    this scenario might be a spacecraft in Earth geosynchronous orbit which
+    performs tracking on a spacecraft in low-Earth orbit. In this instance,
+    the low-Earth spacecraft requires drag modeling and a moderately small
+    integration step size, while the geosynchronous spacecraft does not
+    require drag modeling and can use a larger integration step size.</p><p>To configure this in GMAT, the user should create individual force
+    models and propagators for each spacecraft. The syntax for assigning
+    propagators on estimator objects has been modified to accommodate
+    assigning the individual propagators to each spacecraft. The following
+    syntax may now be used in the case where more than one propagator is
+    required in the estimation process (this example illustrates application
+    to the <span class="guilabel">BatchEstimator</span> resource, but the syntax is the
+    same for the <span class="guilabel">Simulator</span>):</p><pre class="programlisting"><code class="code">Create Spacecraft EstLEO, EstGEO1, EstGEO2, EstGEO3
+
+%
+%   ForceModels and Propagators
+%
+
+Create ForceModel LeoFM;
+
+LeoFM.CentralBody                      = Earth;
+LeoFM.PrimaryBodies                    = {Earth}
+LeoFM.GravityField.Earth.Degree        = 30;
+LeoFM.GravityField.Earth.Order         = 30;
+LeoFM.GravityField.Earth.PotentialFile = 'JGM2.cof';
+LeoFM.SRP                              = On;
+LeoFM.SRP.Flux                         = 1370.052;
+LeoFM.Drag.AtmosphereModel             = 'JacchiaRoberts';
+LeoFM.Drag.HistoricWeatherSource       = 'CSSISpaceWeatherFile';
+LeoFM.ErrorControl                     = None;
+
+Create Propagator LeoProp;
+
+LeoProp.FM                             = LeoFM;
+LeoProp.Type                           = RungeKutta89;
+LeoProp.InitialStepSize                = 60;
+LeoProp.Accuracy                       = 1e-13;
+LeoProp.MinStep                        = 0;
+LeoProp.MaxStep                        = 60;
+LeoProp.MaxStepAttempts                = 50;
+
+Create ForceModel GeoFM;
+
+GeoFM.CentralBody                      = Earth;
+GeoFM.PrimaryBodies                    = {Earth}
+GeoFM.PointMasses                      = {Luna, Sun}
+GeoFM.GravityField.Earth.Degree        = 8;
+GeoFM.GravityField.Earth.Order         = 8;
+GeoFM.GravityField.Earth.PotentialFile = 'JGM2.cof';
+GeoFM.Drag                             = None;
+GeoFM.SRP                              = On;
+GeoFM.ErrorControl                     = None;
+
+Create Propagator GeoProp;
+
+GeoProp.FM                             = GeoFM;
+GeoProp.Type                           = RungeKutta89;
+GeoProp.InitialStepSize                = 300;
+GeoProp.Accuracy                       = 1e-13;
+GeoProp.MinStep                        = 0;
+GeoProp.MaxStep                        = 300;
+GeoProp.MaxStepAttempts                = 50;
+
+%
+%   Estimator
+%
+
+Create BatchEstimator BLS
+
+BLS.ShowProgress               = true;
+BLS.Measurements               = {estData} 
+BLS.AbsoluteTol                = 0.005;
+BLS.RelativeTol                = 0.001;
+BLS.MaximumIterations          = 10;
+BLS.MaxConsecutiveDivergences  = 5;
+BLS.Propagator                 = {LeoProp, EstLEO};
+BLS.Propagator                 = {GeoProp, EstGEO1, EstGEO2, EstGEO3};
+BLS.ShowAllResiduals           = On;
+BLS.OLSEInitialRMSSigma        = 1000;
+BLS.OLSEMultiplicativeConstant = 3;
+BLS.OLSEUseRMSP                = False;
+BLS.UseInitialCovariance       = False
+BLS.ReportFile                 = 'bls_report.txt';
+
+%
+%   Mission Sequence
+%
+
+BeginMissionSequence</code></pre><p>In the above example, take specific note of the
+    <span class="guilabel">BLS.Propagator</span> assignments.</p><pre class="programlisting"><code class="code">BLS.Propagator                 = {LeoProp, EstLEO};
+BLS.Propagator                 = {GeoProp, EstGEO1, EstGEO2, EstGEO3};</code></pre><p>This syntax assigns the LeoProp propagator to the EstLEO spacecraft
+    and assigns the GeoProp propagator to Spacecraft EstGEO1, EstGEO2, and
+    EstGEO3. This enables the estimator to use appropriate force modeling and
+    propagation controls for each individual spacecraft when performing
+    estimation.</p><p>Note that the old syntax for single spacecraft propagation may still
+    be used for multi-spacecraft estimation scenarios, as shown below.
+    </p><pre class="programlisting"><code class="code">BLS.Propagator                 = LeoProp;</code></pre><p>However, be aware that this syntax, when used in a multi-spacecraft
+    estimation run, will cause the LeoProp force model and propagator to be
+    used for all spacecraft in the run.</p><div class="refsection"><a name="N2AABA"></a><h3>Interaction with Propagator MaxStepAttempts</h3><p>When using multiple propagators with different step sizes, it is
+      necessary to pay attention to each propagator's
+      <span class="guilabel">MaxStepAttempts</span> parameter. During propagation, GMAT
+      first takes a propagation step at the size of the largest step-sized
+      propagator. Then it looks to the other propagators and steps each as
+      many times as needed to reach the step of the larger, using the
+      <span class="guilabel">MaxStepAttempts</span> parameter for guidance of how many
+      steps it is allowed to try. For example, if one propagator was
+      configured to use a 300-second step size, and another to use a 5-second
+      step size, the propagator stepping at 5-seconds steps would require 60
+      steps to match each step of the 300-second step propagator. With a
+      <span class="guilabel">MaxStepAttempts</span> parameter of 50 (the default
+      value), the 5-second propagator will not reach the target step of 300
+      seconds before exceeding the <span class="guilabel">MaxStepAttempts</span>, and
+      GMAT will issue a failure message. In this case, the 5-second propagator
+      should have <span class="guilabel">MaxStepAttempts</span> set to 60 or
+      larger.</p></div></div><div class="refsection"><a name="N2AACE"></a><h2>Use of Ephemeris Propagators in Estimation</h2><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>GMAT currently supports use of SPK/SPICE, STK, and CCSDS OEM
+      ephemeris files as ephemeris propagators for estimation. The Code500
+      ephemeris format is not supported as an ephemeris propagator for use
+      with estimators. Use of ephemeris propagators during estimation is only
+      allowed in the <span class="guilabel">Simulator</span> and
+      <span class="guilabel">BatchEstimator</span>. The user cannot estimate any orbit
+      parameters for a spacecraft utilizing an ephemeris propagator.</p></div><p>An ephemeris propagator may be used in place of a numerical
+    propagator for any spacecraft participating in an estimation or simulation
+    run. An example use case for this scenario is estimation of one or more
+    spacecraft using tracking from the Tracking and Data Relay Satellite
+    System (TDRSS), or other relay or space-to-space tracking, where the
+    analyst possesses an ephemeris for the tracking spacecraft orbit and
+    desires to estimate the orbit of the target or user spacecraft. GMAT also
+    allows the possibility of simultaneously estimating both the TDRS and user
+    orbit, or estimating the TDRS orbit from a given user or target spacecraft
+    orbit. Note that it is not possible to estimate the orbit of any
+    spacecraft for which an ephemeris propagator is in use.</p><p>An ephemeris propagator for estimation can be configured for
+    SPICE/SPK, STK, or CCSDS OEM format ephemeris files as described in the
+    <a class="xref" href="Propagator.html" title="Propagator"><span class="refentrytitle">Propagator</span></a> resource. In the
+    example shown above, any of the spacecraft may be assigned to an ephemeris
+    propagator using the same syntax shown for multiple spacecraft propagation
+    on the estimator <span class="guilabel">Propagator</span> parameter.</p><div class="refsection"><a name="N2AAE5"></a><h3>BatchEstimator "Observed Minus Computed" Run Using an Ephemeris
+      File</h3><p>The user can configure the <span class="guilabel">BatchEstimator</span> to
+      perform an "observed minus computed" (OMC) run using an ephemeris
+      propagator. An example of this use would be an instance where a user has
+      a predicted ephemeris modeling a maneuver, and wants to evaluate how the
+      maneuver performed by examining incoming pre- and post-maneuver tracking
+      data residuals against the ephemeris maneuver prediction. (Note that the
+      same run could be configured using a state vector, numerical propagator,
+      and <span class="guilabel">ThrustHistoryFile</span> which models the maneuver.)
+      Similarly, a user could desire just to compute the residuals of tracking
+      data versus a free-flight, non-maneuver ephemeris.</p><p>In either of these cases, the user should configure an ephemeris
+      propagator as described in the <a class="xref" href="Propagator.html#Propagator_SPKPropagator" title="SPK-Configured Propagator">SPK-Configured Propagator</a> resource, and assign the ephemeris propagator
+      on the <span class="guilabel">BatchEstimator</span>
+      <span class="guilabel">Propagator</span> parameter. When running the batch
+      estimator with an ephemeris propagator, state estimation is not possible
+      and the user should also set the estimator
+      <span class="guilabel">SolveMode</span> to <span class="guilabel">RunInitialGuess</span>
+      when calling <span class="guilabel">RunEstimator</span>. See <a class="xref" href="RunEstimator.html" title="RunEstimator"><span class="refentrytitle">RunEstimator</span></a> for more details. This
+      feature is not currently available for the
+      <span class="guilabel">ExtendedKalmanFilter</span>.</p></div></div></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="TrackingDataTypes.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="ch21s03.html">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="InitialOrbitDetermination.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">Tracking Data Types for Orbit Determination&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;Initial Orbit Determination</td></tr></table></div></body></html>

@@ -1,0 +1,110 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2018-03-16
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft DMSP;
+GMAT DMSP.DateFormat = UTCGregorian;
+GMAT DMSP.Epoch = '01 Jul 2000 11:59:28.000';
+GMAT DMSP.CoordinateSystem = EarthMJ2000Eq;
+GMAT DMSP.DisplayStateType = Keplerian;
+GMAT DMSP.SMA = 9000.938817629016;
+GMAT DMSP.ECC = 0.02454974900598064;
+GMAT DMSP.INC = 100.850080056581;
+GMAT DMSP.RAAN = 306.6148021947984;
+GMAT DMSP.AOP = 314.1905515359929;
+GMAT DMSP.TA = 99.88774933204795;
+GMAT DMSP.Attitude = CoordinateSystemFixed;
+GMAT DMSP.AttitudeDisplayStateType = 'EulerAngles';
+GMAT DMSP.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT DMSP.AttitudeCoordinateSystem = LVLH;
+GMAT DMSP.EulerAngleSequence = '321';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator DefaultProp;
+
+GMAT DefaultProp.FM = DefaultProp_ForceModel;
+Create ForceModel DefaultProp_ForceModel;
+GMAT DefaultProp.MaxStep = 0.123;
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem LVLH;
+GMAT LVLH.Origin = DMSP;
+GMAT LVLH.Axes = ObjectReferenced;
+GMAT LVLH.YAxis = -N;
+GMAT LVLH.ZAxis = -R;
+GMAT LVLH.Primary = Earth;
+GMAT LVLH.Secondary = DMSP;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OpenFramesInterface NadirView;
+GMAT NadirView.SolverIterations = Current;
+GMAT NadirView.UpperLeft = [ 0.1 0.05 ];
+GMAT NadirView.Size = [ 0.8 0.9 ];
+GMAT NadirView.Maximized = true;
+GMAT NadirView.Add = {DMSP, Earth};
+GMAT NadirView.CoordinateSystem = EarthMJ2000Eq;
+GMAT NadirView.View = {NadirViewFrame, CoordinateSystemView1, EarthView1, DMSPView1};
+GMAT NadirView.DrawObject = [ true true ];
+GMAT NadirView.CoordinateSystem = EarthMJ2000Eq;
+
+
+%----------------------------------------
+%---------- View Objects
+%----------------------------------------
+
+Create OpenFramesView CoordinateSystemView1;
+GMAT CoordinateSystemView1.ViewFrame = CoordinateSystem;
+GMAT CoordinateSystemView1.ViewTrajectory = Off;
+GMAT CoordinateSystemView1.InertialFrame = Off;
+GMAT CoordinateSystemView1.SetDefaultLocation = Off;
+GMAT CoordinateSystemView1.SetCurrentLocation = On;
+GMAT CoordinateSystemView1.CurrentEye = [ 5000 -6000 20000 ];
+GMAT CoordinateSystemView1.CurrentCenter = [ 0 0 0 ];
+GMAT CoordinateSystemView1.CurrentUp = [ -0.6 0.7 0.34 ];
+
+
+Create OpenFramesView NadirViewFrame;
+GMAT NadirViewFrame.ViewFrame = DMSP;
+GMAT NadirViewFrame.ViewTrajectory = Off;
+GMAT NadirViewFrame.InertialFrame = Off;
+GMAT NadirViewFrame.LookAtFrame = Earth;
+GMAT NadirViewFrame.ShortestAngle = Off;
+GMAT NadirViewFrame.SetDefaultLocation = On;
+GMAT NadirViewFrame.DefaultEye = [ 0 -1000 0 ];
+GMAT NadirViewFrame.DefaultCenter = [ 0 0 0 ];
+GMAT NadirViewFrame.DefaultUp = [ 0 0 1 ];
+GMAT NadirViewFrame.SetCurrentLocation = Off;
+
+Create OpenFramesView EarthView1;
+GMAT EarthView1.ViewFrame = Earth;
+GMAT EarthView1.ViewTrajectory = Off;
+GMAT EarthView1.InertialFrame = Off;
+GMAT EarthView1.SetDefaultLocation = Off;
+GMAT EarthView1.SetCurrentLocation = Off;
+
+Create OpenFramesView DMSPView1;
+GMAT DMSPView1.ViewFrame = DMSP;
+GMAT DMSPView1.ViewTrajectory = Off;
+GMAT DMSPView1.InertialFrame = Off;
+GMAT DMSPView1.SetDefaultLocation = Off;
+GMAT DMSPView1.SetCurrentLocation = On;
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+BeginMissionSequence;
+
+Propagate 'Prop 10000 s' DefaultProp(DMSP) {DMSP.ElapsedSecs = 1000.0};

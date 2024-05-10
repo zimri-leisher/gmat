@@ -1,0 +1,612 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2012-05-25 07:23:08
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft satForward;
+GMAT satForward.DateFormat = TAIModJulian;
+GMAT satForward.Epoch = '21545';
+GMAT satForward.CoordinateSystem = EarthSunRot;
+GMAT satForward.DisplayStateType = Cartesian;
+GMAT satForward.X = -0;
+GMAT satForward.Y = 0;
+GMAT satForward.Z = 0;
+GMAT satForward.VX = 2;
+GMAT satForward.VY = 0;
+GMAT satForward.VZ = 0;
+GMAT satForward.DryMass = 850;
+GMAT satForward.Cd = 2.2;
+GMAT satForward.Cr = 1.8;
+GMAT satForward.DragArea = 15;
+GMAT satForward.SRPArea = 1;
+GMAT satForward.SPADDragScaleFactor = 1;
+GMAT satForward.SPADSRPScaleFactor = 1;
+GMAT satForward.NAIFId = -10001001;
+GMAT satForward.NAIFIdReferenceFrame = -9001001;
+GMAT satForward.OrbitColor = Red;
+GMAT satForward.TargetColor = Teal;
+GMAT satForward.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT satForward.CdSigma = 1e+070;
+GMAT satForward.CrSigma = 1e+070;
+GMAT satForward.Id = 'SatId';
+GMAT satForward.Attitude = CoordinateSystemFixed;
+GMAT satForward.SPADSRPInterpolationMethod = Bilinear;
+GMAT satForward.SPADSRPScaleFactorSigma = 1e+070;
+GMAT satForward.SPADDragInterpolationMethod = Bilinear;
+GMAT satForward.SPADDragScaleFactorSigma = 1e+070;
+GMAT satForward.ModelFile = 'aura.3ds';
+GMAT satForward.ModelOffsetX = 0;
+GMAT satForward.ModelOffsetY = 0;
+GMAT satForward.ModelOffsetZ = 0;
+GMAT satForward.ModelRotationX = 0;
+GMAT satForward.ModelRotationY = 0;
+GMAT satForward.ModelRotationZ = 0;
+GMAT satForward.ModelScale = 1;
+GMAT satForward.AttitudeDisplayStateType = 'Quaternion';
+GMAT satForward.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT satForward.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT satForward.EulerAngleSequence = '321';
+
+Create Spacecraft satBackward;
+GMAT satBackward.DateFormat = TAIModJulian;
+GMAT satBackward.Epoch = '21545';
+GMAT satBackward.CoordinateSystem = MarsSunRot;
+GMAT satBackward.DisplayStateType = Cartesian;
+GMAT satBackward.X = 0;
+GMAT satBackward.Y = 0;
+GMAT satBackward.Z = 0;
+GMAT satBackward.VX = -5.000000000000001;
+GMAT satBackward.VY = 6.661338147750939e-016;
+GMAT satBackward.VZ = -1.013078509970455e-015;
+GMAT satBackward.DryMass = 850;
+GMAT satBackward.Cd = 2.2;
+GMAT satBackward.Cr = 1.8;
+GMAT satBackward.DragArea = 15;
+GMAT satBackward.SRPArea = 1;
+GMAT satBackward.SPADDragScaleFactor = 1;
+GMAT satBackward.SPADSRPScaleFactor = 1;
+GMAT satBackward.NAIFId = -10002001;
+GMAT satBackward.NAIFIdReferenceFrame = -9002001;
+GMAT satBackward.OrbitColor = Green;
+GMAT satBackward.TargetColor = LightGray;
+GMAT satBackward.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT satBackward.CdSigma = 1e+070;
+GMAT satBackward.CrSigma = 1e+070;
+GMAT satBackward.Id = 'SatId';
+GMAT satBackward.Attitude = CoordinateSystemFixed;
+GMAT satBackward.SPADSRPInterpolationMethod = Bilinear;
+GMAT satBackward.SPADSRPScaleFactorSigma = 1e+070;
+GMAT satBackward.SPADDragInterpolationMethod = Bilinear;
+GMAT satBackward.SPADDragScaleFactorSigma = 1e+070;
+GMAT satBackward.ModelFile = 'aura.3ds';
+GMAT satBackward.ModelOffsetX = 0;
+GMAT satBackward.ModelOffsetY = 0;
+GMAT satBackward.ModelOffsetZ = 0;
+GMAT satBackward.ModelRotationX = 0;
+GMAT satBackward.ModelRotationY = 0;
+GMAT satBackward.ModelRotationZ = 0;
+GMAT satBackward.ModelScale = 1;
+GMAT satBackward.AttitudeDisplayStateType = 'Quaternion';
+GMAT satBackward.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT satBackward.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT satBackward.EulerAngleSequence = '321';
+
+
+% Spacecraft objects used for intermediate buffering
+Create Spacecraft satBackwardInit;
+GMAT satBackwardInit.DateFormat = TAIModJulian;
+GMAT satBackwardInit.Epoch = '21545';
+GMAT satBackwardInit.CoordinateSystem = EarthMJ2000Eq;
+GMAT satBackwardInit.DisplayStateType = Cartesian;
+GMAT satBackwardInit.X = 7100;
+GMAT satBackwardInit.Y = 0;
+GMAT satBackwardInit.Z = 1300;
+GMAT satBackwardInit.VX = 0;
+GMAT satBackwardInit.VY = 7.35;
+GMAT satBackwardInit.VZ = 1;
+GMAT satBackwardInit.DryMass = 850;
+GMAT satBackwardInit.Cd = 2.2;
+GMAT satBackwardInit.Cr = 1.8;
+GMAT satBackwardInit.DragArea = 15;
+GMAT satBackwardInit.SRPArea = 1;
+GMAT satBackwardInit.SPADDragScaleFactor = 1;
+GMAT satBackwardInit.SPADSRPScaleFactor = 1;
+GMAT satBackwardInit.NAIFId = -10003001;
+GMAT satBackwardInit.NAIFIdReferenceFrame = -9003001;
+GMAT satBackwardInit.OrbitColor = Yellow;
+GMAT satBackwardInit.TargetColor = DarkGray;
+GMAT satBackwardInit.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT satBackwardInit.CdSigma = 1e+070;
+GMAT satBackwardInit.CrSigma = 1e+070;
+GMAT satBackwardInit.Id = 'SatId';
+GMAT satBackwardInit.Attitude = CoordinateSystemFixed;
+GMAT satBackwardInit.SPADSRPInterpolationMethod = Bilinear;
+GMAT satBackwardInit.SPADSRPScaleFactorSigma = 1e+070;
+GMAT satBackwardInit.SPADDragInterpolationMethod = Bilinear;
+GMAT satBackwardInit.SPADDragScaleFactorSigma = 1e+070;
+GMAT satBackwardInit.ModelFile = 'aura.3ds';
+GMAT satBackwardInit.ModelOffsetX = 0;
+GMAT satBackwardInit.ModelOffsetY = 0;
+GMAT satBackwardInit.ModelOffsetZ = 0;
+GMAT satBackwardInit.ModelRotationX = 0;
+GMAT satBackwardInit.ModelRotationY = 0;
+GMAT satBackwardInit.ModelRotationZ = 0;
+GMAT satBackwardInit.ModelScale = 1;
+GMAT satBackwardInit.AttitudeDisplayStateType = 'Quaternion';
+GMAT satBackwardInit.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT satBackwardInit.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT satBackwardInit.EulerAngleSequence = '321';
+
+
+% Spacecraft objects used for intermediate buffering
+Create Spacecraft satForwardInit;
+GMAT satForwardInit.DateFormat = TAIModJulian;
+GMAT satForwardInit.Epoch = '21545';
+GMAT satForwardInit.CoordinateSystem = EarthMJ2000Eq;
+GMAT satForwardInit.DisplayStateType = Cartesian;
+GMAT satForwardInit.X = 7100;
+GMAT satForwardInit.Y = 0;
+GMAT satForwardInit.Z = 1300;
+GMAT satForwardInit.VX = 0;
+GMAT satForwardInit.VY = 7.35;
+GMAT satForwardInit.VZ = 1;
+GMAT satForwardInit.DryMass = 850;
+GMAT satForwardInit.Cd = 2.2;
+GMAT satForwardInit.Cr = 1.8;
+GMAT satForwardInit.DragArea = 15;
+GMAT satForwardInit.SRPArea = 1;
+GMAT satForwardInit.SPADDragScaleFactor = 1;
+GMAT satForwardInit.SPADSRPScaleFactor = 1;
+GMAT satForwardInit.NAIFId = -10004001;
+GMAT satForwardInit.NAIFIdReferenceFrame = -9004001;
+GMAT satForwardInit.OrbitColor = Blue;
+GMAT satForwardInit.TargetColor = DimGray;
+GMAT satForwardInit.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT satForwardInit.CdSigma = 1e+070;
+GMAT satForwardInit.CrSigma = 1e+070;
+GMAT satForwardInit.Id = 'SatId';
+GMAT satForwardInit.Attitude = CoordinateSystemFixed;
+GMAT satForwardInit.SPADSRPInterpolationMethod = Bilinear;
+GMAT satForwardInit.SPADSRPScaleFactorSigma = 1e+070;
+GMAT satForwardInit.SPADDragInterpolationMethod = Bilinear;
+GMAT satForwardInit.SPADDragScaleFactorSigma = 1e+070;
+GMAT satForwardInit.ModelFile = 'aura.3ds';
+GMAT satForwardInit.ModelOffsetX = 0;
+GMAT satForwardInit.ModelOffsetY = 0;
+GMAT satForwardInit.ModelOffsetZ = 0;
+GMAT satForwardInit.ModelRotationX = 0;
+GMAT satForwardInit.ModelRotationY = 0;
+GMAT satForwardInit.ModelRotationZ = 0;
+GMAT satForwardInit.ModelScale = 1;
+GMAT satForwardInit.AttitudeDisplayStateType = 'Quaternion';
+GMAT satForwardInit.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT satForwardInit.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT satForwardInit.EulerAngleSequence = '321';
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel sunProp_ForceModel;
+GMAT sunProp_ForceModel.CentralBody = Sun;
+GMAT sunProp_ForceModel.PointMasses = {Sun};
+GMAT sunProp_ForceModel.Drag = None;
+GMAT sunProp_ForceModel.SRP = Off;
+GMAT sunProp_ForceModel.RelativisticCorrection = Off;
+GMAT sunProp_ForceModel.ErrorControl = RSSStep;
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator sunProp;
+GMAT sunProp.FM = sunProp_ForceModel;
+GMAT sunProp.Type = PrinceDormand78;
+GMAT sunProp.InitialStepSize = 60;
+GMAT sunProp.Accuracy = 9.999999999999999e-012;
+GMAT sunProp.MinStep = 0;
+GMAT sunProp.MaxStep = 300000;
+GMAT sunProp.MaxStepAttempts = 50;
+GMAT sunProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Burns
+%----------------------------------------
+
+Create ImpulsiveBurn aDeltaV;
+GMAT aDeltaV.CoordinateSystem = Local;
+GMAT aDeltaV.Origin = Earth;
+GMAT aDeltaV.Axes = VNB;
+GMAT aDeltaV.Element1 = 0;
+GMAT aDeltaV.Element2 = 0;
+GMAT aDeltaV.Element3 = 0;
+GMAT aDeltaV.DecrementMass = false;
+GMAT aDeltaV.Isp = 300;
+GMAT aDeltaV.GravitationalAccel = 9.810000000000001;
+
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem EarthSunRot;
+GMAT EarthSunRot.Origin = Earth;
+GMAT EarthSunRot.Axes = ObjectReferenced;
+GMAT EarthSunRot.XAxis = V;
+GMAT EarthSunRot.YAxis = N;
+GMAT EarthSunRot.Primary = Sun;
+GMAT EarthSunRot.Secondary = Earth;
+
+Create CoordinateSystem MarsSunRot;
+GMAT MarsSunRot.Origin = Mars;
+GMAT MarsSunRot.Axes = ObjectReferenced;
+GMAT MarsSunRot.XAxis = V;
+GMAT MarsSunRot.YAxis = N;
+GMAT MarsSunRot.Primary = Sun;
+GMAT MarsSunRot.Secondary = Mars;
+
+Create CoordinateSystem SunMJ2000Ec;
+GMAT SunMJ2000Ec.Origin = Sun;
+GMAT SunMJ2000Ec.Axes = MJ2000Ec;
+
+%----------------------------------------
+%---------- Solvers
+%----------------------------------------
+
+Create Yukon Yukon1;
+GMAT Yukon1.ShowProgress = true;
+GMAT Yukon1.ReportStyle = Normal;
+GMAT Yukon1.ReportFile = 'MinNLPadYukon1.data';
+GMAT Yukon1.MaximumIterations = 500;
+GMAT Yukon1.UseCentralDifferences = false;
+GMAT Yukon1.FeasibilityTolerance = 1;
+GMAT Yukon1.HessianUpdateMethod = SelfScaledBFGS;
+GMAT Yukon1.MaximumFunctionEvals = 1000;
+GMAT Yukon1.OptimalityTolerance = 0.001;
+GMAT Yukon1.FunctionTolerance = 0.0001;
+GMAT Yukon1.MaximumElasticWeight = 10000;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create XYPlot XYPlot1;
+GMAT XYPlot1.SolverIterations = All;
+GMAT XYPlot1.UpperLeft = [ 0.01941176470588235 0.6083333333333333 ];
+GMAT XYPlot1.Size = [ 0.46 0.3869047619047619 ];
+GMAT XYPlot1.RelativeZOrder = 282;
+GMAT XYPlot1.Maximized = false;
+GMAT XYPlot1.XVariable = loopCount;
+GMAT XYPlot1.YVariables = {cost};
+GMAT XYPlot1.ShowGrid = true;
+GMAT XYPlot1.ShowPlot = true;
+
+Create XYPlot XYPlot2;
+GMAT XYPlot2.SolverIterations = All;
+GMAT XYPlot2.UpperLeft = [ 0.4988235294117647 0.6083333333333333 ];
+GMAT XYPlot2.Size = [ 0.48 0.3869047619047619 ];
+GMAT XYPlot2.RelativeZOrder = 277;
+GMAT XYPlot2.Maximized = false;
+GMAT XYPlot2.XVariable = loopCount;
+GMAT XYPlot2.YVariables = {launchEpoch, arrivalEpoch};
+GMAT XYPlot2.ShowGrid = true;
+GMAT XYPlot2.ShowPlot = true;
+
+Create ReportFile rf;
+GMAT rf.SolverIterations = Current;
+GMAT rf.UpperLeft = [ 0 0 ];
+GMAT rf.Size = [ 0 0 ];
+GMAT rf.RelativeZOrder = 0;
+GMAT rf.Maximized = false;
+GMAT rf.Filename = 'MarsLaunchData.txt';
+GMAT rf.Precision = 16;
+GMAT rf.WriteHeaders = true;
+GMAT rf.LeftJustify = On;
+GMAT rf.ZeroFill = Off;
+GMAT rf.FixedWidth = true;
+GMAT rf.Delimiter = ' ';
+GMAT rf.ColumnWidth = 23;
+GMAT rf.WriteReport = true;
+
+Create OpenFramesInterface SunInertialView;
+GMAT SunInertialView.SolverIterations = Current;
+GMAT SunInertialView.UpperLeft = [ 0.01941176470588235 0.009523809523809525 ];
+GMAT SunInertialView.Size = [ 0.5588235294117647 0.5892857142857143 ];
+GMAT SunInertialView.RelativeZOrder = 288;
+GMAT SunInertialView.Maximized = false;
+GMAT SunInertialView.Add = {satForward, satBackward, Earth, Mars, Sun};
+GMAT SunInertialView.View = {CoordinateSystemView1, EarthView1, MarsView1, SunView1, satForwardView1, satBackwardView1};
+GMAT SunInertialView.CoordinateSystem = SunMJ2000Ec;
+GMAT SunInertialView.DrawObject = [ true true true true true ];
+GMAT SunInertialView.DrawTrajectory = [ true true true true true ];
+GMAT SunInertialView.DrawAxes = [ false false false false false ];
+GMAT SunInertialView.DrawXYPlane = [ false false false false false ];
+GMAT SunInertialView.DrawLabel = [ true true true true true ];
+GMAT SunInertialView.DrawUsePropLabel = [ false false false false false ];
+GMAT SunInertialView.DrawCenterPoint = [ true true false false false ];
+GMAT SunInertialView.DrawEndPoints = [ true true false false false ];
+GMAT SunInertialView.DrawVelocity = [ false false false false false ];
+GMAT SunInertialView.DrawGrid = [ false false false false false ];
+GMAT SunInertialView.DrawLineWidth = [ 2 2 2 2 2 ];
+GMAT SunInertialView.DrawMarkerSize = [ 10 10 10 10 10 ];
+GMAT SunInertialView.DrawFontSize = [ 14 14 14 14 14 ];
+GMAT SunInertialView.Axes = Off;
+GMAT SunInertialView.AxesLength = 1;
+GMAT SunInertialView.AxesLabels = Off;
+GMAT SunInertialView.FrameLabel = Off;
+GMAT SunInertialView.XYPlane = Off;
+GMAT SunInertialView.EclipticPlane = Off;
+GMAT SunInertialView.EnableStars = On;
+GMAT SunInertialView.StarCatalog = 'inp_StarsHYGv3.txt';
+GMAT SunInertialView.StarCount = 40000;
+GMAT SunInertialView.MinStarMag = -2;
+GMAT SunInertialView.MaxStarMag = 6;
+GMAT SunInertialView.MinStarPixels = 1;
+GMAT SunInertialView.MaxStarPixels = 10;
+GMAT SunInertialView.MinStarDimRatio = 0.5;
+GMAT SunInertialView.ShowPlot = true;
+GMAT SunInertialView.ShowToolbar = true;
+GMAT SunInertialView.SolverIterLastN = 1;
+GMAT SunInertialView.ShowVR = false;
+GMAT SunInertialView.PlaybackTimeScale = 3600;
+GMAT SunInertialView.MultisampleAntiAliasing = On;
+GMAT SunInertialView.MSAASamples = 2;
+GMAT SunInertialView.DrawFontPosition = {'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right'};
+
+Create OpenFramesInterface EarthSunRotView;
+GMAT EarthSunRotView.SolverIterations = Current;
+GMAT EarthSunRotView.UpperLeft = [ 0.5988235294117648 0.009523809523809525 ];
+GMAT EarthSunRotView.Size = [ 0.38 0.5892857142857143 ];
+GMAT EarthSunRotView.RelativeZOrder = 285;
+GMAT EarthSunRotView.Maximized = false;
+GMAT EarthSunRotView.Add = {satForward, satBackward, Earth, Mars, Sun};
+GMAT EarthSunRotView.View = {CoordinateSystemView2, EarthView2, MarsView2, SunView2, satForwardView2, satBackwardView2};
+GMAT EarthSunRotView.CoordinateSystem = EarthSunRot;
+GMAT EarthSunRotView.DrawObject = [ true true true true true ];
+GMAT EarthSunRotView.DrawTrajectory = [ true true true true true ];
+GMAT EarthSunRotView.DrawAxes = [ false false false false false ];
+GMAT EarthSunRotView.DrawXYPlane = [ false false false false false ];
+GMAT EarthSunRotView.DrawLabel = [ true true true true true ];
+GMAT EarthSunRotView.DrawUsePropLabel = [ false false false false false ];
+GMAT EarthSunRotView.DrawCenterPoint = [ true true false false false ];
+GMAT EarthSunRotView.DrawEndPoints = [ true true false false false ];
+GMAT EarthSunRotView.DrawVelocity = [ false false false false false ];
+GMAT EarthSunRotView.DrawGrid = [ false false false false false ];
+GMAT EarthSunRotView.DrawLineWidth = [ 2 2 2 2 2 ];
+GMAT EarthSunRotView.DrawMarkerSize = [ 10 10 10 10 10 ];
+GMAT EarthSunRotView.DrawFontSize = [ 14 14 14 14 14 ];
+GMAT EarthSunRotView.Axes = Off;
+GMAT EarthSunRotView.AxesLength = 1;
+GMAT EarthSunRotView.AxesLabels = Off;
+GMAT EarthSunRotView.FrameLabel = Off;
+GMAT EarthSunRotView.XYPlane = Off;
+GMAT EarthSunRotView.EclipticPlane = Off;
+GMAT EarthSunRotView.EnableStars = On;
+GMAT EarthSunRotView.StarCatalog = 'inp_StarsHYGv3.txt';
+GMAT EarthSunRotView.StarCount = 40000;
+GMAT EarthSunRotView.MinStarMag = -2;
+GMAT EarthSunRotView.MaxStarMag = 6;
+GMAT EarthSunRotView.MinStarPixels = 1;
+GMAT EarthSunRotView.MaxStarPixels = 10;
+GMAT EarthSunRotView.MinStarDimRatio = 0.5;
+GMAT EarthSunRotView.ShowPlot = true;
+GMAT EarthSunRotView.ShowToolbar = true;
+GMAT EarthSunRotView.SolverIterLastN = 1;
+GMAT EarthSunRotView.ShowVR = false;
+GMAT EarthSunRotView.PlaybackTimeScale = 3600;
+GMAT EarthSunRotView.MultisampleAntiAliasing = On;
+GMAT EarthSunRotView.MSAASamples = 2;
+GMAT EarthSunRotView.DrawFontPosition = {'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right', 'Top-Right'};
+
+%----------------------------------------
+%---------- Arrays, Variables, Strings
+%----------------------------------------
+Create Variable launchEpoch arrivalEpoch patchEpoch cost loopCount tofConstraint tofValue I;
+GMAT loopCount = 1;
+GMAT tofConstraint = 270;
+GMAT tofValue = 1;
+
+
+
+%----------------------------------------
+%---------- User Objects
+%----------------------------------------
+
+Create OpenFramesView CoordinateSystemView1;
+GMAT CoordinateSystemView1.ViewFrame = CoordinateSystem;
+GMAT CoordinateSystemView1.ViewTrajectory = Off;
+GMAT CoordinateSystemView1.InertialFrame = Off;
+GMAT CoordinateSystemView1.SetDefaultLocation = On;
+GMAT CoordinateSystemView1.DefaultEye = [ 175924414.0461449 -68605346.9024777 836437573.0851352 ];
+GMAT CoordinateSystemView1.DefaultCenter = [ 6e-08 1.8e-07 1.2e-07 ];
+GMAT CoordinateSystemView1.DefaultUp = [ 1 0 0 ];
+GMAT CoordinateSystemView1.SetCurrentLocation = On;
+GMAT CoordinateSystemView1.CurrentEye = [ 175924414.0461449 -68605346.9024777 836437573.0851352 ];
+GMAT CoordinateSystemView1.CurrentCenter = [ 5.960464477539063e-08 1.788139343261719e-07 1.192092895507813e-07 ];
+GMAT CoordinateSystemView1.CurrentUp = [ 0.9725737285286525 0.1282565128938855 -0.1940376496357739 ];
+GMAT CoordinateSystemView1.FOVy = 45;
+
+Create OpenFramesView EarthView1;
+GMAT EarthView1.ViewFrame = Earth;
+GMAT EarthView1.ViewTrajectory = Off;
+GMAT EarthView1.InertialFrame = Off;
+GMAT EarthView1.SetDefaultLocation = Off;
+GMAT EarthView1.SetCurrentLocation = Off;
+GMAT EarthView1.FOVy = 45;
+
+Create OpenFramesView MarsView1;
+GMAT MarsView1.ViewFrame = Mars;
+GMAT MarsView1.ViewTrajectory = Off;
+GMAT MarsView1.InertialFrame = Off;
+GMAT MarsView1.SetDefaultLocation = Off;
+GMAT MarsView1.SetCurrentLocation = Off;
+GMAT MarsView1.FOVy = 45;
+
+Create OpenFramesView SunView1;
+GMAT SunView1.ViewFrame = Sun;
+GMAT SunView1.ViewTrajectory = Off;
+GMAT SunView1.InertialFrame = Off;
+GMAT SunView1.SetDefaultLocation = Off;
+GMAT SunView1.SetCurrentLocation = Off;
+GMAT SunView1.FOVy = 45;
+
+Create OpenFramesView satForwardView1;
+GMAT satForwardView1.ViewFrame = satForward;
+GMAT satForwardView1.ViewTrajectory = Off;
+GMAT satForwardView1.InertialFrame = Off;
+GMAT satForwardView1.SetDefaultLocation = Off;
+GMAT satForwardView1.SetCurrentLocation = Off;
+GMAT satForwardView1.FOVy = 45;
+
+Create OpenFramesView satBackwardView1;
+GMAT satBackwardView1.ViewFrame = satBackward;
+GMAT satBackwardView1.ViewTrajectory = Off;
+GMAT satBackwardView1.InertialFrame = Off;
+GMAT satBackwardView1.SetDefaultLocation = Off;
+GMAT satBackwardView1.SetCurrentLocation = Off;
+GMAT satBackwardView1.FOVy = 45;
+
+Create OpenFramesView CoordinateSystemView2;
+GMAT CoordinateSystemView2.ViewFrame = CoordinateSystem;
+GMAT CoordinateSystemView2.ViewTrajectory = Off;
+GMAT CoordinateSystemView2.InertialFrame = On;
+GMAT CoordinateSystemView2.SetDefaultLocation = On;
+GMAT CoordinateSystemView2.DefaultEye = [ -30132693.60909937 752048311.5400642 -113499124.8065184 ];
+GMAT CoordinateSystemView2.DefaultCenter = [ 7.000000000000001e-08 -1.2e-07 -1e-08 ];
+GMAT CoordinateSystemView2.DefaultUp = [ 1 0 0 ];
+GMAT CoordinateSystemView2.SetCurrentLocation = On;
+GMAT CoordinateSystemView2.CurrentEye = [ -30132693.60909927 752048311.5400643 -113499124.8065187 ];
+GMAT CoordinateSystemView2.CurrentCenter = [ 5.21540641784668e-08 0 -3.278255462646484e-07 ];
+GMAT CoordinateSystemView2.CurrentUp = [ 0.9990360394663664 0.03630457387747088 -0.02467731271698509 ];
+GMAT CoordinateSystemView2.FOVy = 45;
+
+Create OpenFramesView EarthView2;
+GMAT EarthView2.ViewFrame = Earth;
+GMAT EarthView2.ViewTrajectory = Off;
+GMAT EarthView2.InertialFrame = Off;
+GMAT EarthView2.SetDefaultLocation = Off;
+GMAT EarthView2.SetCurrentLocation = Off;
+GMAT EarthView2.FOVy = 45;
+
+Create OpenFramesView MarsView2;
+GMAT MarsView2.ViewFrame = Mars;
+GMAT MarsView2.ViewTrajectory = Off;
+GMAT MarsView2.InertialFrame = Off;
+GMAT MarsView2.SetDefaultLocation = Off;
+GMAT MarsView2.SetCurrentLocation = Off;
+GMAT MarsView2.FOVy = 45;
+
+Create OpenFramesView SunView2;
+GMAT SunView2.ViewFrame = Sun;
+GMAT SunView2.ViewTrajectory = Off;
+GMAT SunView2.InertialFrame = Off;
+GMAT SunView2.SetDefaultLocation = Off;
+GMAT SunView2.SetCurrentLocation = Off;
+GMAT SunView2.FOVy = 45;
+
+Create OpenFramesView satForwardView2;
+GMAT satForwardView2.ViewFrame = satForward;
+GMAT satForwardView2.ViewTrajectory = Off;
+GMAT satForwardView2.InertialFrame = Off;
+GMAT satForwardView2.SetDefaultLocation = Off;
+GMAT satForwardView2.SetCurrentLocation = Off;
+GMAT satForwardView2.FOVy = 45;
+
+Create OpenFramesView satBackwardView2;
+GMAT satBackwardView2.ViewFrame = satBackward;
+GMAT satBackwardView2.ViewTrajectory = Off;
+GMAT satBackwardView2.InertialFrame = Off;
+GMAT satBackwardView2.SetDefaultLocation = Off;
+GMAT satBackwardView2.SetCurrentLocation = Off;
+GMAT satBackwardView2.FOVy = 45;
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+BeginScript
+   
+   GMAT satForward.DateFormat = 'TAIModJulian';
+   GMAT satBackward.DateFormat = 'TAIModJulian';
+   GMAT launchEpoch = 29087;
+   GMAT arrivalEpoch = launchEpoch +  258.9234;  % Add hohmann transfer TOF to launchEpoch
+   GMAT patchEpoch = launchEpoch + (arrivalEpoch - launchEpoch)/2;
+   GMAT satForward.Epoch = launchEpoch;
+   GMAT satBackward.Epoch = arrivalEpoch;
+   GMAT tofConstraint = 291;
+   
+   
+   GMAT arrivalEpoch = launchEpoch +  258.9234;  % Add hohmann transfer TOF to launchEpoch
+   GMAT patchEpoch = launchEpoch + (arrivalEpoch - launchEpoch)/2;
+   GMAT launchEpoch = 27357.0637387;
+   GMAT arrivalEpoch = 27722.2678134;
+   GMAT satForward.VX = 1.24242326859;
+   GMAT satForward.VY = 0.857493964283;
+   GMAT satForward.VZ = -7.31156188552;
+   GMAT satBackward.VX = -4.24323514703;
+   GMAT satBackward.VY = -0.238185150576;
+   GMAT satBackward.VZ = -5.58416575838;
+   
+   GMAT satForwardInit = satForward;
+   GMAT satBackwardInit = satBackward;
+   
+EndScript;
+
+For I = 1:1:20;
+   
+   GMAT launchEpoch = 27357.0637387 - 11 + I*2;
+   GMAT satForward = satForwardInit;
+   GMAT satBackward = satBackwardInit;
+   
+   Optimize Yukon1 {SolveMode = Solve, ExitMode = SaveAndContinue, ShowProgressWindow = true};
+      GMAT loopCount = loopCount + 1;
+      
+      %Vary NLP(launchEpoch = launchEpoch, {Perturbation = 1e-4, MaxStep = 125, AdditiveScaleFactor = 0.0, MultiplicativeScaleFactor = 1.0});
+      %Vary NLP(patchEpoch = patchEpoch, {Perturbation = 1e-4, MaxStep = 125, AdditiveScaleFactor = 0.0, MultiplicativeScaleFactor = 1.0});
+      Vary Yukon1(arrivalEpoch = arrivalEpoch, {Perturbation = 1e-4, MaxStep = 125, AdditiveScaleFactor = 0.0, MultiplicativeScaleFactor = 1.0});
+      GMAT tofValue = arrivalEpoch - launchEpoch;
+      
+      GMAT satForward.Epoch = launchEpoch;
+      GMAT satBackward.Epoch = arrivalEpoch;
+      GMAT patchEpoch = launchEpoch + (arrivalEpoch - launchEpoch)/2;
+      
+      Vary Yukon1(satForward.VX = satForward.EarthSunRot.VX, {Perturbation = 1e-6, MaxStep = 1, AdditiveScaleFactor = 0.0, MultiplicativeScaleFactor = 1.0});
+      Vary Yukon1(satForward.VY = satForward.EarthSunRot.VY, {Perturbation = 1e-6, MaxStep = 1, AdditiveScaleFactor = 0.0, MultiplicativeScaleFactor = 1.0});
+      Vary Yukon1(satForward.VZ = satForward.EarthSunRot.VZ, {Perturbation = 1e-6, MaxStep = 1, AdditiveScaleFactor = 0.0, MultiplicativeScaleFactor = 1.0});
+      
+      Vary Yukon1(satBackward.VX = satBackward.MarsSunRot.VX, {Perturbation = 1e-6, MaxStep = 1, AdditiveScaleFactor = 0.0, MultiplicativeScaleFactor = 1.0});
+      Vary Yukon1(satBackward.VY = satBackward.MarsSunRot.VY, {Perturbation = 1e-6, MaxStep = 1, AdditiveScaleFactor = 0.0, MultiplicativeScaleFactor = 1.0});
+      Vary Yukon1(satBackward.VZ = satBackward.MarsSunRot.VZ, {Perturbation = 1e-6, MaxStep = 1, AdditiveScaleFactor = 0.0, MultiplicativeScaleFactor = 1.0});
+      
+      PenUp SunInertialView EarthSunRotView;
+      Propagate sunProp(satForward) {satForward.ElapsedSecs = 5};
+      PenDown SunInertialView EarthSunRotView;
+      Propagate sunProp(satForward) {satForward.TAIModJulian = patchEpoch};
+      PenUp SunInertialView EarthSunRotView;
+      Propagate BackProp sunProp(satBackward) {satBackward.ElapsedSecs = -5};
+      PenDown SunInertialView EarthSunRotView;
+      Propagate BackProp sunProp(satBackward) {satBackward.TAIModJulian = patchEpoch};
+      
+      NonlinearConstraint Yukon1(satForward.SunMJ2000Ec.X=satBackward.SunMJ2000Ec.X);
+      NonlinearConstraint Yukon1(satForward.SunMJ2000Ec.Y=satBackward.SunMJ2000Ec.Y);
+      NonlinearConstraint Yukon1(satForward.SunMJ2000Ec.Z=satBackward.SunMJ2000Ec.Z);
+      NonlinearConstraint Yukon1(satForward.SunMJ2000Ec.VX=satBackward.SunMJ2000Ec.VX);
+      NonlinearConstraint Yukon1(satForward.SunMJ2000Ec.VY=satBackward.SunMJ2000Ec.VY);
+      NonlinearConstraint Yukon1(satForward.SunMJ2000Ec.VZ=satBackward.SunMJ2000Ec.VZ);
+      
+      GMAT cost = sqrt(satForward.EarthSunRot.VX^2 + satForward.EarthSunRot.VY^2 + satForward.EarthSunRot.VZ^2) + sqrt(satBackward.MarsSunRot.VX^2 + satBackward.MarsSunRot.VY^2 + satBackward.MarsSunRot.VZ^2);
+      
+      % Report rf cost satForward.EarthSunRot.VX satForward.EarthSunRot.VY satForward.EarthSunRot.VZ satBackward.MarsSunRot.VX satBackward.MarsSunRot.VY satBackward.MarsSunRot.VZ;
+      Minimize Yukon1(cost);
+   
+   
+   EndOptimize;  % For optimizer NLP
+   Report rf launchEpoch cost;
+EndFor;

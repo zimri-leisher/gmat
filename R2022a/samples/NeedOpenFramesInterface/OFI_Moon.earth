@@ -1,0 +1,29 @@
+<!--
+Load map found at http://webmap.lroc.asu.edu/lunaserv.html
+-->
+
+<map name="WMS LRO" type="geocentric" version="2">  
+
+	<options>
+		<profile srs="+proj=longlat +a=1737400 +b=1737400 +units=m +no_defs"/>
+    <terrain first_lod="1" normalize_edges="true" min_tile_range_factor="10"/>
+    <cache driver = "filesystem" path = "./OFICache/moon" />
+	</options>
+ 
+  <image name="lro" driver="wms">
+      <url>http://webmap.lroc.asu.edu/</url>
+      <format>png</format>
+      <layers>luna_wac_global</layers>
+      <!-- <layers>luna_wac_normalized_reflectance</layers> -->
+      <wms_version>1.1.1</wms_version>
+      <transparent>true</transparent>
+  </image>
+ 
+ <!-- Lunar terrain is disabled until there is a standard method of tiling LRO terrain data
+  <elevation name="terrain" driver="tms">
+      <url>D:/osgEarthData/Lunar_LRO_LOLA_Global_LDEM_118m_Mar2014/tms.xml</url>
+  </elevation>
+ -->
+ 
+  <sky driver="gl" ambient="0.0" sun_visible="false" moon_visible="false" stars_visible="false"/>
+</map>

@@ -1,0 +1,363 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2017-06-20 16:44:39
+%
+% This script uses fits a TLE to an STK ephemeris file
+%
+% Author:  S. Hughes. Original version 7/19/17
+% Modified: G. Davis 7/27/2017 
+%				"Include" file usage for User Settings and ***WARNING*** handling
+% Modified: Jairus Elarbee 7/16/2021
+% 				Complete overhaul for Yukon optimizer, TLE propagator, code500 and spk ephems compatibilty, and reworked user parameters
+% Modified: Ravi Mathur 11/4/2022
+%           Update optimization parameters to improve convergence
+
+%----------------------------------------
+%--- Additional Prep Settings
+%----------------------------------------
+
+EphemReader.StepSize = 1000;
+EphemReader.CentralBody = Earth;
+EphemReader.StartEpoch = 'FromSpacecraft';
+
+%----------------------------------------
+%---------- Start the Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence
+
+TEMPTLELocation = '/samples/SupportFiles/';
+GMATPath = '/';
+TEMPTLELocation = Python.GenerateTLE.GetPath(TEMPTLELocation);
+TEMPTLELocation = Python.GenerateTLE.JoinString(TEMPTLELocation,GMATPath);
+
+% Create a blank TLE in TEMPTLE fix any corrupted files
+tleCreated = Python.GenerateTLE.CreateTEMPTLE(TEMPTLELocation)
+TLESatellite.Id = 'TEMPORARYTLE';
+TLESatellite.EphemerisName = tleCreated;
+
+TLENAME = Python.GenerateTLE.JoinString(scName,fileType);
+%----------------------------------------
+%---------- Set up Directory Locations
+%----------------------------------------
+
+If UseCustomName == 1
+TLENAME = CustomTLEName;
+EndIf
+
+
+If UseCustomDirectory == 1
+GMATPath = OutputDirectory;
+GMATPath = Python.GenerateTLE.JoinString(GMATPath,TLENAME);
+Else
+fileType = '/output/'
+TLENAME = Python.GenerateTLE.JoinString(fileType,TLENAME);
+GMATPath = Python.GenerateTLE.GetPath(TLENAME);
+EndIf
+
+tleFile.Filename = GMATPath;
+
+% Define constants
+mu = 398600.4415; % From GMAT
+pi = acos(-1.0);
+
+
+%----------------------------------------
+%-------- Set Up Initial State from Ephem
+%----------------------------------------
+
+EphemSatellite.Cd = CoefficientOfDrag;											
+EphemSatellite.DragArea = CrossSectionalArea;									
+EphemSatellite.DryMass = TotalMass;
+
+EphemSatellite.EphemerisName = ephemerisFile;
+[initialEpoch, initialState, finalEpoch, finalState] = GetEphemStates(ephemType, EphemSatellite, 'UTCGregorian', EarthMJ2000Eq);
+
+%  Set state and compute Brouwer mean elements for guess for TLE elements
+EphemSatellite.Epoch.UTCGregorian = initialEpoch;
+EphemSatellite.EarthMJ2000Eq.X = initialState(1,1);
+EphemSatellite.EarthMJ2000Eq.Y = initialState(2,1);
+EphemSatellite.EarthMJ2000Eq.Z = initialState(3,1);
+EphemSatellite.EarthMJ2000Eq.VX = initialState(4,1);
+EphemSatellite.EarthMJ2000Eq.VY = initialState(5,1);
+EphemSatellite.EarthMJ2000Eq.VZ = initialState(6,1);
+
+TLESatellite.Epoch.UTCGregorian = initialEpoch;
+TLESatellite.EarthMJ2000Eq.X = initialState(1,1);
+TLESatellite.EarthMJ2000Eq.Y = initialState(2,1);
+TLESatellite.EarthMJ2000Eq.Z = initialState(3,1);
+TLESatellite.EarthMJ2000Eq.VX = initialState(4,1);
+TLESatellite.EarthMJ2000Eq.VY = initialState(5,1);
+TLESatellite.EarthMJ2000Eq.VZ = initialState(6,1);
+
+% Determine the span of the Ephemeris to evaluate
+finalEpoch = ConvertTime('UTCGregorian','A1ModJulian',finalEpoch);
+initialEpoch = ConvertTime('UTCGregorian','A1ModJulian',initialEpoch);
+
+%----------------------------------------
+%-------- Use Modified Span As Needed
+%----------------------------------------
+
+If UseCustomFitSpan == 1 | UseCustomFitSpan == 3
+	initialEpoch = ConvertTime('UTCGregorian','A1ModJulian',FitSpanStart );
+	ephemTimeSpanBuffer = Str2num(initialEpoch);
+	Propagate EphemReader(EphemSatellite){EphemSatellite.A1ModJulian = ephemTimeSpanBuffer};
+	EphemSatellite.Epoch.A1ModJulian = ephemTimeSpanBuffer;
+	EphemSatellite.Epoch.UTCGregorian = FitSpanStart ;
+	Propagate TLEProp(TLESatellite) {TLESatellite.Epoch.A1ModJulian = ephemTimeSpanBuffer};
+	TLESatellite.Epoch.A1ModJulian = ephemTimeSpanBuffer;
+	TLESatellite.Epoch.UTCGregorian = FitSpanStart ;
+Else
+	FitSpanStart  = initialEpoch;
+EndIf
+
+If UseCustomFitSpan == 2 | UseCustomFitSpan ==3
+	finalEpoch = ConvertTime('UTCGregorian','A1ModJulian',FitSpanEnd);
+Else
+	FitSpanEnd = finalEpoch;
+EndIf
+
+
+ephemTimeSpan = Str2num(finalEpoch);
+ephemTimeSpanBuffer = Str2num(initialEpoch);
+
+%----------------------------------------
+%-------- Establish Anchor Point if Needed
+%----------------------------------------
+
+If UseAnchorEpoch == 1
+	AnchorEpochReal = ConvertTime('UTCGregorian','A1ModJulian',AnchorEpoch);
+	anchorEpochBuffer = Str2num(AnchorEpochReal);
+	If anchorEpochBuffer < ephemTimeSpanBuffer | anchorEpochBuffer > ephemTimeSpan
+		warnings = 'Warning: The AnchorEpoch lies outside the time span of the ephemeris being evaluated. Setting the value to the first available datapoint in the span.'
+		Write warnings 
+		AnchorEpochReal = initialEpoch;
+		anchorEpochBuffer = Str2num(AnchorEpochReal);
+		AnchorEpoch = TLESatellite.Epoch.UTCGregorian;
+	EndIf
+	Propagate EphemReader(EphemSatellite){EphemSatellite.A1ModJulian = anchorEpochBuffer};
+	EphemSatellite.Epoch.A1ModJulian = anchorEpochBuffer;
+	EphemSatellite.Epoch.UTCGregorian = AnchorEpoch;
+	Propagate TLEProp(TLESatellite) {TLESatellite.Epoch.A1ModJulian = anchorEpochBuffer};
+	TLESatellite.Epoch.A1ModJulian = anchorEpochBuffer;
+	TLESatellite.Epoch.UTCGregorian = AnchorEpoch;
+EndIf
+
+ephemTimeSpan = ephemTimeSpan - ephemTimeSpanBuffer;
+
+
+%-----------------------------------------------
+% TOD brouwer mean elements as the initial guess
+%-----------------------------------------------
+
+orbitSMA = EphemSatellite.BrouwerLongSMA;
+meanMotion = sqrt(mu/EphemSatellite.EarthTOD.BrouwerLongSMA^3)*86400/(2*pi);
+orbitECC = EphemSatellite.BrouwerLongECC;
+orbitINC = EphemSatellite.EarthTOD.BrouwerLongINC - 1.0;
+orbitRAAN = EphemSatellite.BrouwerLongRAAN;
+orbitAOP = EphemSatellite.EarthTOD.BrouwerLongAOP;
+orbitMA = EphemSatellite.EarthTOD.BrouwerLongMA;
+UTCGregorianEpoch = EphemSatellite.UTCGregorian;
+tleUTCGregorianEpoch = UTCGregorianEpoch;
+
+% Source for BStar equation is description of filed 1.11 - <https://www.celestrak.com/columns/v04n03/>
+rho = 2.461e-5;     % From Vallado, Fundamentals 4th edition
+rEarth = 6378.1363; % From GMAT
+orbitBStar = rho*rEarth*EphemSatellite.Cd*EphemSatellite.DragArea/(2*EphemSatellite.DryMass);
+
+numSteps = PointsToEvaluate;
+If ephemTimeSpan == 0 
+	propStep = 0;
+	numSteps = 1;
+	PointsToEvaluate = 1;
+Else
+	propStep = (ephemTimeSpan*86400)/(numSteps);
+   
+   If ephemTimeSpan > 1
+      warnings = 'Warning: The Span is greater than 1 day, giving a step size (in seconds) of '
+      Write warnings propStep
+      warnings = 'Reduce the size of the data used by defining a FitSpanStart  or FitSpanEnd.'
+      Write warnings
+   EndIf
+EndIf
+
+If UseAnchorEpoch == 1
+	Propagate BackProp EphemReader(EphemSatellite){EphemSatellite.A1ModJulian = ephemTimeSpanBuffer};
+EndIf
+
+%----------------------------------------
+%-------- Retrieve States from Ephem
+%----------------------------------------
+
+For stepIdx = 1:numSteps
+	% Prop off of the ephem
+	If stepIdx ~= 1
+		Propagate EphemReader(EphemSatellite){EphemSatellite.ElapsedSecs = propStep};
+	EndIf
+	rvVec(1,1) = EphemSatellite.EarthMJ2000Eq.X;
+	rvVec(1,2) = EphemSatellite.EarthMJ2000Eq.Y;
+	rvVec(1,3) = EphemSatellite.EarthMJ2000Eq.Z;
+	vvVec(1,1) = EphemSatellite.EarthMJ2000Eq.VX;
+	vvVec(1,2) = EphemSatellite.EarthMJ2000Eq.VY;
+	vvVec(1,3) = EphemSatellite.EarthMJ2000Eq.VZ;
+
+	fitEphem(stepIdx,1) = rvVec(1,1);
+	fitEphem(stepIdx,2) = rvVec(1,2);
+	fitEphem(stepIdx,3) = rvVec(1,3);
+	fitEphem(stepIdx,4) = vvVec(1,1);
+	fitEphem(stepIdx,5) = vvVec(1,2);
+	fitEphem(stepIdx,6) = vvVec(1,3);
+	taiModJulVec(stepIdx,1) = EphemSatellite.A1ModJulian;
+EndFor
+
+%----------------------------------------
+%-------- Begin Optimization
+%----------------------------------------
+
+% Minimize the rss differences between ephem prop, and the TLE prop output
+Optimize NLPSolver {SolveMode = Solve, ExitMode = DiscardAndContinue, ShowProgressWindow = true}
+	
+	lineText = '========================  New Optimizer Pass =========================='
+	Report OptimizationReport lineText
+	RSSx = 0;
+	RSSy = 0;
+	RSSz = 0;
+	RSS = 0;
+	maxR = 0;
+	
+	
+	%----------------------------------------
+	%-------- Vary Parameters
+	%----------------------------------------
+	% Optimizer varies over each of the elements being solved for. SMA is being solved for to determine the meanMotion, while all others are being solved for directly, with appropriate bounds.
+	% Note: NDot and NDotDot are not used by SGP4, so it is not possible to solve for this using this optimizer. See note on TLE fields 1.9 and 1.10 <https://www.celestrak.com/columns/v04n03/>
+	%Vary NLPSolver(orbitBStar = orbitBStar, 	{Perturbation = 1e-4, MaxStep = 0.1, MultiplicativeScaleFactor = 100.0});
+	Vary NLPSolver(orbitECC = orbitECC, 	{Perturbation = 1e-6, MaxStep = 0.001, Lower = 0.000001, Upper = 0.9, MultiplicativeScaleFactor = 100.0});
+	Vary NLPSolver(orbitINC = orbitINC, 	{Perturbation = 1e-3, MaxStep = 0.1, MultiplicativeScaleFactor = 0.01});
+	Vary NLPSolver(orbitRAAN = orbitRAAN, 	{Perturbation = 1e-3, MaxStep = 1.0, MultiplicativeScaleFactor = 0.01});
+	Vary NLPSolver(orbitAOP = orbitAOP, 	{Perturbation = 1e-3, MaxStep = 1.0, MultiplicativeScaleFactor = 0.01});
+   Vary NLPSolver(orbitMA = orbitMA, 	{Perturbation = 1e-3, MaxStep = 1.0, MultiplicativeScaleFactor = 0.01});
+	Vary NLPSolver(meanMotion = meanMotion, 	{Perturbation = 1e-7, MaxStep = 0.1, MultiplicativeScaleFactor = 0.1});
+	
+	lineText = '====== Optimization Variables'
+	Report OptimizationReport tleUTCGregorianEpoch
+	Report OptimizationReport lineText
+	Report OptimizationReport orbitBStar
+	Report OptimizationReport orbitECC
+	Report OptimizationReport orbitINC
+	Report OptimizationReport orbitRAAN
+	Report OptimizationReport orbitAOP
+	Report OptimizationReport orbitMA
+	Report OptimizationReport meanMotion
+
+    
+	%----------------------------------------
+	%-------- Reset Sat to Initial State
+	%----------------------------------------
+	If UseAnchorEpoch == 1
+		If TLESatellite.A1ModJulian < anchorEpochBuffer & TLESatellite.A1ModJulian ~= anchorEpochBuffer
+			Propagate TLEProp(TLESatellite) {TLESatellite.A1ModJulian = anchorEpochBuffer};	
+		EndIf
+		If TLESatellite.A1ModJulian > anchorEpochBuffer & TLESatellite.A1ModJulian ~= anchorEpochBuffer
+				Propagate BackProp TLEProp(TLESatellite) {TLESatellite.A1ModJulian = anchorEpochBuffer};	
+		EndIf
+	Else
+		If TLESatellite.A1ModJulian < ephemTimeSpanBuffer & TLESatellite.A1ModJulian ~= ephemTimeSpanBuffer
+			Propagate TLEProp(TLESatellite) {TLESatellite.A1ModJulian = ephemTimeSpanBuffer};	
+		EndIf
+		If TLESatellite.A1ModJulian > ephemTimeSpanBuffer & TLESatellite.A1ModJulian ~= ephemTimeSpanBuffer
+				Propagate BackProp TLEProp(TLESatellite) {TLESatellite.A1ModJulian = ephemTimeSpanBuffer};	
+		EndIf
+	EndIf
+	
+	%----------------------------------------
+	%-------- Create Temporary TLE
+	%----------------------------------------
+	lineText = '====== Temporary TLE for this Iteration'
+	Report OptimizationReport lineText
+	[tleLine1,tleLine2] = Python.GenerateTLE.GenerateTLEADV(meanMotion,orbitECC,orbitINC,orbitRAAN,orbitAOP,orbitMA,tleUTCGregorianEpoch,scClassification,scIdentifier,launchDesignator,Ndot,Ndotdot,orbitBStar)
+	Report OptimizationReport tleLine1
+	Report OptimizationReport tleLine2
+	lineText = '====== TLE File Data'
+	satName = 'TEMPORARYTLE'
+	
+	tleCreated = Python.GenerateTLE.GetTLEFromGMATReport(tleLine1,tleLine2,satName,TEMPTLELocation)
+	TLESatellite.EphemerisName = tleCreated;
+	
+	lineText = '====== Propagation State Data'
+	Report OptimizationReport lineText
+	
+	If UseAnchorEpoch == 1
+		If TLESatellite.A1ModJulian < ephemTimeSpanBuffer & TLESatellite.A1ModJulian ~= ephemTimeSpanBuffer
+			Propagate TLEProp(TLESatellite) {TLESatellite.A1ModJulian = ephemTimeSpanBuffer};	
+		EndIf
+		If TLESatellite.A1ModJulian > ephemTimeSpanBuffer & TLESatellite.A1ModJulian ~= ephemTimeSpanBuffer
+				Propagate BackProp TLEProp(TLESatellite) {TLESatellite.A1ModJulian = ephemTimeSpanBuffer};	
+		EndIf
+	EndIf
+	
+	%----------------------------------------
+	%-------- Evaluate Temp TLE At Each Step
+	%----------------------------------------
+	For stepIdx = 1:numSteps
+		UseCustomFitSpan = taiModJulVec(stepIdx,1)
+		Propagate TLEProp(TLESatellite) {TLESatellite.A1ModJulian = UseCustomFitSpan};	
+		posVec(1,1) = TLESatellite.EarthMJ2000Eq.X;
+		posVec(1,2) = TLESatellite.EarthMJ2000Eq.Y;
+		posVec(1,3) = TLESatellite.EarthMJ2000Eq.Z;
+		rVec(1,1) = fitEphem(stepIdx,1);
+		rVec(2,1) = fitEphem(stepIdx,2);
+		rVec(3,1) = fitEphem(stepIdx,3);
+		vVec(1,1) = fitEphem(stepIdx,4);
+		vVec(2,1) = fitEphem(stepIdx,5);
+		vVec(3,1) = fitEphem(stepIdx,6);
+		xHat = rVec/norm(rVec);
+		zVec = cross(rVec,vVec);
+		zHat = zVec/norm(zVec);
+		yHat = cross(zHat,xHat);
+		
+		rotMat(1,1) = xHat(1,1);
+		rotMat(2,1) = xHat(2,1);
+		rotMat(3,1) = xHat(3,1);
+		rotMat(1,2) = yHat(1,1);
+		rotMat(2,2) = yHat(2,1);
+		rotMat(3,2) = yHat(3,1);
+		rotMat(1,3) = zHat(1,1);
+		rotMat(2,3) = zHat(2,1);
+		rotMat(3,3) = zHat(3,1);
+		rotMat = rotMat';
+		
+		relVec(1,1) = fitEphem(stepIdx,1) - posVec(1,1);
+		relVec(2,1) = fitEphem(stepIdx,2) - posVec(1,2);
+		relVec(3,1) = fitEphem(stepIdx,3) - posVec(1,3);
+		 
+		Report OptimizationReport relVec(1,1) relVec(2,1) relVec(3,1);  
+		
+		RSSx = RSSx + (relVec(1,1))^2; 
+		RSSy = RSSy + (relVec(2,1))^2;
+		RSSz = RSSz + (relVec(3,1))^2; 
+		relVec = rotMat*relVec;
+		currentR = norm(relVec);
+		
+		% Save the maximum rss difference
+		If currentR > maxR
+		   maxR = currentR;
+		EndIf
+	EndFor
+	
+	
+	lineText = '====== Propagation State Data End'
+	Report OptimizationReport lineText
+	% Cost function Definition
+	costFunction = sqrt((RSSx + RSSy + RSSz)/numSteps);
+	Minimize NLPSolver(costFunction)
+	%Minimize NLPSolver(maxR)
+   
+	lineText = '====== Computing Cost Function'
+	Report OptimizationReport lineText
+	Report OptimizationReport costFunction
+	%Report OptimizationReport maxR
+
+EndOptimize
+Report tleFile scName
+Report tleFile tleLine1
+Report tleFile tleLine2

@@ -1,0 +1,142 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2017-06-20 16:44:39
+%
+% This script uses fits a TLE to an STK ephemeris file
+%
+% Author:  S. Hughes. Original version 7/19/17
+% Modified: G. Davis 7/27/2017 
+%				"Include" file usage for User Settings and ***WARNING*** handling
+% Modified: Jairus Elarbee 7/16/2021
+% 				Complete overhaul for Yukon optimizer, TLE propagator, code500 and spk ephems compatibilty, and reworked user parameters
+%
+
+%----------------------------------------
+%---------- Arrays, Variables, Strings
+%----------------------------------------
+Create String initialEpoch finalEpoch tleUTCGregorianEpoch lineText TLEFile OutputDirectory scClassification scName;
+Create String CustomTLEName launchDesignator scIdentifier AnchorEpoch GMATPath UTCGregorianEpoch tleLine1 tleLine2;
+Create String tleCreated satName ephemerisFile TLENAME fileType warnings ephemType FitSpanStart FitSpanEnd TEMPTLELocation AnchorEpochReal;
+Create Array initialState[6,1] finalState[6,1] posVec[1,3] xHat[3,1]  yHat[3,1] zHat[3,1] zVec[3,1] rVec[3,1] vVec[3,1];
+Create Array fitEphem[1000,6] taiModJulVec[1000,1] rvVec[1,3] vvVec[1,3]  state[1,3] vel[1,3]  rotMat[3,3] relVec[3,1];
+Create Variable year mon day hour min sec RSSx RSSy RSSz RSS propStep sqrtECC ephemTimeSpan ephemTimeSpanBuffer; 
+Create Variable stepIdx maxR currentR JDnow JD2000 PointsToEvaluate meanMotion orbitECC orbitINC orbitRAAN orbitAOP rEarth; 
+Create Variable CrossSectionalArea TotalMass CoefficientOfDrag UseAnchorEpoch anchorEpochBuffer  UseCustomFitSpan rho;
+Create Variable costFunction Ndot Ndotdot orbitMA mu pi orbitSMA orbitBStar numSteps UseCustomName UseCustomDirectory;
+
+
+Ndot	= 0.0;
+Ndotdot = 0.0;
+PointsToEvaluate = 15;
+fileType = 'TLE.txt';
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+Create Spacecraft TLESatellite;
+TLESatellite.DateFormat = UTCGregorian;
+TLESatellite.CoordinateSystem = EarthMJ2000Eq;
+TLESatellite.DisplayStateType = Keplerian;
+TLESatellite.Id = ExampleSat;   
+TLESatellite.EphemerisName = '../samples/SupportFiles/Ex_R2022a_TLE_Propagation_TLE.txt';
+TLESatellite.ModelScale = 0.001;
+
+Create Spacecraft EphemSatellite;
+EphemSatellite.DateFormat = UTCGregorian;
+EphemSatellite.CoordinateSystem = EarthMJ2000Eq;
+EphemSatellite.DisplayStateType = Keplerian;
+EphemSatellite.Id = 'ExampleSat';
+EphemSatellite.ModelScale = 0.001;
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator TLEProp;
+TLEProp.Type = SPICESGP4;
+TLEProp.StepSize = 86400;
+
+Create Propagator EphemReader;
+
+%----------------------------------------
+%---------- Functions
+%----------------------------------------
+
+Create Yukon NLPSolver;
+NLPSolver.ShowProgress = true;
+NLPSolver.ReportStyle = Normal;
+NLPSolver.ReportFile = '../output/TLEYukonSolver.data';
+NLPSolver.UseCentralDifferences = true;
+NLPSolver.FeasibilityTolerance = 0.0001;
+NLPSolver.FunctionTolerance = 0.0001;
+NLPSolver.MaximumIterations = 200;
+
+
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create ReportFile OptimizationReport
+OptimizationReport.Filename = '../output/TLEOptimizationReport.txt'
+OptimizationReport.WriteHeaders = false;
+
+Create ReportFile tleFile
+tleFile.Filename = '../output/tleFile.txt'
+tleFile.WriteHeaders = false
+
+Create CoordinateSystem EarthTOD;
+EarthTOD.Origin = Earth;
+EarthTOD.Axes = TODEq;
+
+Create OpenFramesInterface OpenFrames1;
+OpenFrames1.SolverIterations = Current;
+OpenFrames1.UpperLeft = [ 0 0 ];
+OpenFrames1.Size = [ 0 0 ];
+OpenFrames1.RelativeZOrder = 0;
+OpenFrames1.Maximized = false;
+OpenFrames1.Add = {EphemSatellite, TLESatellite, Earth, Sun};
+OpenFrames1.CoordinateSystem = EarthMJ2000Eq;
+OpenFrames1.DrawObject = [ true true true ];
+OpenFrames1.DrawTrajectory = [ true true true ];
+OpenFrames1.DrawAxes = [ false false false ];
+OpenFrames1.DrawXYPlane = [ false false false ];
+OpenFrames1.DrawLabel = [ true true true ];
+OpenFrames1.DrawUsePropLabel = [ false false false ];
+OpenFrames1.DrawCenterPoint = [ true true false true ];
+OpenFrames1.DrawEndPoints = [ true false false ];
+OpenFrames1.DrawVelocity = [ false false false ];
+OpenFrames1.DrawGrid = [ false false false ];
+OpenFrames1.DrawLineWidth = [ 2 2 2 ];
+OpenFrames1.DrawMarkerSize = [ 10 10 10 ];
+OpenFrames1.DrawFontSize = [ 14 14 14 ];
+OpenFrames1.Axes = Off;
+OpenFrames1.AxesLength = 12756.2726;
+OpenFrames1.AxesLabels = On;
+OpenFrames1.FrameLabel = Off;
+OpenFrames1.XYPlane = On;
+OpenFrames1.EclipticPlane = Off;
+OpenFrames1.EnableStars = On;
+OpenFrames1.StarCatalog = 'inp_StarsHYGv3.txt';
+OpenFrames1.StarCount = 40000;
+OpenFrames1.MinStarMag = -2;
+OpenFrames1.MaxStarMag = 6;
+OpenFrames1.MinStarPixels = 1;
+OpenFrames1.MaxStarPixels = 10;
+OpenFrames1.MinStarDimRatio = 0.5;
+OpenFrames1.ShowPlot = true;
+OpenFrames1.ShowToolbar = true;
+OpenFrames1.SolverIterLastN = 1;
+OpenFrames1.ShowVR = false;
+OpenFrames1.PlaybackTimeScale = 3600;
+OpenFrames1.MultisampleAntiAliasing = On;
+OpenFrames1.MSAASamples = 2;
+OpenFrames1.DrawFontPosition = {'Top-Right', 'Top-Right', 'Top-Right'};
+OpenFrames1.View = {TLESatelliteView1};
+
+Create OpenFramesView TLESatelliteView1;
+TLESatelliteView1.ViewFrame = TLESatellite;
+TLESatelliteView1.ViewTrajectory = Off;
+TLESatelliteView1.InertialFrame = Off;
+TLESatelliteView1.SetDefaultLocation = Off;
+TLESatelliteView1.SetCurrentLocation = Off;
+TLESatelliteView1.FOVy = 45;

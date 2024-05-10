@@ -1,0 +1,334 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Estimate the orbit</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="FilterSmoother_GpsPosVec.html" title="Chapter&nbsp;15.&nbsp;Filter and Smoother Orbit Determination using GPS_PosVec Data"><link rel="prev" href="ch15s02.html" title="Simulate GPS_PosVec measurements"><link rel="next" href="ch15s04.html" title="Review and quality check the filter run"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">Estimate the orbit</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="ch15s02.html">Prev</a>&nbsp;</td><th align="center" width="60%">Chapter&nbsp;15.&nbsp;Filter and Smoother Orbit Determination using GPS_PosVec Data</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="ch15s04.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="N152B9"></a>Estimate the orbit</h2></div></div></div><p>In this section, we&rsquo;ll walk through the process of creating a script
+    to estimate an orbit using an Extended Kalman Filter. Many of the
+    resources required for this task are the same as those we used in the
+    simulation exercise. But there are a few new resources to contend with,
+    and we&rsquo;ll cover those as we encounter them.</p><p>First, we&rsquo;ll start a blank script file for our estimation task. You
+    can do this without closing the simulation script &ndash; GMAT can load multiple
+    scripts simultaneously, but we&rsquo;ll be ignoring the simulation script from
+    now on.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>In the GMAT File menu, choose New &gt; Script</p></li></ol></div><p>As before, a new script window will open in the GMAT GUI.</p><div class="orderedlist"><ol class="orderedlist" start="2" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script
+          window.</p></li></ol></div><pre class="programlisting">Create Spacecraft EstSat;
+
+EstSat.DateFormat        = UTCGregorian;
+EstSat.Epoch             = '10 Jun 2014 00:00:00.000';
+EstSat.CoordinateSystem  = EarthMJ2000Eq;
+EstSat.DisplayStateType  = Cartesian;
+EstSat.X                 =  576.8
+EstSat.Y                 = -5701.1
+EstSat.Z                 = -4170.5
+EstSat.VX                = -1.7645
+EstSat.VY                =  4.1813
+EstSat.VZ                = -5.9658
+EstSat.DryMass           = 10;
+EstSat.Cd                = 2.0;
+EstSat.CdSigma           = 0.1;
+EstSat.Cr                = 1.8;
+EstSat.DragArea          = 10;
+EstSat.SRPArea           = 10;
+EstSat.Id                = 'LEOSat';
+EstSat.SolveFors         = {CartesianState};
+
+%
+%   Mission sequence
+%
+
+BeginMissionSequence
+</pre><div class="orderedlist"><ol class="orderedlist" start="3" type="1"><li class="listitem"><p>At the bottom of the script window, click on the
+          &ldquo;Save,Sync,Run&rdquo; button.</p></li><li class="listitem"><p>GMAT will ask if you would like to save the script and make it
+          the active script. Click on &ldquo;Yes&rdquo; and choose a directory to save the
+          script. Save it to the same location as the simulation script and
+          call it &ldquo;filter.script&rdquo;.</p><p>a. After saving, the GMAT console window should show the
+          message &ldquo;Successfully interpreted the script.&rdquo;</p></li></ol></div><p>Just like in the simulation exercise, we are starting with
+    a spacecraft object. In the simulation case, this represented the
+    spacecraft initial condition for the orbit we wished to simulate. In this
+    case, our spacecraft object is configured with the initial conditions for
+    estimation. To avoid &ldquo;cheating&rdquo; and giving the estimation process too
+    accurate an initial estimate of the state, we have reduced the precision
+    of the initial state, effectively introducing about 100 meters position
+    error and a couple of cm/sec velocity error, which is typical for a
+    well-tracked LEO satellite.</p><p>We have also added a new parameter &ndash; SolveFors. This lists one or
+    more spacecraft parameters that we wish to estimate in the filter run.
+    Here we are using one of GMAT&rsquo;s built-in solve-for keywords to specify
+    that we intend to estimate the spacecraft Cartesian state, which means the
+    spacecraft position and velocity in Cartesian coordinates (X, Y, X, VX,
+    VY, VZ) in the J2000 Earth-centered coordinate system. Later in this
+    tutorial we will add estimation of the coefficient of drag to this
+    list.</p><p>You may also notice that we have changed the spacecraft Cd
+    (coefficient of drag) value from 2.2 in the simulator to 2.0 here for the
+    estimation. This is because we are going to try to estimate the
+    coefficient of drag in addition to the spacecraft position and velocity.
+    Because we are going to estimate Cd, we have also added a new parameter,
+    CdSigma, to set the presumed uncertainty of our initial estimate of the
+    coefficient of drag. Although in this case we know how much error our
+    guess has, of course in practice you don&rsquo;t know this, and some
+    experimentation may be needed.</p><p>Next we&rsquo;ll add the spacecraft hardware we need to model the GPS
+    measurements.</p><div class="orderedlist"><ol class="orderedlist" start="5" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script
+          window.</p></li></ol></div><pre class="programlisting">%
+%   Spacecraft hardware
+%
+
+Create Antenna GpsAntenna;
+Create Receiver GpsReceiver;
+
+GpsReceiver.PrimaryAntenna = GpsAntenna;
+GpsReceiver.Id             = 800;
+GpsReceiver.ErrorModels    = {PosVecModel}
+
+Create ErrorModel PosVecModel;
+ 
+PosVecModel.Type       = 'GPS_PosVec'
+PosVecModel.NoiseSigma = 0.010;
+</pre><div class="orderedlist"><ol class="orderedlist" start="6" type="1"><li class="listitem"><p>In the script, go back to the spacecraft parameter
+          configuration section and add the following at the bottom of the
+          spacecraft parameters list.</p></li></ol></div><pre class="programlisting">EstSat.AddHardware       = {GpsReceiver, GpsAntenna};
+</pre><div class="orderedlist"><ol class="orderedlist" start="7" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>Here we are just reusing the same hardware configuration we used for
+    the simulation. However, in this instance the NoiseSigma assigned on the
+    error model is now the assumed measurement noise in the existing data. We
+    are &ldquo;cheating&rdquo; slightly by using the same value we set in the simulation.
+    In practice, you won&rsquo;t know the measurement noise so well and may need
+    experiment or perform analysis on the orbit determination residuals to
+    find an appropriate value to use.</p><p>Next, let&rsquo;s quickly create our tracking file set, force model, and
+    propagator.</p><div class="orderedlist"><ol class="orderedlist" start="8" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script
+          window.</p></li></ol></div><pre class="programlisting">%
+%   Tracking file sets
+%
+
+Create TrackingFileSet EstData;
+
+EstData.FileName = {'gps_posvec.gmd'};
+
+%
+%   Force model
+%
+
+Create ForceModel FM;
+
+FM.CentralBody                       = Earth;
+FM.PrimaryBodies                     = {Earth};
+FM.GravityField.Earth.Degree         = 8;
+FM.GravityField.Earth.Order          = 8;
+FM.GravityField.Earth.PotentialFile  = 'JGM2.cof';
+FM.SRP                               = On;
+FM.Drag.AtmosphereModel              = 'JacchiaRoberts';
+FM.Drag.CSSISpaceWeatherFile         = 'SpaceWeather-All-v1.2.txt'
+FM.Drag.HistoricWeatherSource        = 'CSSISpaceWeatherFile';
+FM.ErrorControl                      = None;
+
+%
+%   Propagator
+%
+
+Create Propagator Prop;
+
+Prop.FM              = FM;
+Prop.Type            = 'RungeKutta89';
+Prop.InitialStepSize = 60;
+Prop.MinStep         = 0;
+Prop.MaxStep         = 60;
+</pre><div class="orderedlist"><ol class="orderedlist" start="9" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>The force model and propagator are identical to those we used in the
+    simulation script. For the tracking file set, we have changed the instance
+    name to the more appropriate &ldquo;EstData&rdquo;. The assigned tracking data file is
+    now an input file to be read in the estimation process, so it points to
+    the file we created in our simulation run. Note that we have dropped the
+    AddTrackingConfig assignment. When you are using a tracking file set for
+    estimation, GMAT will examine the data in the input tracking data file and
+    automatically determine the tracking measurement paths. The user does not
+    have to specify these for the estimation process. Next let&rsquo;s create the
+    Kalman filter estimator object.</p><div class="orderedlist"><ol class="orderedlist" start="10" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script
+          window.</p></li></ol></div><pre class="programlisting">%
+%   Estimator
+%
+
+Create ExtendedKalmanFilter EKF;
+
+EKF.ShowProgress         = True;
+EKF.Measurements         = {EstData};
+EKF.Propagator           = Prop;
+EKF.ShowAllResiduals     = On;
+EKF.OutputWarmStartFile  = 'filter.csv';
+EKF.ReportFile           = 'filter.txt';
+EKF.MatlabFile           = 'filter.mat';
+</pre><div class="orderedlist"><ol class="orderedlist" start="11" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>Just like the simulator, the estimation gets assigned the
+    tracking file set. In this case, the tracking file set contains the input
+    data to the estimator. The receiver ID on each input measurement record
+    links the input data to our configured GPS receiver, spacecraft, and error
+    model resources. We also assign the estimator a propagator (with its
+    attached force model) for use in propagating the spacecraft orbit during
+    the estimation process.</p><p>The ShowProgress setting causes GMAT to provide verbose output in
+    the console window while the estimation is running, and ShowAllResiduals
+    will tell GMAT to display a plot of the residuals while the estimation is
+    running. The EKF ReportFile is a detailed report that the filter will
+    generate to help us interpret and quality check (QA) the run. The
+    MatlabFile is a MATLAB-format file that will be generated from the run. It
+    contains useful data that the filter generates as it runs and we will use
+    it later to assist in quality checking the run. Note that the MatlabFile
+    can only be generated if you have MATLAB installed on the machine running
+    GMAT, and GMAT is properly configured to use the MATLAB connection. See
+    <a class="xref" href="MatlabInterface.html" title="MATLAB Interface"><span class="refentrytitle">MATLAB Interface</span></a> for details on configuring the MATLAB
+    interface.</p><p>The OutputWarmStartFile is an additional output file that can be
+    used as input to a subsequent run to allow the filter to operate in a
+    &ldquo;continuous estimation&rdquo; mode. We&rsquo;ll come back to this file to see how this
+    works later in the exercise.</p><p>Unlike the simulator, the filter has no start or stop time
+    parameters. The filter will instead start at the initial epoch of the
+    spacecraft object and process all measurements that are present in the
+    input tracking data file.</p><p>The GMAT orbit determination filter operates by continuously
+    propagating the uncertainty of the state estimate and comparing the state
+    uncertainty and measurement noise at each measurement to the measurement
+    residual, to determine if the new measurement should be rejected or
+    accepted, and if accepted, how strongly that measurement should be used to
+    correct the current state estimate. Propagation of the state uncertainty
+    begins from an initial estimate of the state uncertainty and takes into
+    account a presumed model of the force modeling and propagation errors. As
+    we propagate a state in the absence of measurements, the state uncertainty
+    grows due to force modeling errors. When we incorporate, or accept, a
+    measurement, the state uncertainty decreases because the measurement
+    improves our orbit knowledge. We&rsquo;ll see these effects in action shortly
+    when we run the filter, but first we need to create and configure the
+    objects needed for modeling the state and force model uncertainty.</p><div class="orderedlist"><ol class="orderedlist" start="12" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script window. If
+          you wish, you can move the EstSat.ProcessNoiseModel assignment up to
+          the other spacecraft initial parameter settings to keep them grouped
+          together.</p></li></ol></div><pre class="programlisting">%
+%   Process noise model
+%
+
+Create ProcessNoiseModel SNC;
+
+SNC.Type             = 'StateNoiseCompensation';
+SNC.CoordinateSystem = EarthMJ2000Eq;
+SNC.AccelNoiseSigma  = [1.0e-9 1.0e-9 1.0e-9];
+SNC.UpdateTimeStep   = 120.
+
+EstSat.ProcessNoiseModel = SNC;
+</pre><div class="orderedlist"><ol class="orderedlist" start="13" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>Here we create an instance of a new resource called a Process Noise
+    Model. This resource models the error in spacecraft propagation in the
+    absence of measurements. This is the error in the prediction &ldquo;process&rdquo;. It
+    attempts to model things like error due to imprecise gravity, SRP, and
+    drag modeling, as well as errors due to any small forces, known or
+    unknown, that were not modeled explicitly in the force model we
+    configured. You can see that this model assigns a trio of values
+    representing the noise in the computed nominal acceleration in a specified
+    coordinate system (here the Earth J2000 coordinate frame). This model is
+    assigned to the spacecraft, since it is associated with that spacecraft&rsquo;s
+    orbit and force model. Process noise supplied by this model will be added
+    to the state uncertainty at the interval defined by the process noise
+    model UpdateTimeStep, which we set to be every 120 seconds. Selection of
+    the proper values of process noise in operations normally requires
+    experimentation and analysis.</p><p>The process noise method GMAT implements is called State Noise
+    Compensation, and you can read more about it in Reference 1 if you wish.
+    For now it would take us too far afield to go into the details of this
+    model.</p><p>Next, we&rsquo;ll add estimation of the coefficient of drag to the filter
+    run. Estimation of a coefficient of drag or some other representation of a
+    drag correction factor is common practice for spacecraft in low-earth
+    orbit. This is because the drag force is the most poorly modeled of the
+    forces affecting a spacecraft in this regime. Analytic atmospheric density
+    models have inherent errors of up to 30% or more just due to the immensity
+    and complexity of atmospheric chemistry. On top of that, the drag force
+    depends not only on a presumed coefficient of drag (Cd), but on the
+    spacecraft area (which is often only coarsely modeled and usually
+    dynamic), and the spacecraft mass (which may be imprecisely known).
+    Estimating a drag correction value has the effect of compensating for all
+    these errors in an aggregate fashion and can significantly improve the
+    accuracy of the orbit estimate and prediction.</p><div class="orderedlist"><ol class="orderedlist" start="14" type="1"><li class="listitem"><p>Type or paste the following into the GMAT script
+          window.</p></li></ol></div><pre class="programlisting">%
+%   Create the drag solve-for
+%
+
+Create EstimatedParameter FogmCd
+
+FogmCd.Model            = 'FirstOrderGaussMarkov';
+FogmCd.SolveFor         = 'Cd';
+FogmCd.SteadyStateValue = 2.0;
+FogmCd.SteadyStateSigma = 0.05;
+FogmCd.HalfLife         = 864000;
+</pre><div class="orderedlist"><ol class="orderedlist" start="15" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>Here is another new resource &ndash; the EstimatedParameter resource. We
+    mentioned previously that GMAT has a collection of built-in solve-for
+    parameters, including a coefficient of drag solve-for parameter. However,
+    the built-in Cd solve-for is not ideal for use with a filter becasue it
+    does not include process noise modeling. The EstimatedParameter resource
+    allows the user to configure more sophisticated modeling for some
+    solve-fors, in a fashion that is more appropriate for a filter and which
+    includes process noise modeling. This resource implements Cd estimation as
+    a &ldquo;First-Order Gauss-Markov&rdquo; (FOGM) process. You can read more about this
+    model in Reference 2. This type of model includes three essential
+    parameters &ndash; a steady-state value, a steady-state uncertainty (sigma), and
+    a half-life for &ldquo;decay&rdquo;.</p><p>When a filter runs, the uncertainty of all estimated parameters
+    always increases when propagating in the absence of measurements, and the
+    uncertainty of all estimated parameters always decreases when a
+    measurement is processed. The steady-state value of a FOGM variable is the
+    value to which the parameter will automatically return, in the absence of
+    measurements. This should generally always be set to your best guess of
+    what the actual value is (again, here we are pretending that we don&rsquo;t know
+    the actual value). Similarly, the steady-state uncertainty of a FOGM
+    variable is the value to which the parameter uncertainty will
+    automatically return, in the absence of measurements. Rather than grow
+    continuously without upper bound, the FOGM Cd uncertainty will, after a
+    given amount of time, level off at a maximum of the SteadyStateSigma
+    value. The amount of time for both the steady-state value and sigma to
+    level-off is given (in seconds) by the HalfLife parameter, which specifies
+    how long it will take the current Cd estimate to return halfway back to
+    its limiting value set by SteadyStateValue.</p><p>We need to add the estimated parameter to the Spacecraft solve-fors
+    list.</p><div class="orderedlist"><ol class="orderedlist" start="16" type="1"><li class="listitem"><p>Find the line setting the EstSat.SolveFors parameter and edit
+          it to add FOGM Cd estimation as shown below.</p></li></ol></div><pre class="programlisting">EstSat.SolveFors         = {CartesianState, FogmCd};
+</pre><div class="orderedlist"><ol class="orderedlist" start="17" type="1"><li class="listitem"><p>At the bottom of the script window, click on the &ldquo;Save,Sync&rdquo;
+          button.</p></li></ol></div><p>In GMAT, it doesn&rsquo;t matter that a parameter or resource instance
+    (like FogmCd) is assigned before it is created. It&rsquo;s not necessary to put
+    the code that created the FogmCd estimated parameter before the
+    EstSat.SolveFors assignment in the GMAT script. GMAT will attempt to
+    connect everything together properly at run-time. As long as all the
+    required objects are defined somewhere in the script, everything should
+    work.</p><p>The last thing to do is add the code in the mission sequence to
+    execute the filter run.</p><div class="orderedlist"><ol class="orderedlist" start="18" type="1"><li class="listitem"><p>Update the mission sequence as shown below, then click on
+          &ldquo;Save,Sync&rdquo;.</p></li></ol></div><pre class="programlisting">%
+%   Mission sequence
+%
+
+BeginMissionSequence
+
+EstSat.OrbitErrorCovariance = diag([1e-2 1e-2 1e-2 4e-10 4e-10 4e-10]);
+
+RunEstimator EKF;</pre><p>You probably expected to see the RunEstimator command. Just like
+    RunSimulator, the RunEstimator command has one argument &ndash; the name of the
+    filter instance to execute. This command instructs GMAT to process the
+    input tracking data measurements and perform the estimation using the
+    propagator, spacecraft, and error and process noise models attached to the
+    filter and its associated objects.</p><p>We have one additional command in the mission sequence. Before
+    running the estimator, we are using the <span class="bold"><strong>diag()</strong></span> command to set the spacecraft initial orbit
+    uncertainty. The filter will continuously propagate and adjust the
+    spacecraft uncertainty (&ldquo;covariance&rdquo;) as it runs, but it needs some
+    starting value of the uncertainty from which to begin. The spacecraft
+    position and velocity uncertainty is represented by a 6x6 matrix (for
+    three components of position and three components of velocity), but all we
+    care about for initialization are the diagonal components of the matrix.
+    The diag() function is a convenient way of creating a diagonal matrix.
+    Here we specify the initial &ldquo;covariance&rdquo; of the three position (1e-2 km^2)
+    and velocity (4e-10 km^2/sec^2) components of the initial state of
+    EstSat.</p><p>You are probably wondering where these values come from. We have in
+    a way slightly &ldquo;cheated&rdquo; here again. Since we know the spacecraft state
+    used in the simulation, we also know the error in the EstSat in this run.
+    Recall from above we said that we reduced the precision of the initial
+    state for the estimation script, and thereby and introduced about 100
+    meters position error and a couple cm/sec velocity error. The values we
+    assign here along the diagonal of EstSat.OrbitErrorCovariance are just the
+    squares of these errors (covariance units are squared uncertainties) in
+    km^2 and km^2/sec^2. In operational practice, you don&rsquo;t know the initial
+    uncertainty so well and usually have to make educated &ldquo;order of magnitude&rdquo;
+    guesses at the initial orbit uncertainty either through experience,
+    research, or analysis.</p><div class="orderedlist"><ol class="orderedlist" start="19" type="1"><li class="listitem"><p>Run the script by clicking on the &ldquo;Save,Sync,Run&rdquo; button,
+          clicking on the blue &ldquo;Run&rdquo; error in the tool bar, or by hitting the
+          F5 key.</p></li></ol></div><p>The script should complete in a few seconds. Unlike the when we ran
+    the simulator, you will this time see a lot of action in the GUI and
+    console window. Firstly, a window similar to that shown below appears in
+    the GUI. This is a plot of all the measurement residuals.</p><div class="screenshot"><div class="mediaobject" align="center"><img src="../files/images/Tut_FilterSmoother_GpsPosVec_Fig1.png" align="middle" width="950"></div></div><p>The vertical axis is the measurement residual in kilometers and the
+    horizontal axis is the measurement time in Modified Julian Date (MJD) of
+    atomic time (TAI). Note that the spread of residuals is consistent with
+    the measurement noise (10 meters) that we applied in the
+    simulation.</p><p>If you scroll backwards in the console window, you will find a
+    summary of the initial state and estimated parameters, and the final state
+    and estimated parameters (after processing all measurements), as well as
+    the final covariance matrix. This is useful information, but is not enough
+    for a full quality check of the run, so let&rsquo;s now dive into the other
+    output files generated from the run.</p></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="ch15s02.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="FilterSmoother_GpsPosVec.html">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="ch15s04.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">Simulate GPS_PosVec measurements&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;Review and quality check the filter run</td></tr></table></div></body></html>

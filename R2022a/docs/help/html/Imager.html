@@ -1,0 +1,79 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Imager</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="ch18.html#N15B4D" title="Resources"><link rel="prev" href="GroundStation.html" title="GroundStation"><link rel="next" href="ImpulsiveBurn.html" title="ImpulsiveBurn"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">Imager</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="GroundStation.html">Prev</a>&nbsp;</td><th align="center" width="60%">Resources</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="ImpulsiveBurn.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="Imager"></a><div class="titlepage"></div><a name="N19E72" class="indexterm"></a><div class="refnamediv"><h2><span class="refentrytitle">Imager</span></h2><p>Imager &mdash; An imager with a defined field of view.</p></div><div class="refsection"><a name="N19E83"></a><h2>Description</h2><p>A number of GMAT resources including
+    <span class="guilabel">Spacecraft</span>, and <span class="guilabel">IntrusionLocator</span>
+    resource to simulate when objects pass through a spacecraft camera's field
+    of view.</p><p><span class="ref_seealso">See Also</span>: <a class="xref" href="Spacecraft.html" title="Spacecraft"><span class="refentrytitle">Spacecraft</span></a>, <a class="xref" href="IntrusionLocator.html" title="IntrusionLocator"><span class="refentrytitle">IntrusionLocator</span></a></p></div><div class="refsection"><a name="N19E98"></a><h2>Fields</h2><div class="informaltable"><table border="1"><colgroup><col width="33%"><col width="67%"></colgroup><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td><span class="guilabel">FieldOfView</span></td><td><p>Reference to optional field-of-view object which
+            models the area visible to the antenna. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>FOV Resource</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p><span class="guilabel">CustomFOV</span>,
+                    <span class="guilabel">ConicalFOV</span>, or
+                    <span class="guilabel">RectantularFOV</span> Resource.</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>empty</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">DirectionX</span></td><td><p>X-component of the field-of-view boresight vector
+            expressed in spacecraft body coordinates. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real number</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>0</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">DirectionY</span></td><td><p>Y-component of the field-of-view boresight vector
+            expressed in spacecraft body coordinates. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real number</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>0</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">DirectionZ</span></td><td><p>Z-component of the field-of-view boresight vector
+            expressed in spacecraft body coordinates. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real number</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>1</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">SecondDirectionX</span></td><td><p>X-component of the vector, expressed in the body
+            frame, used to resolve the sensor's orientation about the boresite
+            vector. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>-1</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">SecondDirectionY</span></td><td><p>Y-component of the vector, expressed in the body
+            frame, used to resolve the sensor's orientation about the boresite
+            vector. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>0</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">SecondDirectionZ</span></td><td><p>Z-component of the vector, expressed in the body
+            frame, used to resolve the sensor's orientation about the boresite
+            vector. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>0</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">HWOriginInBCSX</span></td><td><p>X-component of the origin of the antenna&rsquo;s coordinate
+            system expressed in the spacecraft&rsquo;s body coordinate
+            system.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>0</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">HWOriginInBCSY</span></td><td><p>Y-component of the origin of the antenna&rsquo;s coordinate
+            system expressed in the spacecraft&rsquo;s body coordinate system.
+            </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>0</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">HWOriginInBCSZ</span></td><td><p>Z-component of the origin of the antenna&rsquo;s coordinate
+            system expressed in the spacecraft&rsquo;s body coordinate
+            system.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>0</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr></tbody></table></div></div><div class="refsection"><a name="N1A06D"></a><h2>Remarks</h2><p>The imager model supports mask, orientation and location settings.
+    The mask is provided by the object designated by
+    <span class="guilabel">FieldOfView</span>. The location is the position of the
+    origin of the sensor frame, expressed in the spacecraft body coordinate
+    frame. The orientation is represented as a direction cosine matrix that is
+    initially computed from two non-colinear vectors, provided by the user as
+    <span class="guilabel">Direction</span> and <span class="guilabel">SecondDirection</span>
+    components. The three axes for the sensor coordinate frame expressed in
+    Body coordinates are computed as follow:</p><div class="orderedlist"><ol class="orderedlist compact" type="1"><li class="listitem"><p>Normalize <span class="guilabel">z</span> &amp; <span class="guilabel">v</span>,
+        where <span class="guilabel">z</span> is the boresight represented by
+        <span class="guilabel">Direction</span> and<span class="guilabel"> v</span> is the
+        <span class="guilabel">SecondDirection</span> vector.</p></li><li class="listitem"><p>Compute the normal N = z x v and its magnitude m.</p></li><li class="listitem"><p>Verify magnitude of <span class="guilabel">N</span> isn&rsquo;t 0.0, send
+        message if it is too close. This will happen if one of the input
+        vectors is a zero vector or if the two vectors are co-linear,
+        including the case where they point in opposite directions.</p></li><li class="listitem"><p><span class="guilabel">x</span> = <span class="guilabel">N</span> / m</p></li><li class="listitem"><p><span class="guilabel">y</span> = <span class="guilabel">z</span> x
+        <span class="guilabel">x</span></p></li><li class="listitem"><p>The rotation matrix <span class="guilabel">R</span>sb is constructed with
+        <span class="guilabel">x</span> on the first row, <span class="guilabel">y</span> on the
+        second, and <span class="guilabel">z</span> on the third. This matrix rotates
+        vectors from the body frame to the sensor frame.</p></li></ol></div><p><span class="guilabel">R</span>sb is used as part of the chain checking if an
+    object is in the field of view. The general approach is to have a vector
+    from the imager to the object in a given reference frame and do a series
+    of rotations, the last of which would use <span class="guilabel">R</span>sb to
+    rotate the vector from spacecraft to imager coordinates. The default
+    direction of the boresight is along the z-axis of the body to which it is
+    attached. Note that the default's for <span class="bold"><strong>Direction</strong></span> and <span class="bold"><strong>SecondDirection</strong></span> are [0,0,1] and [-1,0,0]
+    respectively. This default orientation is selected to match the correct
+    orientation for a <span class="bold"><strong>GroundStation</strong></span> with an
+    <span class="bold"><strong>Imager</strong></span> pointed up, with <span class="bold"><strong>SecondDirection</strong></span> matching North in the topocentric
+    frame.</p></div><div class="refsection"><a name="N1A0D7"></a><h2>Examples</h2><div class="informalexample"><p>Attach an <span class="guilabel">Imager</span> to a
+      <span class="guilabel">Spacecraft</span> <span class="guilabel">Resource</span> type.</p><pre class="programlisting">Create Imager SatImager 
+
+Create Spacecraft Sat
+Sat.AddHardware = {SatImager};
+
+BeginMissionSequence;</pre><p>Define the field-of-view, orientation, and location of an
+      imager.</p><pre class="programlisting">% Define a conical FOV
+Create ConicalFOV coneFOV;
+GMAT coneFOV.FieldOfViewAngle = 20;
+
+% Create an imager and attache a FOV
+Create Imager myImager;
+GMAT myImager.FieldOfView = coneFOV;
+
+% Define the antenna boresight direction in body coordinates
+GMAT myImager.DirectionX = 1;
+GMAT myImager.DirectionY = 0;
+GMAT myImager.DirectionZ = 0;
+
+% Define the vector to resolve orientation about boresight
+GMAT myImager.SecondDirectionX = 0;
+GMAT myImager.SecondDirectionY = 1;
+GMAT myImager.SecondDirectionZ = 0;
+
+% Define the location of antenna in body coordinates
+GMAT myImager.HWOriginInBCSX = 100;
+GMAT myImager.HWOriginInBCSY = -100;
+GMAT myImager.HWOriginInBCSZ = 0;
+</pre></div></div></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="GroundStation.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="ch18.html#N15B4D">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="ImpulsiveBurn.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">GroundStation&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;ImpulsiveBurn</td></tr></table></div></body></html>

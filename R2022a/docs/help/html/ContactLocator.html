@@ -1,0 +1,630 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>ContactLocator</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="ch18.html#N15B4D" title="Resources"><link rel="prev" href="Thruster.html" title="ChemicalThruster"><link rel="next" href="CoordinateSystem.html" title="CoordinateSystem"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">ContactLocator</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="Thruster.html">Prev</a>&nbsp;</td><th align="center" width="60%">Resources</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="CoordinateSystem.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="ContactLocator"></a><div class="titlepage"></div><a name="N17394" class="indexterm"></a><div class="refnamediv"><h2><span class="refentrytitle">ContactLocator</span></h2><p>ContactLocator &mdash; A line-of-sight event locater between a target
+    <span class="guilabel">Spacecraft</span> and an observer
+    <span class="guilabel">GroundStation</span></p></div><div class="refsection"><a name="N173AA"></a><h2>Description</h2><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p><span class="guilabel">ContactLocator</span> is a SPICE-based subsystem
+      that uses a parallel configuration for the solar system and celestial
+      bodies from other GMAT components. For precision applications, care must
+      be taken to ensure that both configurations are consistent. See <a class="link" href="ContactLocator.html#ContactLocator_DataConfiguration" title="Data configuration">Remarks</a> for
+      details.</p></div><p>A <span class="guilabel">ContactLocator</span> is an event locater used to
+    find line-of-sight contact events between a
+    <span class="guilabel">Spacecraft</span> and a <span class="guilabel">GroundStation</span>.
+    By default, a <span class="guilabel">ContactLocator</span> generates a text event
+    report listing the beginning and ending times of each line-of-sight event,
+    along with the duration. Contact location can be performed over the entire
+    propagation interval or over a subinterval, and can optionally adjust for
+    light-time delay and stellar aberration. Contact location can be
+    configured to search for times of occultation of other
+    <span class="guilabel">CelestialBody</span> resources that may block line of sight,
+    and can limit contact events to a specified minimum elevation angle
+    configured on the <span class="guilabel">GroundStation</span>.</p><p>Contact location can be performed between one
+    <span class="guilabel">Spacecraft</span> (<span class="guilabel">Target</span>) and any
+    number of <span class="guilabel">GroundStation</span> resources
+    (<span class="guilabel">Observers</span>). Each target-observer pair is searched
+    individually, and results in a separate segment of the resulting report.
+    All pairs must use the same interval and search options; to customize the
+    options per pair, use multiple <span class="guilabel">ContactLocator</span>
+    resources.</p><p>Third-body occultation searches can be included by listing one or
+    more <span class="guilabel">CelestialBody</span> resources in the
+    <span class="guilabel">OccultingBodies</span> list. Any configured
+    <span class="guilabel">CelestialBody</span> can be used as an occulting body,
+    including user-defined ones. By default, no occultation searches are
+    performed; the central body of the <span class="guilabel">GroundStation</span> is
+    included automatically in the basic line-of-sight algorithm.</p><p>By default, the <span class="guilabel">ContactLocator</span> searches the
+    entire interval of propagation of the <span class="guilabel">Target</span>, after
+    applying certain endpoint light-time adjustments; see <a class="link" href="ContactLocator.html#ContactLocator_SearchInterval" title="Search interval">Remarks</a> for details. To
+    search a custom interval, set <span class="guilabel">UseEntireInterval</span> to
+    <code class="literal">False</code> and set <span class="guilabel">InitialEpoch</span> and
+    <span class="guilabel">FinalEpoch</span> accordingly. Note that these epochs are
+    assumed to be at the observer, and so must be valid when translated to the
+    target via light-time delay and stellar aberration, if configured. If they
+    fall outside the propagation interval of the <span class="guilabel">Target</span>,
+    GMAT will display an error.</p><p>The contact locater can optionally adjust for both light-time delay
+    and stellar aberration, using either a transmit sense
+    (<span class="guilabel">Observer</span>&rarr;<span class="guilabel">Target</span>) or receive
+    sense (<span class="guilabel">Observer</span>&larr;<span class="guilabel">Target</span>)
+    depending on the value of <span class="guilabel">LightTimeDirection</span>. The
+    light-time direction affects the valid search interval by limiting
+    searches near the start of the interval (for transmit sense) or the end of
+    the interval (for receive sense). See <a class="link" href="ContactLocator.html#ContactLocator_SearchInterval" title="Search interval">Remarks</a> for details.
+    Stellar aberration is only applied for the line-of-sight portion of the
+    search; it has no effect during occultation searches.</p><p>The event search is performed at a fixed step through the interval.
+    You can control the step size (in seconds) by setting the
+    <span class="guilabel">StepSize</span> field. An appropriate choice for step size
+    is no greater than half the period of the line-of-sight function&mdash;that is,
+    half the orbit period for an elliptical orbit. If third-body occultations
+    are used, the maximum step size is no greater than the minimum-duration
+    occultation event you wish to find. See <a class="link" href="ContactLocator.html#ContactLocator_SearchAlgorithm" title="Search algorithm">Remarks</a> for
+    details.</p><p>GMAT uses the SPICE library for the fundamental event location
+    algorithm. As such, all celestial body data is loaded from SPICE kernels
+    for this subsystem, rather than GMAT's own
+    <span class="guilabel">CelestialBody</span> shape and orientation configuration.
+    See <a class="link" href="ContactLocator.html#ContactLocator_Remarks" title="Remarks">Remarks</a> for
+    details.</p><p>Unless otherwise mentioned, <span class="guilabel">ContactLocator</span>
+    fields cannot be set in the mission sequence.</p><p><span class="ref_seealso">See Also</span>: <a class="xref" href="CelestialBody.html" title="CelestialBody"><span class="refentrytitle">CelestialBody</span></a>, <a class="xref" href="GroundStation.html" title="GroundStation"><span class="refentrytitle">GroundStation</span></a>, <a class="xref" href="Spacecraft.html" title="Spacecraft"><span class="refentrytitle">Spacecraft</span></a>, <a class="xref" href="EclipseLocator.html" title="EclipseLocator"><span class="refentrytitle">EclipseLocator</span></a>, <a class="xref" href="FindEvents.html" title="FindEvents"><span class="refentrytitle">FindEvents</span></a></p></div><div class="refsection"><a name="N17443"></a><h2>Fields</h2><div class="informaltable"><table border="1"><colgroup><col width="25%"><col width="75%"></colgroup><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td><span class="guilabel">Filename</span></td><td><p>Name and path of the contact report file. This field
+            can be set in the mission sequence.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>String</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Valid file path</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="filename">'<em class="replaceable"><code>ContactLocator</code></em>.txt'</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">FinalEpoch</span></td><td><p>Last epoch to search for contacts, in the format
+            specified by <span class="guilabel">InputEpochFormat</span>. The epoch is
+            relative to the <span class="guilabel">Observer</span>, and must map to a
+            valid epoch in the <span class="guilabel">Target</span> ephemeris interval,
+            including any light time. This field can be set in the mission
+            sequence.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>String</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Valid epoch in available spacecraft ephemeris</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="filename">'21545.138'</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>ModifiedJulian epoch formats: days</p><p>Gregorian epoch formats: N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">InitialEpoch</span></td><td><p>First epoch to search for contacts, in the format
+            specified by <span class="guilabel">InputEpochFormat</span>. The epoch is
+            relative to the <span class="guibutton">Observer</span>, and must map to a
+            valid epoch in the <span class="guibutton">Target</span> ephemeris
+            interval, including any light time. This field can be set in the
+            mission sequence.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>String</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Valid epoch in available spacecraft ephemeris</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="filename">'21545'</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>ModifiedJulian epoch formats: days</p><p>Gregorian epoch formats: N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">InputEpochFormat</span></td><td><p>The field allows you to set the type of the epoch
+            that you choose to enter for <span class="guilabel">InitialEpoch</span> and
+            <span class="guilabel">FinalEpoch</span> fields. This field cannot be
+            modified in the Mission Sequence.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Enumeration</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any of the following epoch formats:<span class="guilabel">
+                    UTCGregorian</span><span class="guilabel">
+                    UTCModJulian</span>,<span class="guilabel">
+                    TAIGregorian</span>,<span class="guilabel">
+                    TAIModJulian</span>,<span class="guilabel">
+                    TTGregorian</span>,<span class="guilabel">
+                    TTModJulian</span>,<span class="guilabel"> A1Gregorian</span>,
+                    <span class="guilabel">A1ModJulian</span></p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>Set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">TAIModJulian</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">IntervalStepSize</span></td><td><p>Determines the resolution of time intervals for the
+            intermediate step reporting. If set to 0, then only the beginning
+            and end of contact periods are recorded.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Positive Real values</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="literal">0.0</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>Seconds</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">LeftJustified</span></td><td><p>Modifies the contact report to have columns be left
+            or right justified. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Boolean</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>true, false</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>false</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">LightTimeDirection</span></td><td><p>Sense of light-time calculation: transmit from
+            observer or receive at observer.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Enumeration</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p><code class="literal">Transmit</code>,
+                    <code class="literal">Receive</code></p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="literal">Transmit</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">Observers</span></td><td><p>List of the contact observer objects. Can be any
+            number of GMAT <span class="guilabel">GroundStation</span>
+            resources.Observations will be calculated using the minimum
+            elevation angle of the GroundStation as well as any FOV attached
+            to its Antenna if available. These Groundstations must have a
+            <span class="guilabel">Planet</span> or <span class="guilabel">Moon</span> for their
+            central body. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>List of <span class="guilabel">GroundStation</span>
+                    resources</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any existing <span class="guilabel">GroundStation</span>
+                    resources</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>Empty list</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">OccultingBodies</span></td><td><p>List of occulting bodies to search for contacts. Can
+            be any number of GMAT <span class="guilabel">CelestialBody</span>-type
+            resources, such as <span class="guilabel">Planet</span>,
+            <span class="guilabel">Moon</span>, <span class="guilabel">Asteroid</span>, etc.
+            Note that an occulting body must have a mass (e.g. not
+            <span class="guilabel">LibrationPoint</span> or
+            <span class="guilabel">Barycenter</span>).</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>List of <span class="guilabel">CelestialBody</span> resources
+                    (e.g. <span class="guilabel">Planet</span>,
+                    <span class="guilabel">Asteroid</span>, <span class="guilabel">Moon</span>,
+                    etc.)</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any existing
+                    <span class="guilabel">CelestialBody</span>-class resources</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>Empty list</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ReportPrecision</span></td><td><p>Modifies the contact report precision on fields other
+            than times. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Integer</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Positive integers</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="literal">6</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ReportFormat</span></td><td><p>Defines the report style to return from the
+            ContactLocator. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Enumeration</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p><code class="literal">SiteViewMaxElevationReport,</code><code class="literal">ContactRangeReport,AzimuthElevationRangeReport,SiteViewMaxElevationRangeReport,Legacy</code></p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="literal">Legacy</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ReportTimeFormat</span></td><td><p>Determines the time format to be written in the
+            ContactLocator report file. Does not affect reports of the
+            'Legacy' format</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Enumeration</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p><code class="literal">UTCGregorian</code>,
+                    <code class="literal">UTCMJD,ISOYD</code></p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="literal">UTCGregorian</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">RunMode</span></td><td><p>Mode of event location execution.
+            <code class="literal">'Automatic'</code> triggers event location to occur
+            automatically at the end of the run. <code class="literal">'Manual'</code>
+            limits execution only to the <span class="guilabel">FindEvents</span>
+            command. <code class="literal">'Disabled'</code> turns off event location
+            entirely.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Enumeration</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p><code class="literal">Automatic</code>,
+                    <code class="literal">Manual</code>,
+                    <code class="literal">Disabled</code></p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="filename">'Automatic'</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">StepSize</span></td><td><p>Step size of event locater. See <a class="link" href="ContactLocator.html#ContactLocator_SearchAlgorithm" title="Search algorithm">Remarks</a> for
+            discussion of appropriate values.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p><span class="guilabel">StepSize</span> &gt; 0</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>10</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>s</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">Target</span></td><td><p>The target <span class="guilabel">Spacecraft</span> resource
+            to search for contacts.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p><span class="guilabel">Spacecraft</span> resource</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any existing <span class="guilabel">Spacecraft</span>
+                    resource</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>First configured <span class="guilabel">Spacecraft</span>
+                    resource</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">UseEntireInterval</span></td><td><p>Search the entire available
+            <span class="guilabel">Target</span> ephemeris interval, after adjusting
+            the end-points for light-time delay as appropriate. See <a class="link" href="ContactLocator.html#ContactLocator_SearchInterval" title="Search interval">Remarks</a> for
+            details. This field can be set in the mission
+            sequence.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Boolean</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>true, false</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>true</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">UseLightTimeDelay</span></td><td><p>Use light-time delay in the event-finding algorithm.
+            The clock is always hosted on the <span class="guibutton">Observer</span>.
+            For more information on how this is being calculated, see the link
+            to the SPICE Aberration Correction documentation in the
+            references.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Boolean</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>true, false</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>true</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">UseStellarAberration</span></td><td><p>Use stellar aberration in addition to light-time
+            delay in the event-finding algorithm. Light-time delay must be
+            enabled. Stellar aberration only affects line-of-sight searches,
+            not occultation searches.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Boolean</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>true, false</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>true</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">WriteReport</span></td><td><p>Write an event report when event location is
+            executed. This field can be set in the mission
+            sequence.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Boolean</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>true, false</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>true</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>GUI, script</p></td></tr></tbody></table></div></td></tr></tbody></table></div></div><div class="refsection"><a name="N17844"></a><h2>GUI</h2><div class="screenshot"><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" style="cellpadding: 0; cellspacing: 0;" width="100%"><tr><td align="center"><img src="../files/images/Resource_ContactLocator_1.png" align="middle" height="461"></td></tr></table></div></div><p>The default <span class="guilabel">ContactLocator</span> GUI for a new
+    resource is shown above. You can choose one
+    <span class="guilabel">Spacecraft</span> from <span class="guilabel">Target</span>, which is
+    populated by all the <span class="guilabel">Spacecraft</span> resources currently
+    configured in the mission. In the <span class="guilabel">Observers</span> list, you
+    can check the box next to all <span class="guilabel">GroundStations</span> you want
+    to search for contacts to.</p><p>To search for third-body occultations, check the boxes next to any
+    applicable <span class="guilabel">CelestialBody</span> resources in the
+    <span class="guilabel">Occulting Bodies</span> list. This list shows all celestial
+    bodies currently configured in the mission. Note that each occultation
+    search will increase the execution time of the overall search.</p><p>You can configure the output via <span class="guilabel">Filename</span>,
+    <span class="guilabel">Run Mode</span>, and <span class="guilabel">Write Report</span> near
+    the bottom. If <span class="guilabel">Write Report</span> is enabled, a text report
+    will be written to the file specified in <span class="guilabel">Filename</span>.
+    The search will execute during <span class="guilabel">FindEvents</span> commands
+    (for <span class="guilabel">Manual</span> or <span class="guilabel">Automatic</span> modes)
+    and automatically at the end of the mission (for
+    <span class="guilabel">Automatic</span> mode), depending on the <span class="guilabel">Run
+    Mode</span>.</p><p>You can configure the search interval via the options in the upper
+    right. Uncheck <span class="guilabel">Use Entire Interval</span> to set the search
+    interval manually. See the <a class="link" href="ContactLocator.html#ContactLocator_SearchInterval" title="Search interval">Remarks</a> section for
+    considerations when setting the search interval.</p><p>You can control the search algorithm via the options in the bottom
+    right. Configure light-time and stellar aberration via the check boxes
+    next to each, and select the signal direction via the <span class="guilabel">Light-time
+    direction</span> selection.</p><p>To control the fidelity and execution time of the search, set the
+    <span class="guilabel">Step size</span> appropriately. See the <a class="link" href="ContactLocator.html#ContactLocator_Remarks" title="Remarks">Remarks</a> section for
+    details.</p></div><div class="refsection"><a name="N178A3"></a><h2>Scripting</h2><p>Beyond the basic ContactLocator options offered through the GUI,
+    GMAT offers a number of additional report customization options that can
+    be accessed through the script interface. By specifying inputs in the
+    <span class="bold"><strong>ReportColumnsOrder</strong></span> field, the advanced
+    ContactLocator reporting system outputs will be available. To create a
+    report that gives information at set intervals within the contact period,
+    the user may set <span class="bold"><strong>IntervalSize</strong></span> to a
+    positive value in seconds. Finally, using <span class="bold"><strong>ReportPrecision</strong></span> and <span class="bold"><strong>LeftJustified</strong></span> allows for configuring the advanced
+    output with additional specificity.</p></div><div class="refsection"><a name="ContactLocator_Remarks"></a><h2>Remarks</h2><div class="refsection"><a name="ContactLocator_DataConfiguration"></a><h3>Data configuration</h3><p>The <span class="guilabel">ContactLocator</span> implementation is based on
+      the <a class="link" href="http://naif.jpl.nasa.gov/naif/" target="_top">NAIF SPICE
+      toolkit</a>, which uses a different mechanism for environmental data
+      such as celestial body shape and orientation, planetary ephemerides,
+      body-specific frame definitions, and leap seconds. Therefore, it is
+      necessary to maintain two parallel configurations to ensure that the
+      event location results are consistent with GMAT's own propagation and
+      other parameters. The specific data to be maintained is:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Planetary shape and orientation:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>GMAT core:
+              <span class="guilabel">CelestialBody</span>.<span class="guilabel">EquatorialRadius</span>,
+              <span class="guilabel">Flattening</span>,
+              <span class="guilabel">SpinAxisRAConstant</span>,
+              <span class="guilabel">SpinAxisRARate</span>, etc.</p></li><li class="listitem"><p>ContactLocator:
+              <span class="guilabel">SolarSystem</span>.<span class="guilabel">PCKFilename</span>,
+              <span class="guilabel">CelestialBody</span>.<span class="guilabel">PlanetarySpiceKernelName</span></p></li></ul></div></li><li class="listitem"><p>Planetary ephemeris:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>GMAT core:
+              <span class="guilabel">SolarSystem</span>.<span class="guilabel">DEFilename</span>,
+              or
+              (<span class="guilabel">SolarSystem</span>.<span class="guilabel">SPKFilename</span>,
+              <span class="guilabel">CelestialBody</span>.<span class="guilabel">OrbitSpiceKernelName</span>,
+              <span class="guilabel">CelestialBody</span>.<span class="guilabel">NAIFId</span>)</p></li><li class="listitem"><p>ContactLocator:
+              <span class="guilabel">SolarSystem</span>.<span class="guilabel">SPKFilename</span>,
+              <span class="guilabel">CelestialBody</span>.<span class="guilabel">OrbitSpiceKernelName</span>,
+              <span class="guilabel">CelestialBody</span>.<span class="guilabel">NAIFId</span></p></li></ul></div></li><li class="listitem"><p>Body-fixed frame:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>GMAT core: built-in</p></li><li class="listitem"><p>ContactLocator:
+              <span class="guilabel">CelestialBody</span>.<span class="guilabel">SpiceFrameId</span>,
+              <span class="guilabel">CelestialBody</span>.<span class="guilabel">FrameSpiceKernelName</span></p></li></ul></div></li><li class="listitem"><p>Leap seconds:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>GMAT core: startup file <code class="literal">LEAP_SECS_FILE</code>
+              setting</p></li><li class="listitem"><p>ContactLocator:
+              <span class="guilabel">SolarSystem</span>.<span class="guilabel">LSKFilename</span></p></li></ul></div></li></ul></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>For precise applications, the <span class="guilabel">CelestialBody</span>
+        shape must be consistent in both subsystems to ensure consistent
+        placement of a <span class="guilabel">GroundStation</span>. The following
+        script lines make the two definitions consistent for Earth.</p><pre class="programlisting">SolarSystem.PCKFilename = '..\data\planetary_coeff\pck00010.tpc'
+Earth.EquatorialRadius = 6378.1366
+Earth.Flattening = 0.00335281310845547</pre></div><p>See SolarSystem and <a class="link" href="CelestialBody.html#CelestialBody_ConfiguringForEventLocation" title="Configuring for event location">CelestialBody</a>
+      for more details.</p></div><div class="refsection"><a name="ContactLocator_SearchInterval"></a><h3>Search interval</h3><p>The <span class="guilabel">ContactLocator</span> search interval can be
+      specified either as the entire ephemeris interval of the
+      <span class="guilabel">Target</span>, or as a user-defined interval. Each mode
+      offers specific behavior related to handling of light-time delay and
+      discontinuous intervals.</p><p>If <span class="guilabel">UseEntireInterval</span> is true, the search is
+      performed over the entire ephemeris interval of the
+      <span class="guilabel">Target</span>, including any gaps or discontinuities. If
+      light-time delay is enabled, the search interval is truncated by the
+      approximate light time to allow SPICE to determine the exact light-time
+      delay between the participants during the search. If
+      <span class="guilabel">LightTimeDirection</span> is <code class="literal">Transmit</code>,
+      the beginning of the interval is truncated. If
+      <span class="guilabel">LightTimeDirection</span> is <code class="literal">Receive</code>,
+      the end of the interval is truncated. In either case, the other end of
+      the interval is trimmed slightly via bisection to avoid stepping beyond
+      the end of the ephemeris due to numeric precision issues. This trimming
+      is typically less than 1 s. The endpoints of gaps or discontinuities are
+      not modified, so these are not fully supported if light-time delay is
+      enabled. If light-time delay is disabled, the entire interval is used
+      directly, with no endpoint manipulation.</p><p>If <span class="guilabel">UseEntireInterval</span> is false, the provided
+      <span class="guilabel">InitialEpoch</span> and <span class="guilabel">FinalEpoch</span>
+      are used to form the search interval directly. This interval is
+      consistent with the <span class="guilabel">Observer</span> clock, and does not
+      support the inclusion of gaps or discontinuities from the
+      <span class="guilabel">Target</span> ephemeris. The user must ensure than the
+      provided interval results in valid <span class="guilabel">Target</span> ephemeris
+      epochs after light-time delay and stellar aberration have been
+      applied.</p><p>These rules are summarized in the following table, where
+      t<sub>0</sub> and t<sub>f</sub> are the
+      beginning and end of the <span class="guilabel">Target</span> ephemeris,
+      respectively, and lt is the light time between the
+      <span class="guilabel">Target</span> and the
+      <span class="guilabel">Observer</span>.</p><div class="informaltable"><table border="1"><colgroup><col width="27%"><col width="36%"><col width="37%"></colgroup><tbody><tr><td>&nbsp;</td><td><span class="guilabel">UseEntireInterval</span>
+              true</td><td><span class="guilabel">UseEntireInterval</span> false</td></tr><tr><td><span class="guilabel">UseLightTimeDelay</span>
+              true</td><td align="left"><div class="variablelist"><dl class="variablelist"><dt><span class="term">Effective interval</span></dt><dd><p><span class="guilabel">LightTimeDirection</span> =
+                      <code class="literal">'Transmit'</code>:
+                      [t<sub>0</sub>+lt,
+                      t<sub>f</sub>]</p><p><span class="guilabel">LightTimeDirection</span> =
+                      <code class="literal">'Receive'</code>:
+                      [t<sub>0</sub>,
+                      t<sub>f</sub>-lt]</p></dd><dt><span class="term">Discontinuous intervals</span></dt><dd><p>Unsupported. Behavior is undefined.</p></dd></dl></div></td><td align="left"><div class="variablelist"><dl class="variablelist"><dt><span class="term">Effective interval</span></dt><dd><p>[<span class="guilabel">InitialEpoch</span>,
+                      <span class="guilabel">FinalEpoch</span>]</p></dd><dt><span class="term">Discontinuous intervals</span></dt><dd><p>Unsupported. Behavior is undefined.</p></dd></dl></div></td></tr><tr><td><span class="guilabel">UseLightTimeDelay</span>
+              false</td><td align="left"><div class="variablelist"><dl class="variablelist"><dt><span class="term">Effective interval</span></dt><dd><p>[t<sub>0</sub>,
+                      t<sub>f</sub>]</p></dd><dt><span class="term">Discontinuous intervals</span></dt><dd><p>Fully supported</p></dd></dl></div></td><td align="left"><div class="variablelist"><dl class="variablelist"><dt><span class="term">Effective interval</span></dt><dd><p>[<span class="guilabel">InitialEpoch</span>,
+                      <span class="guilabel">FinalEpoch</span>]</p></dd><dt><span class="term">Discontinuous intervals</span></dt><dd><p>Fully supported</p></dd></dl></div></td></tr></tbody></table></div></div><div class="refsection"><a name="ContactLocator_RunModes"></a><h3>Run modes</h3><p>The <span class="guilabel">ContactLocator</span> works in conjunction with
+      the <span class="guilabel">FindEvents</span> command: the
+      <span class="guilabel">ContactLocator</span> resource defines the configuration
+      of the event search, and the <span class="guilabel">FindEvents</span> command
+      executes the search at a specific point in the mission sequence. The
+      mode of interaction is defined by
+      <span class="guilabel">ContactLocator</span>.<span class="guilabel">RunMode</span>, which
+      has three options:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">Automatic</code>: All
+            <span class="guilabel">FindEvents</span> commands are executed as-is, plus
+            an additional <span class="guilabel">FindEvents</span> is executed
+            automatically at the end of the mission sequence.</p></li><li class="listitem"><p><code class="literal">Manual</code>: All
+            <span class="guilabel">FindEvents</span> commands are executed
+            as-is.</p></li><li class="listitem"><p><code class="literal">Disabled</code>: <span class="guilabel">FindEvents</span>
+            commands are ignored.</p></li></ul></div></div><div class="refsection"><a name="ContactLocator_ObserverFieldOfView"></a><h3>Observer Field of View</h3><p>The contact locater has two approaches to determining the field of
+      view of the observer. The most basic way is to initialize a
+      GroundStation with a MinimumElevationAngle defined. This approach will
+      give a constant elevation off the horizon as the threshold for
+      visibility. For more complex observers, users may attach an imager with
+      either a CircularFOV, RectangularFOV, or CustomFOV to the ground
+      station. For each observer in the ContactLocator, GMAT will conduct an
+      individual search for each <a class="link" href="Imager.html" title="Imager">Imager</a> with a
+      <a class="link" href="FieldOfView.html" title="FieldOfView">FOV</a> , listing the contacts separately
+      in the report.</p></div><div class="refsection"><a name="ContactLocator_SearchAlgorithm"></a><h3>Search algorithm</h3><p>The <span class="guilabel">ContactLocator</span> uses the NAIF SPICE GF
+      (geometry finder) subsystem to perform event location. Specifically, to
+      find the initial Contact windows, GMAT uses the intersection of the
+      windows found by the following two functions:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal"><a class="link" href="http://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/gfposc_c.html" target="_top">gfposc_c</a></code>:
+            For line-of-sight search above the
+            <span class="guilabel">GroundStation.MinimumElevationAngle</span></p></li><li class="listitem"><p><code class="literal"><a class="link" href="https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/gftfov_c.html" target="_top">gftfov_c</a></code>:
+            For line-of-sight search within the <span class="bold"><strong>FOV</strong></span> on any attached <span class="bold"><strong>Imager </strong></span>(ignored if no FOV are
+            available)</p></li></ul></div><p>The following call is made to perform occultation
+      calculations:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal"><a class="link" href="http://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/gfoclt_c.html" target="_top">gfoclt_c</a></code>:
+          For third-body occultation searches</p></li></ul></div><p>All functions implement a fixed-step search method through the
+      interval, with an embedded root-location step if an event is found.
+      Proper selection of <span class="guilabel">StepSize</span> differs between the
+      two types.</p><p>For the basic line-of-sight search, without third-body
+      occultations, <span class="guilabel">StepSize</span> can be set as high as
+      one-half the period of the event function. For an elliptic orbit, this
+      is up to one-half the orbit period. Note however, when computing view
+      periods to a <span class="guilabel">GroundStation</span> utilizing a horizon mask
+      (either via the <span class="guilabel">GroundStation</span>
+      <span class="guilabel">HorizonMaskFileName</span> or sensor
+      <span class="guilabel">FieldOfView</span>), <span class="guilabel">StepSize</span> should
+      be sized to the resolution of the horizon mask. If the step size is too
+      large, GMAT may completely overstep some portions of the mask and view
+      periods may be incorrect or missing some events.</p><p>For third-body occultations, <span class="guilabel">StepSize</span> should
+      be set equal to the length of the minimum-duration event to be found, or
+      equal to the length of the minimum-duration gap between events,
+      whichever is smaller. To guarantee location of 10-second occultations,
+      set <span class="guilabel">StepSize</span> = 10.</p><p>If no third-body occultations are to be found, you can increase
+      performance of the search by increasing <span class="guilabel">StepSize</span>
+      per the notes above.</p><p>For details, see the reference documentation for the two functions
+      linked above.</p></div><div class="refsection"><a name="ContactLocator_ReportFormat"></a><h3>Report format</h3><p>When <span class="guilabel">WriteReport</span> is enabled,
+      <span class="guilabel">ContactLocator</span> outputs an event report at the end
+      of each search execution. There are three report templates. The Legacy
+      report contains the following data:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Target name</p></li><li class="listitem"><p>For each Observer:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>Observer name</p></li><li class="listitem"><p>For each event:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem"><p>Event start time (UTC)</p></li><li class="listitem"><p>Event stop time (UTC)</p></li><li class="listitem"><p>Duration (s)</p></li></ul></div></li><li class="listitem"><p>Total number of events</p></li></ul></div></li></ul></div><p>A sample report of the Legacy format is shown below.</p><pre class="programlisting">Target: DefaultSC
+
+Observer: GroundStation1
+Start Time (UTC)            Stop Time (UTC)               Duration (s)         
+01 Jan 2000 13:18:45.268    01 Jan 2000 13:29:54.824      669.55576907    
+01 Jan 2000 15:06:44.752    01 Jan 2000 15:18:22.762      698.01023654    
+
+
+Number of events : 2
+
+
+Observer: GroundStation2
+Start Time (UTC)            Stop Time (UTC)               Duration (s)         
+01 Jan 2000 13:36:13.792    01 Jan 2000 13:47:51.717      697.92488540    
+
+
+Number of events : 1</pre><p>The SiteViewMaxElevationReport report contains the following
+      data:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Target name</p></li><li class="listitem"><p>For each Observation:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>Observer name</p></li><li class="listitem"><p>For each event:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem"><p>Event start time (ReportTimeFormat)</p></li><li class="listitem"><p>Event stop time (ReportTimeFormat)</p></li><li class="listitem"><p>Duration (s)</p></li><li class="listitem"><p>Maximum Elevation (degrees)</p></li><li class="listitem"><p>Maximum Elevation Time (ReportTimeFormat)</p></li></ul></div></li></ul></div></li></ul></div><p>The SiteViewMaxElevationRangeReport report contains the following
+      data:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Target name</p></li><li class="listitem"><p>For each Observation:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>Observer name</p></li><li class="listitem"><p>For each event:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem"><p>Event start time (ReportTimeFormat)</p></li><li class="listitem"><p>Event stop time (ReportTimeFormat)</p></li><li class="listitem"><p>Duration (s)</p></li><li class="listitem"><p>Maximum Elevation (degrees)</p></li><li class="listitem"><p>Maximum Elevation Time (ReportTimeFormat)</p></li><li class="listitem"><p>Range at start time</p></li><li class="listitem"><p>Range at stop time</p></li></ul></div></li></ul></div></li></ul></div><p>The AzimuthRangeElevationReport report uses the IntervalStepSize
+      parameter to produce the following data:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Target name</p></li><li class="listitem"><p>For each Observation:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>The Pass number</p></li><li class="listitem"><p>Observer name</p></li><li class="listitem"><p>For Each Time Stamp</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem"><p>The Azimuth (degrees)</p></li><li class="listitem"><p>The elevation (degrees)</p></li><li class="listitem"><p>The Range (km)</p></li></ul></div></li></ul></div></li></ul></div><p>The ContactRangeReport report contains the following
+      data:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Target name</p></li><li class="listitem"><p>For each Observer:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>Observer name</p></li><li class="listitem"><p>For each event:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem"><p>Duration (s)</p></li><li class="listitem"><p>Event start time</p></li><li class="listitem"><p>Event stop time</p></li><li class="listitem"><p>Range at start time</p></li><li class="listitem"><p>Range at stop time</p></li></ul></div></li></ul></div></li></ul></div></div><div class="refsection"><a name="N17B7A"></a><h3>Event location with SPK propagator</h3><p>When using the SPK propagator, you load one or more SPK ephemeris
+      files using the
+      <span class="guilabel">Spacecraft</span>.<span class="guilabel">OrbitSpiceKernelName</span>
+      field. For the purposes of event location, this field causes the
+      appropriate ephemeris files to be loaded automatically on run, and so
+      use of the <span class="guilabel">Propagate</span> command is not necessary. This
+      is an easy way of performing event location on an existing SPK ephemeris
+      file. See the example below.</p></div></div><div class="refsection"><a name="N17B88"></a><h2>Examples</h2><div class="informalexample"><p>Perform a basic contact search in LEO:</p><pre class="programlisting"><code class="code">SolarSystem.EphemerisSource = 'DE421'
+
+Earth.EquatorialRadius = 6378.1366
+Earth.Flattening = 0.00335281310845547
+
+Create Spacecraft sat
+sat.DateFormat = UTCGregorian
+sat.Epoch = '15 Sep 2010 16:00:00.000'
+sat.CoordinateSystem = EarthMJ2000Eq
+sat.DisplayStateType = Keplerian
+sat.SMA = 6678.14
+sat.ECC = 0.001
+sat.INC = 0
+sat.RAAN = 0
+sat.AOP = 0
+sat.TA = 180
+
+Create ForceModel fm
+fm.CentralBody = Earth
+fm.PrimaryBodies = {Earth}
+fm.GravityField.Earth.PotentialFile = 'JGM2.cof'
+fm.GravityField.Earth.Degree = 0
+fm.GravityField.Earth.Order = 0
+fm.GravityField.Earth.TideModel = 'None'
+fm.Drag.AtmosphereModel = None
+fm.PointMasses = {}
+fm.RelativisticCorrection = Off
+fm.SRP = Off
+
+Create Propagator prop
+prop.FM = fm
+prop.Type = RungeKutta89
+
+Create GroundStation GS
+GS.CentralBody = Earth
+GS.StateType = Spherical
+GS.HorizonReference = Ellipsoid
+GS.Location1 = 0;
+GS.Location2 = 0;
+GS.Location3 = 0;
+
+Create ContactLocator cl
+cl.Target = sat
+cl.Observers = {GS}
+cl.Filename = 'Simple.report'
+
+BeginMissionSequence
+
+Propagate prop(sat) {sat.ElapsedSecs = 10800}</code></pre></div><div class="informalexample"><p>Perform a contact event search from an Earth ground station to a
+      Mars orbiter, with Phobos occultations:</p><pre class="programlisting"><code class="code">% Mars orbiter, 2 days, Mars and Phobos eclipses
+
+SolarSystem.EphemerisSource = 'SPICE'
+SolarSystem.SPKFilename = 'de421.bsp'
+
+Mars.OrbitSpiceKernelName = '../data/planetary_ephem/spk/mar063.bsp'
+
+Earth.EquatorialRadius = 6378.1366
+Earth.Flattening = 0.00335281310845547
+
+Create Spacecraft sat
+sat.DateFormat = UTCGregorian
+sat.Epoch = '11 Mar 2004 12:00:00.000'
+sat.CoordinateSystem = MarsMJ2000Eq
+sat.DisplayStateType = Cartesian
+sat.X = -1.436997966893255e+003
+sat.Y = 2.336077717512823e+003
+sat.Z = 2.477821416108639e+003
+sat.VX = -2.978497667195258e+000
+sat.VY = -1.638005864673213e+000
+sat.VZ = -1.836385137438366e-001
+
+Create ForceModel fm
+fm.CentralBody = Mars
+fm.PrimaryBodies = {Mars}
+fm.GravityField.Mars.PotentialFile = 'Mars50c.cof'
+fm.GravityField.Mars.Degree = 0
+fm.GravityField.Mars.Order = 0
+fm.Drag.AtmosphereModel = None
+fm.PointMasses = {}
+fm.RelativisticCorrection = Off
+fm.SRP = Off
+
+Create Propagator prop
+prop.FM = fm
+prop.Type = RungeKutta89
+
+Create Moon Phobos
+Phobos.CentralBody = 'Mars'
+Phobos.PosVelSource = 'SPICE'
+Phobos.NAIFId = 401
+Phobos.OrbitSpiceKernelName = {'mar063.bsp'}
+Phobos.SpiceFrameId = 'IAU_PHOBOS'
+Phobos.EquatorialRadius = 13.5
+Phobos.Flattening = 0.3185185185185186
+Phobos.Mu = 7.093399e-004
+
+Create Moon Deimos
+Deimos.CentralBody = 'Mars'
+Deimos.PosVelSource = 'SPICE'
+Deimos.NAIFId = 402
+Deimos.OrbitSpiceKernelName = {'mar063.bsp'}
+Deimos.SpiceFrameId = 'IAU_DEIMOS'
+Deimos.EquatorialRadius = 7.5
+Deimos.Flattening = 0.30666666666666664
+Deimos.Mu = 1.588174e-004
+
+Create CoordinateSystem MarsMJ2000Eq
+MarsMJ2000Eq.Origin = Mars
+MarsMJ2000Eq.Axes = MJ2000Eq
+
+Create GroundStation GS
+GS.CentralBody = Earth
+GS.StateType = Spherical
+GS.HorizonReference = Ellipsoid
+GS.Location1 = 36.3269
+GS.Location2 = 127.433
+GS.Location3 = 0.081
+
+Create ContactLocator cl
+cl.Target = sat
+cl.Observers = {GS}
+cl.OccultingBodies = {Sun, Mercury, Venus, Luna, Mars, Phobos, Deimos}
+cl.Filename = 'Martian.report'
+cl.StepSize = 5
+
+BeginMissionSequence
+
+Propagate prop(sat) {sat.ElapsedDays = 2}</code></pre></div><div class="informalexample"><p>Perform contact location on an existing SPK ephemeris file:</p><pre class="programlisting"><span class="emphasis"><em>SolarSystem.EphemerisSource = 'DE421'
+
+Earth.EquatorialRadius = 6378.1366
+Earth.Flattening = 0.00335281310845547
+
+Create Spacecraft sat
+sat.OrbitSpiceKernelName = {'../data/vehicle/ephem/spk/Events_Simple.bsp'}
+
+Create GroundStation GS
+GS.CentralBody = Earth
+GS.StateType = Spherical
+GS.HorizonReference = Ellipsoid
+GS.Location1 = 0
+GS.Location2 = 0
+GS.Location3 = 0
+
+Create ContactLocator cl
+cl.Target = sat
+cl.Observers = {GS}
+cl.Filename = 'SPKPropagation.report'
+
+BeginMissionSequence
+</em></span></pre></div><div class="informalexample"><p>Perform a contact search with a station mask in LEO:</p><pre class="programlisting"><code class="code">
+Create Spacecraft sat
+sat.DateFormat = UTCGregorian
+sat.Epoch = '15 Sep 2010 16:00:00.000'
+sat.CoordinateSystem = EarthMJ2000Eq
+sat.DisplayStateType = Keplerian
+sat.SMA = 6678.14
+sat.ECC = 0.001
+sat.INC = 0
+sat.RAAN = 0
+sat.AOP = 0
+sat.TA = 180
+
+Create ForceModel fm
+fm.CentralBody = Earth
+fm.PrimaryBodies = {Earth}
+fm.GravityField.Earth.PotentialFile = 'JGM2.cof'
+fm.GravityField.Earth.Degree = 0
+fm.GravityField.Earth.Order = 0
+fm.GravityField.Earth.TideModel = 'None'
+fm.Drag.AtmosphereModel = None
+fm.PointMasses = {}
+fm.RelativisticCorrection = Off
+fm.SRP = Off
+
+Create Propagator prop
+prop.FM = fm
+prop.Type = RungeKutta89
+
+Create CustomFOV ArrowFOV;
+ArrowFOV.Elevation = [ 75 75 82 75 75 82 75 ];
+ArrowFOV.Azimuth = [ 0 90 90.09999999999999 150 210 270 270.1 ];
+
+Create Antenna CustomAntenna;
+CustomAntenna.FieldOfView = ArrowFOV;
+CustomAntenna.DirectionX = 0;
+CustomAntenna.DirectionY = 0;
+CustomAntenna.DirectionZ = 1;
+
+Create GroundStation GS
+GS.CentralBody = Earth
+GS.StateType = Spherical
+GS.HorizonReference = Ellipsoid
+GS.Location1 = 0;
+GS.Location2 = 0;
+GS.Location3 = 0;
+GS.AddHardware = {CustomAntenna};
+
+Create ContactLocator cl
+cl.Target = sat
+cl.Observers = {GS}
+cl.Filename = 'Simple.report'
+
+BeginMissionSequence
+
+Propagate prop(sat) {sat.ElapsedSecs = 10800}</code></pre></div><div class="informalexample"><p>Perform a contact search with advanced reporting in LEO:</p><pre class="programlisting"><code class="code">
+Create Spacecraft sat
+sat.DateFormat = UTCGregorian
+sat.Epoch = '15 Sep 2010 16:00:00.000'
+sat.CoordinateSystem = EarthMJ2000Eq
+sat.DisplayStateType = Keplerian
+sat.SMA = 6678.14
+sat.ECC = 0.001
+sat.INC = 0
+sat.RAAN = 0
+sat.AOP = 0
+sat.TA = 180
+
+Create ForceModel fm
+fm.CentralBody = Earth
+fm.PrimaryBodies = {Earth}
+fm.GravityField.Earth.PotentialFile = 'JGM2.cof'
+fm.GravityField.Earth.Degree = 0
+fm.GravityField.Earth.Order = 0
+fm.GravityField.Earth.TideModel = 'None'
+fm.Drag.AtmosphereModel = None
+fm.PointMasses = {}
+fm.RelativisticCorrection = Off
+fm.SRP = Off
+
+Create Propagator prop
+prop.FM = fm
+prop.Type = RungeKutta89
+
+Create GroundStation GS
+GS.CentralBody = Earth
+GS.StateType = Spherical
+GS.HorizonReference = Ellipsoid
+GS.Location1 = 0;
+GS.Location2 = 0;
+GS.Location3 = 0;
+
+Create ContactLocator cl;
+cl.Target = sat;
+cl.Filename = 'Advanced.report';
+cl.Observers = {GS};
+cl.LeftJustified = false;
+cl.ReportPrecision = 6;
+cl.IntervalStepSize   = 60
+cl.ReportTimeFormat   = 'UTCGregorian'
+cl.ReportFormat = {'RangeAzimuthElevationReport'};
+
+BeginMissionSequence
+
+Propagate prop(sat) {sat.ElapsedSecs = 10800}</code></pre></div><div class="informalexample"><p>Perform a contact search with interval reporting in LEO:</p><pre class="programlisting"><code class="code">
+Create Spacecraft sat
+sat.DateFormat = UTCGregorian
+sat.Epoch = '15 Sep 2010 16:00:00.000'
+sat.CoordinateSystem = EarthMJ2000Eq
+sat.DisplayStateType = Keplerian
+sat.SMA = 6678.14
+sat.ECC = 0.001
+sat.INC = 0
+sat.RAAN = 0
+sat.AOP = 0
+sat.TA = 180
+
+Create ForceModel fm
+fm.CentralBody = Earth
+fm.PrimaryBodies = {Earth}
+fm.GravityField.Earth.PotentialFile = 'JGM2.cof'
+fm.GravityField.Earth.Degree = 0
+fm.GravityField.Earth.Order = 0
+fm.GravityField.Earth.TideModel = 'None'
+fm.Drag.AtmosphereModel = None
+fm.PointMasses = {}
+fm.RelativisticCorrection = Off
+fm.SRP = Off
+
+Create Propagator prop
+prop.FM = fm
+prop.Type = RungeKutta89
+
+Create GroundStation GS
+GS.CentralBody = Earth
+GS.StateType = Spherical
+GS.HorizonReference = Ellipsoid
+GS.Location1 = 0;
+GS.Location2 = 0;
+GS.Location3 = 0;
+
+Create ContactLocator cl;
+cl.Target = sat;
+cl.Filename = 'Interval.report';
+cl.Observers = {GS};
+cl.LightTimeDirection = Transmit;
+cl.LeftJustified = true;
+cl.ReportPrecision = 6;
+cl.IntervalStepSize   = 60
+cl.ReportTimeFormat   = 'UTCGregorian'
+cl.ReportFormat = 'RangeAzimuthElevationReport';
+
+
+BeginMissionSequence
+
+Propagate prop(sat) {sat.ElapsedSecs = 10800}</code></pre></div></div><div class="refsection"><a name="N17BAF"></a><h2>References</h2><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>SPICE Toolkit Documentation, <a class="link" href="https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/abcorr.html" target="_top">Aberration
+        Corrections Required Reading</a></p></li></ol></div></div></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="Thruster.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="ch18.html#N15B4D">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="CoordinateSystem.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">ChemicalThruster&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;CoordinateSystem</td></tr></table></div></body></html>

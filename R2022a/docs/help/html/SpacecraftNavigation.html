@@ -1,0 +1,128 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Spacecraft Navigation</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="ch21.html#N2714D" title="Resources"><link rel="prev" href="Smoother.html" title="Smoother"><link rel="next" href="TrackingFileSet.html" title="TrackingFileSet"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">Spacecraft Navigation</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="Smoother.html">Prev</a>&nbsp;</td><th align="center" width="60%">Resources</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="TrackingFileSet.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="SpacecraftNavigation"></a><div class="titlepage"></div><a name="N293C1" class="indexterm"></a><a name="N293C4" class="indexterm"></a><div class="refnamediv"><h2><span class="refentrytitle">Spacecraft Navigation</span></h2><p>Spacecraft Navigation &mdash; There are a number of <span class="guilabel">Spacecraft</span> fields
+    that are used exclusively to support GMAT's navigation (orbit
+    determination) capability.</p></div><div class="refsection"><a name="N293DA"></a><h2>Description</h2><p>When using GMAT's navigation (orbit determination) capabilities,
+    certain Spacecraft parameters can be estimated or "solved-for." As
+    discussed in the <a class="xref" href="SpacecraftBallisticMass.html" title="Spacecraft Ballistic/Mass Properties"><span class="refentrytitle">Spacecraft Ballistic/Mass Properties</span></a> section, the <span class="guilabel">Spacecraft</span>
+    ballistic and mass properties include the coefficient of reflectivity,
+    <span class="guilabel">Cr</span>, and the coefficient of drag,
+    <span class="guilabel">Cd</span>. As part of GMAT's navigation capability, GMAT can
+    ingest measurements and estimate ("solve-for") either the
+    <span class="guilabel">CartesianState</span>, or
+    <span class="guilabel">KeplerianState</span>, as well as any of a set of associated
+    force modeling parameters. See the <span class="guilabel">SolveFors</span>
+    parameter below for a full list of estimated parameters.</p><p><span class="ref_seealso">See Also</span>: <a class="xref" href="BatchEstimator.html" title="BatchEstimator"><span class="refentrytitle">BatchEstimator</span></a></p></div><div class="refsection"><a name="N293FC"></a><h2>Fields</h2><div class="informaltable"><table border="1"><colgroup><col width="25%"><col width="75%"></colgroup><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td><span class="guilabel">AddHardware</span><a name="N29415" class="indexterm"></a></td><td><p>List of <span class="guilabel">Antenna</span>,
+            <span class="guilabel">Transmitter</span>, <span class="guilabel">Receiver</span>,
+            and <span class="guilabel">Transponder</span> objects attached to a
+            <span class="guilabel">Spacecraft</span></p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p><span class="guilabel">Antenna</span>,
+                    <span class="guilabel">Transmitter</span>,
+                    <span class="guilabel">Receiver</span>, or
+                    <span class="guilabel">Transponder</span> object</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any user defined <span class="guilabel">Antenna</span>,
+                    <span class="guilabel">Transmitter</span>,
+                    <span class="guilabel">Receiver</span>, or
+                    <span class="guilabel">Transponder</span> object</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>None</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">AtmosDensityScaleFactorSigma</span><a name="N29469" class="indexterm"></a></td><td><p>Standard deviation of the atmospheric density scale
+            factor, <span class="guilabel">AtmosDensityScaleFactor</span>. For the
+            batch estimator, this field is only used if the
+            <span class="guilabel">UseInitialCovariance</span> field of the
+            <span class="guilabel">BatchEstimator</span> resource is set to True and
+            <span class="guilabel">AtmosDensityScaleFactor</span> is estimated.
+            </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real &gt; 0</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>1.0E+70</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>dimensionless</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">CdSigma</span><a name="N294A4" class="indexterm"></a></td><td><p>Standard deviation of the coefficient of drag,
+            <span class="guilabel">Cd</span>. For the batch estimator, this field is
+            only used if the <span class="guilabel">UseInitialCovariance</span> field
+            of the <span class="guilabel">BatchEstimator</span> resource is set to True
+            and <span class="guilabel">Cd</span> is estimated. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real &gt; 0</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>1.0E+70</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>dimensionless</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">CrSigma</span><a name="N294DF" class="indexterm"></a></td><td><p>Standard deviation of the coefficient of
+            reflectivity, <span class="guilabel">Cr</span>. For the batch estimator,
+            this field is only used if the
+            <span class="guilabel">UseInitialCovariance</span> field of the
+            <span class="guilabel">BatchEstimator</span> resource is set to True and
+            <span class="guilabel">Cr</span> is estimated. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real &gt; 0</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>1.0E+70</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>dimensionless</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">OrbitErrorCovariance</span><a name="N2951A" class="indexterm"></a></td><td><p>State 6x6 error covariance matrix. If
+            <span class="guilabel">CartesianState</span> is estimated, this must be a
+            Cartesian covariance. If <span class="guilabel">KeplerianState</span> is
+            estimated, this must be a Keplerian covariance. Regardless of
+            choice of spacecraft coordinate system, the covariance must be
+            specified in the EarthMJ2000Eq coordinate system.</p><p>For
+            the batch estimator, this field is only used if the
+            <span class="guilabel">UseInitialCovariance</span> of the
+            <span class="guilabel">BatchEstimator</span> resource is set to
+            True.</p><p>For the extended Kalman filter, this field sets
+            the spacecraft initial covariance in cold-start mode. This field
+            is ignored by the extended Kalman filter when running in
+            warm-start mode.</p><p>For the Propagate command, the
+            covariance may be specified in any coordinate system defined with
+            MJ2000Eq axes. This will contain the propagated Cartesian
+            covariance. The Covariance may be output in user defined
+            coordinate systems, including non-MJ2000Eq systems, using the
+            syntax <span class="bold"><strong>Spacecraft.CoordinateSystem.OrbitErrorCovariance</strong></span></p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real Matrix</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>6x6 positive definite symmetric
+                    <span class="guilabel">Array</span></p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set, get</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>6x6 diagonal matrix with 1e70 in all diagonal
+                    entries.</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>For Cartesian elements: covariance matrix where
+                    position is specified in km and velocity in km/s. (Thus,
+                    first three diagonal elements have units km^2 and last
+                    three diagonal elements have units (km/s)^2)</p><p>For Keplerian elements: covariance matrix in km and
+                    degrees (For example, the SMA element of the matrix has
+                    units km^2 and the INC element has units deg^2). The order
+                    of Keplerian elements is (SMA, ECC, INC, RAAN, AOP, MA).
+                    See the Remarks section for additional notes.</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ProcessNoiseModel</span><a name="N29562" class="indexterm"></a></td><td><p>An instance of
+            <span class="guilabel">ProcessNoiseModel</span>. This is used by an
+            <span class="guilabel">ExtendedKalmanFilter</span> and the
+            <code class="literal">Covariance</code> option of the <span class="bold"><strong>Propagate</strong></span> command to account for general
+            force modeling errors.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Resource</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any user defined
+                    <span class="guilabel">ProcessNoiseModel</span> resource</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>None</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">SolveFors</span><a name="N295A1" class="indexterm"></a></td><td><p>List of fields to be solved for. This list must at
+            least include either <span class="guilabel">CartesianState</span> or
+            <span class="guilabel">KeplerianState</span> (but not both). For example,
+            <span class="guilabel">Cr</span> cannot be the only parameter solved for.
+            </p><p>When using the batch estimator, it is not possible to
+            simultaneously estimate both <span class="guilabel">Cd</span> and
+            <span class="guilabel">AtmosDensityScaleFactor</span> since they are
+            linearly-dependent parameters. They may be simultaneously
+            estimated in the extended Kalman filter, by configuring them as
+            separate <span class="guilabel">EstimatedParameter</span>
+            resources.</p><p>Estimation of KeplerianElements is not
+            currently supported for the ExtendedKalmanFilter
+            estimator.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>StringArray</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>CartesianState, KeplerianState (BatchEstimator
+                    only), Cr, Cd, SPADDragScaleFactor, SPADSRPScaleFactor,
+                    AtmosDensityScaleFactor</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>None</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">SPADDragScaleFactorSigma</span><a name="N295E6" class="indexterm"></a></td><td><p>Standard deviation of the SPAD drag scale factor. For
+            the batch estimator, this field is only used if the
+            <span class="guilabel">UseInitialCovariance</span> field of the
+            <span class="guilabel">BatchEstimator</span> resource is set to True and
+            <span class="guilabel">SPADDragScaleFactor</span> is
+            estimated.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real &gt; 0</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>1.0E+70</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>dimensionless</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>Script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">SPADSRPScaleFactorSigma</span><a name="N2961E" class="indexterm"></a></td><td><p>Standard deviation of the SPAD SRP scale factor. For
+            the batch estimator, this field is only used if the
+            <span class="guilabel">UseInitialCovariance</span> field of the
+            <span class="guilabel">BatchEstimator</span> resource is set to True and
+            <span class="guilabel">SPADSRPScaleFactor</span> is
+            estimated.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real &gt; 0</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>1.0E+70</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>dimensionless</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>Script</p></td></tr></tbody></table></div></td></tr></tbody></table></div></div><div class="refsection"><a name="N29652"></a><h2>Remarks</h2><p>When estimating <span class="guilabel">CartesianState</span>, the input
+    <span class="guilabel">OrbitErrorCovariance</span> matrix must represent a
+    Cartesian covariance, and when estimating
+    <span class="guilabel">KeplerianState</span> the
+    <span class="guilabel">OrbitErrorCovariance</span> must represent a Keplerian
+    covariance. Note that Keplerian covariance input employs Mean Anomaly (MA)
+    instead of True Anomaly. The current release of GMAT only supports input
+    of Keplerian orbit elements using TA and does not permit explicitly
+    setting an initial MA. After estimation completes,
+    <span class="guilabel">OrbitErrorCovariance</span> is updated to the value of the
+    estimated covariance matrix.</p><p>For more details, see <a class="xref" href="BatchEstimator.html#BatchEstimator_UseInitialCovariance" title="UseInitialCovariance Restrictions">the section called &ldquo;UseInitialCovariance Restrictions&rdquo;</a> in the Batch Estimator
+    resource.</p></div><div class="refsection"><a name="N2966B"></a><h2>Examples</h2><div class="informalexample"><p>Solve for Cr and the spacecraft Cartesian state.</p><pre class="programlisting"><code class="code">Create Spacecraft Sat
+Create BatchEstimator bat
+Sat.SolveFors = {CartesianState, Cr}
+%User must create a TrackingFileSet
+%and set up bat appropriately
+
+BeginMissionSequence
+RunEstimator bat</code></pre></div><div class="informalexample"><p>Solve for Cd and the spacecraft Cartesian state assuming that the
+      <span class="emphasis"><em>a priori</em></span> information is included in the estimation
+      state vector.</p><pre class="programlisting"><code class="code">Create Spacecraft Sat
+Sat.SolveFors = {CartesianState, Cd}
+
+Create BatchEstimator bat
+bat.UseInitialCovariance= True  
+%User must create a TrackingFileSet
+%and set up bat appropriately
+
+Create Array Initial_6x6_covariance[6,6]
+
+BeginMissionSequence
+Initial_6x6_covariance = ...
+       diag([1e-6 1e70 1e70 1e70 1e70 1e70]) %X pos known very well
+Sat.OrbitErrorCovariance = Initial_6x6_covariance
+Sat.CrSigma = 1e-6   %Cr known very well
+
+RunEstimator bat</code></pre></div></div></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="Smoother.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="ch21.html#N2714D">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="TrackingFileSet.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">Smoother&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;TrackingFileSet</td></tr></table></div></body></html>

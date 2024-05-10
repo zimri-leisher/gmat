@@ -1,0 +1,383 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>PlanetographicRegion</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="ch18.html#N15B4D" title="Resources"><link rel="prev" href="NuclearPowerSystem.html" title="NuclearPowerSystem"><link rel="next" href="Plate.html" title="Plate"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">PlanetographicRegion</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="NuclearPowerSystem.html">Prev</a>&nbsp;</td><th align="center" width="60%">Resources</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="Plate.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="PlanetographicRegion"></a><div class="titlepage"></div><a name="N1AF17" class="indexterm"></a><div class="refnamediv"><h2><span class="refentrytitle">PlanetographicRegion</span></h2><p>PlanetographicRegion &mdash; Define an area on a celestial body's surface as a target for
+    an observing <span class="guilabel">Spacecraft</span></p></div><div class="refsection"><a name="N1AF2A"></a><h2>Description</h2><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p><span class="guilabel">PlanetographicRegion</span> is closely tied to the
+      <span class="bold"><strong>ContactLocator </strong></span>resource. It effectively
+      defines an area target that is then used as any other target in the
+      <span class="bold"><strong>ContactLocator</strong></span>.</p></div><p>A <span class="guilabel">PlanetographicRegion</span> is an area target on the
+    surface of a celestial body used to find a sub-satellite point crossing of
+    a <span class="guilabel">Spacecraft</span> into and out of the
+    <span class="guilabel">PlanetographicRegion</span>. The <span class="bold"><strong>PlanetographicRegion</strong></span> is defined by user-input
+    latitude and longitude pairs of points. By default, <span class="bold"><strong>PlanetographicRegion</strong></span> uses
+    <span class="guilabel">ContactLocator</span> to generate a text event report
+    listing the beginning and ending times of each crossing event, along with
+    the duration. Contact location can be performed over the entire
+    propagation interval or over a subinterval; unlike regular <span class="bold"><strong>ContactLocator</strong></span>, light-time delay and stellar
+    aberration are ignored. Another difference from standard contact location
+    is that <span class="bold"><strong>PlanetographicRegion</strong></span> uses the
+    sub-satellite point, so the elevation angle is 90 degrees by
+    design.</p><p>Contact location can be performed between one
+    <span class="guilabel">Spacecraft</span> (<span class="guilabel">Observer</span>) and one
+    <span class="guilabel">PlanetographicRegion</span> region
+    (<span class="guilabel">Target</span>). More than one target-observer pair may be
+    included in a run using multiple <span class="guilabel">ContactLocator</span>
+    resources.</p><p>By default, the <span class="guilabel">PlanetographicRegion</span> searches
+    the entire interval of propagation of the <span class="guilabel">Observer</span>;
+    see <a class="link" href="PlanetographicRegion.html#PlanetographicRegion_SearchInterval" title="Search interval">Remarks</a> for
+    details. To search a custom interval, as with standard <span class="bold"><strong>ContactLocator</strong></span>, set
+    <span class="guilabel">UseEntireInterval</span> to <code class="literal">False</code> and set
+    <span class="guilabel">InitialEpoch</span> and <span class="guilabel">FinalEpoch</span>
+    accordingly. Note that if these epochs fall outside the propagation
+    interval of the <span class="guilabel">Observer</span>, GMAT will display an
+    error.</p><p>Unlike the standard ContactLocator, the <span class="bold"><strong>PlanetographicRegion</strong></span> ignores both light-time delay
+    and stellar aberration. The switches may be set either to
+    <code class="literal">True</code> or <code class="literal">False</code>, though each
+    combination will result in the same output intervals. (While irrelevant to
+    <span class="bold"><strong>PlanetographicRegion</strong></span>, GMAT will throw an
+    error if the stellar aberration is <code class="literal">True</code> when the
+    light-time correction is <code class="literal">False</code>.) This behavior was
+    chosen to makes the results consistent with using the sub-satellite point
+    in the calculation of the crossing times.</p><p>The event search is performed at a fixed step through the interval.
+    You can control the step size (in seconds) by setting the
+    <span class="guilabel">StepSize</span> field. For crossing complicated regions (e.g
+    with densely packed latitude/longitude <span class="bold"><strong>PlanetographicRegion</strong></span> definition points), or grazing
+    "sharp" target areas, it may be useful to reduce the step size; otherwise,
+    the algorithm may "step over" the feature, leading to a false positive or
+    false negative entry/exit for the region. See <a class="link" href="PlanetographicRegion.html#PlanetographicRegion_SearchAlgorithm" title="Search algorithm">Remarks</a> for
+    details.</p><p>GMAT uses the SPICE library for the fundamental event location
+    algorithm. As such, all celestial body data is loaded from SPICE kernels
+    for this subsystem, rather than GMAT's own
+    <span class="guilabel">CelestialBody</span> shape and orientation configuration.
+    Currently <span class="bold"><strong>PlanetographicRegion</strong></span> only
+    supports Earth as a <span class="bold"><strong>CentralBody</strong></span>; other
+    choices will cause GMAT to throw an error.</p><p>Unless otherwise mentioned, <span class="guilabel">ContactLocator</span>
+    fields cannot be set in the mission sequence.</p><p><span class="ref_seealso">See Also</span>: <a class="xref" href="ContactLocator.html" title="ContactLocator"><span class="refentrytitle">ContactLocator</span></a>, <a class="xref" href="Spacecraft.html" title="Spacecraft"><span class="refentrytitle">Spacecraft</span></a>, <a class="xref" href="CelestialBody.html" title="CelestialBody"><span class="refentrytitle">CelestialBody</span></a>, <a class="xref" href="FindEvents.html" title="FindEvents"><span class="refentrytitle">FindEvents</span></a></p></div><div class="refsection"><a name="N1AFCD"></a><h2>Fields</h2><div class="informaltable"><table border="1"><colgroup><col width="25%"><col width="75%"></colgroup><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td><span class="guilabel">AreaFileName</span></td><td><p>Name and path of the definition file for the region.
+            File can contain comments at the top, then has pairs of latitude
+            and longitude points. See below for a sample. For a specific
+            region, use this file to define the area OR the latitude/longitude
+            arrays described below. Using both for the same region will cause
+            GMAT to throw an error.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>String</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Valid file path</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="filename">None</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">CentralBody</span></td><td><p>Body on which the region is defined. Currently only
+            Earth is implemented.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>String</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Only "<code class="literal">Earth</code>"</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="filename">"Earth"</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">Latitude</span></td><td><p>Array of latitude points defining the region. Must
+            have a corresponding <span class="bold"><strong>Longitude</strong></span>
+            array with the same number of elements.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Array of real values, separated by commas.</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>-90 to 90</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="filename">None</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>Degrees</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">Longitude</span></td><td><p>Array of longitude points defining the region. Must
+            have a corresponding <span class="bold"><strong>Latitude</strong></span>
+            array with the same number of elements. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Array of real values, separated by commas.</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>-180 to 180 OR 0 to 360 (cannot mix both in one
+                    array)</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><code class="filename">None</code></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>Degrees</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td>&nbsp;</td><td class="auto-generated">&nbsp;</td></tr></tbody></table></div></div><div class="refsection"><a name="PlanetographicRegion_Remarks"></a><h2>Remarks</h2><div class="refsection"><a name="PlanetographicRegion_SearchInterval"></a><h3>Search interval</h3><p>For a <span class="bold"><strong>PlanetographicRegion</strong></span>, the
+      <span class="guilabel">ContactLocator</span> search interval can be specified
+      either as the entire ephemeris interval of the
+      <span class="guilabel">Observers</span>, or as a user-defined interval. Each mode
+      offers specific behavior related to handling of discontinuous
+      intervals.</p><p>If <span class="guilabel">UseEntireInterval</span> is true, the search is
+      performed over the entire ephemeris interval of the
+      <span class="guilabel">Observers</span>, including any gaps or discontinuities.
+      For <span class="bold"><strong>PlanetographicRegion</strong></span> light-time
+      delay is ignored.</p><p>If <span class="guilabel">UseEntireInterval</span> is false, the provided
+      <span class="guilabel">InitialEpoch</span> and <span class="guilabel">FinalEpoch</span>
+      are used to form the search interval directly. The user must ensure than
+      the provided interval results in valid <span class="guilabel">Observers</span>
+      ephemeris epochs.</p></div><div class="refsection"><a name="PlanetographicRegion_RunModes"></a><h3>Run modes</h3><p>For run modes, the <span class="bold"><strong>PlanetographicRegion</strong></span> feature uses the
+      <span class="guilabel">ContactLocator</span> function which works in conjunction
+      with the <span class="guilabel">FindEvents</span> command: the
+      <span class="guilabel">ContactLocator</span> resource defines the configuration
+      of the event search, and the <span class="guilabel">FindEvents</span> command
+      executes the search at a specific point in the mission sequence. The
+      mode of interaction is defined by
+      <span class="guilabel">ContactLocator</span>.<span class="guilabel">RunMode</span>, which
+      has three options:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">Automatic</code>: All
+            <span class="guilabel">FindEvents</span> commands are executed as-is, plus
+            an additional <span class="guilabel">FindEvents</span> is executed
+            automatically at the end of the mission sequence.</p></li><li class="listitem"><p><code class="literal">Manual</code>: All
+            <span class="guilabel">FindEvents</span> commands are executed
+            as-is.</p></li><li class="listitem"><p><code class="literal">Disabled</code>: <span class="guilabel">FindEvents</span>
+            commands are ignored.</p></li></ul></div></div><div class="refsection"><a name="PlanetographicRegion_SearchAlgorithm"></a><h3>Search algorithm</h3><p>The <span class="guilabel">PlanetographicRegion</span> algorithm makes a
+      line segment from the sub-satellite point (at the specified time
+      interval) to a point that's definitely outside of the celestial body. If
+      it intersects an odd number of line segments (often one), then the point
+      is considered to be <span class="emphasis"><em>within</em></span> the polygon; likewise,
+      if it encounters an even number (usually zero), then the sub-satellite
+      point is considered to be <span class="emphasis"><em>outside</em></span> of the region.
+      When a change (inside-to-outside, or outside-to-inside) occurs, then
+      GMAT will determine <span class="emphasis"><em>when</em></span> the change
+      occurred.</p><p>It is important to note that if the beginning epoch has the
+      sub-satellite point within the region, then it will list this as the
+      entering of the region even if it isn't close to the boundary; likewise,
+      if the epoch ends with the sub-satellite point within the region, it
+      will list the epoch end-time as the final point of leaving the
+      region.</p><p>It is also important to note that if the sub-satellite point
+      crosses two or more times between checks (due to a long interval), it
+      may either not register the crossing (in the case of an even number of
+      crossings), or not find all of the crossings (in the case of odd numbers
+      three and above). In these cases, the <span class="bold"><strong>StepSize
+      </strong></span>parameter can be reduced to catch the finer details. For an
+      example of this, see "Reducing Step Size for a Region with sharp
+      Vertices" below.</p><p>In contrast, unnecessarily detailed regions or excessively small
+      time intervals may cause performance issues. So there can be a trade
+      off, e.g. if no area target is complex, you can increase performance of
+      the search by increasing <span class="guilabel">StepSize</span>.</p></div></div><div class="refsection"><a name="N1B128"></a><h2>Examples</h2><div class="informalexample"><p>Set up a basic <span class="bold"><strong>PlanetographicRegion</strong></span> with a LEO
+      spacecraft:</p><pre class="programlisting"><code class="code">Create Spacecraft Fermi
+
+Fermi.DateFormat                   = UTCGregorian;
+Fermi.Epoch                        = '16 Mar 2010 00:00:00.000';
+Fermi.CoordinateSystem             = EarthMJ2000Eq;
+Fermi.DisplayStateType             = Cartesian;
+Fermi.X                            = 1861.715588    
+Fermi.Y                            = -6097.672271    
+Fermi.Z                            = -2687.893642       
+Fermi.VX                           = 7.278672       
+Fermi.VY                           = 1.600198       
+Fermi.VZ                           = 1.424786
+Fermi.DryMass                      = 4357.33
+Fermi.Cd                           = 2.1
+Fermi.CdSigma                      = 0.21
+Fermi.AtmosDensityScaleFactor      = 1.0;
+Fermi.AtmosDensityScaleFactorSigma = 1.0;
+Fermi.Cr                           = 0.75
+Fermi.CrSigma                      = 0.1
+Fermi.DragArea                     = 14.18
+Fermi.SRPArea                      = 14.18
+Fermi.Id                           = 'Fermi'
+
+Create ForceModel FM
+
+FM.CentralBody            = Earth
+FM.PointMasses            = {Earth}
+FM.RelativisticCorrection = Off
+FM.SRP                    = Off
+FM.ErrorControl           = None
+
+Create Propagator Prop
+
+Prop.FM   = FM
+Prop.Type = RungeKutta89
+
+Create PlanetographicRegion SAA
+SAA.CentralBody = Earth
+SAA.Latitude  = [ 20,  20, -20, -20]
+SAA.Longitude = [ 20, -20, -20,  20]
+
+Create ContactLocator CL
+CL.Observers = {Fermi}
+CL.Target    = SAA
+CL.Filename  = 'Contacts_PlanetoRegion_Square.txt'
+
+BeginMissionSequence
+
+Propagate Prop(Fermi) {Fermi.ElapsedDays = 1.0}</code></pre></div><div class="informalexample"><p>Input a <span class="bold"><strong>PlanetographicRegion</strong></span> via
+      a file for a LEO spacecraft:</p><pre class="programlisting"><code class="code">%
+Create Spacecraft Fermi
+
+Fermi.DateFormat                   = UTCGregorian;
+Fermi.Epoch                        = '16 Mar 2010 00:00:00.000';
+Fermi.CoordinateSystem             = EarthMJ2000Eq;
+Fermi.DisplayStateType             = Cartesian;
+Fermi.X                            = 1861.715588    
+Fermi.Y                            = -6097.672271    
+Fermi.Z                            = -2687.893642       
+Fermi.VX                           = 7.278672       
+Fermi.VY                           = 1.600198       
+Fermi.VZ                           = 1.424786
+Fermi.DryMass                      = 4357.33
+Fermi.Cd                           = 2.1
+Fermi.CdSigma                      = 0.21
+Fermi.AtmosDensityScaleFactor      = 1.0;
+Fermi.AtmosDensityScaleFactorSigma = 1.0;
+Fermi.Cr                           = 0.75
+Fermi.CrSigma                      = 0.1
+Fermi.DragArea                     = 14.18
+Fermi.SRPArea                      = 14.18
+Fermi.Id                           = 'Fermi'
+
+Create ForceModel FM
+
+FM.CentralBody            = Earth
+FM.PointMasses            = {Earth}
+FM.RelativisticCorrection = Off
+FM.SRP                    = Off
+FM.ErrorControl           = None
+
+Create Propagator Prop
+
+Prop.FM   = FM
+Prop.Type = RungeKutta89
+
+Create PlanetographicRegion SAA
+SAA.CentralBody = Earth
+SAA.AreaFileName = (optional directory path\)PlanetoRegion_Sample.AT
+
+Create ContactLocator CL
+CL.Observers = {Fermi}
+CL.Target    = SAA
+CL.Filename  = 'Contacts_PlanetoRegion_Sample_FileInput.txt'
+
+BeginMissionSequence
+
+Propagate Prop(Fermi) {Fermi.ElapsedDays = 1.0}</code></pre></div><div class="informalexample"><p>Sample <span class="bold"><strong>PlanetographicRegion</strong></span> area
+      input file (for above example):</p><pre class="programlisting">PlanetographicRegion
+% First line is required to be the above keyword
+% comment lines indicated by the percent sign
+% any number of comment lines allowed between header and data lines
+% blank lines are allowed in the header
+% Windows or Linux line endings are allowed
+% this file implements the same simple square which is 
+%    implemented in arrays in the above sample
+% each row is a Lat/Long pair: 
+%    first column is Latitude, second is Longitude
+% no intrinsic limit on the number of rows; has been tested to 1200
+% last row <span class="bold"><strong>does not</strong></span> have to repeat first row
+
+ 20    20 
+ 20   -20 
+-20   -20 
+-20    20 </pre></div><div class="informalexample"><p>Using Multiple <span class="bold"><strong>PlanetographicRegion</strong></span> areas in a single run (input
+      areas can be any combination of files and arrays):</p><pre class="programlisting"><code class="code">Create Spacecraft Fermi
+Fermi.DateFormat                   = UTCGregorian;
+Fermi.Epoch                        = '16 Mar 2010 00:00:00.000';
+Fermi.CoordinateSystem             = EarthMJ2000Eq;
+Fermi.DisplayStateType             = Cartesian;
+Fermi.X                            = 1861.715588    
+Fermi.Y                            = -6097.672271    
+Fermi.Z                            = -2687.893642       
+Fermi.VX                           = 7.278672       
+Fermi.VY                           = 1.600198       
+Fermi.VZ                           = 1.424786
+Fermi.DryMass                      = 4357.33
+Fermi.Cd                           = 2.1
+Fermi.CdSigma                      = 0.21
+Fermi.AtmosDensityScaleFactor      = 1.0;
+Fermi.AtmosDensityScaleFactorSigma = 1.0;
+Fermi.Cr                           = 0.75
+Fermi.CrSigma                      = 0.1
+Fermi.DragArea                     = 14.18
+Fermi.SRPArea                      = 14.18
+Fermi.Id                           = 'Fermi'
+
+Create ForceModel FM
+FM.CentralBody            = Earth
+FM.PointMasses            = {Earth}
+FM.RelativisticCorrection = Off
+FM.SRP                    = Off
+FM.ErrorControl           = None
+
+Create Propagator Prop
+Prop.FM   = FM
+Prop.Type = RungeKutta89
+
+Create PlanetographicRegion LAT_SAA
+Create PlanetographicRegion GBM_SAA
+
+LAT_SAA.CentralBody = Earth
+LAT_SAA.Latitude  = [ 20,  20, -20, -20]
+LAT_SAA.Longitude = [ 20, -20, -20,  20]
+
+GBM_SAA.CentralBody = Earth
+GBM_SAA.Latitude  = [9.515, 11.0, -7.0, -9.0]
+GBM_SAA.Longitude = [-170.0, 168.0, 178.0, -175.0]
+
+Create ContactLocator CL1
+CL1.Observers = {Fermi}
+CL1.Target    = LAT_SAA
+CL1.Filename  = 'Contacts_PlanetoRegion_FermiMultiArea_LAT.txt'
+
+Create ContactLocator CL2
+CL2.Observers = {Fermi}
+CL2.Target    = GBM_SAA
+CL2.Filename  = 'Contacts_PlanetoRegion_FermiMultiArea2_GBM.txt'
+
+BeginMissionSequence
+
+Propagate Prop(Fermi) {Fermi.ElapsedDays = 1.0}</code></pre></div><div class="informalexample"><p>Reducing Step Size for a Region with sharp Vertices:</p><pre class="programlisting"><code class="code">%   South Polar Region Area target with EOS-like sun-sync satellite
+Create Spacecraft EOS
+EOS.DateFormat                   = UTCGregorian;
+EOS.Epoch                        = '16 Mar 2010 00:00:00.000';
+EOS.CoordinateSystem             = EarthMJ2000Eq;
+EOS.DisplayStateType             = Cartesian;
+EOS.X                            = 257.38045993527360   
+EOS.Y                            = 948.52767071254202
+EOS.Z                            = -6869.1766527867969
+EOS.VX                           = 6.1343425407376108   
+EOS.VY                           = -4.4346302750983723      
+EOS.VZ                           = -0.38250721354048136
+EOS.DryMass                      = 4357.33
+EOS.Cd                           = 2.1
+EOS.CdSigma                      = 0.21
+EOS.AtmosDensityScaleFactor      = 1.0;
+EOS.AtmosDensityScaleFactorSigma = 1.0;
+EOS.Cr                           = 0.75
+EOS.CrSigma                      = 0.1
+EOS.DragArea                     = 14.18
+EOS.SRPArea                      = 14.18
+EOS.Id                           = 'EOS'
+
+Create ForceModel FM
+FM.CentralBody            = Earth
+FM.PointMasses            = {Earth}
+FM.RelativisticCorrection = Off
+FM.SRP                    = Off
+FM.ErrorControl           = None
+
+Create Propagator Prop
+Prop.FM   = FM
+Prop.Type = RungeKutta89
+
+Create PlanetographicRegion SAA
+SAA.CentralBody = Earth
+SAA.Latitude  = [-70.0, -80.0, -85.0, -85.0, -70.0, -75.0]
+SAA.Longitude = [20.0,   80.0,   0.0,  220.0, 320.0, 359.0]
+
+Create ContactLocator CL
+CL.StepSize = 1.0
+CL.Observers = {EOS}
+CL.Target    = SAA
+CL.Filename  = 'Contacts_PlanetoRegion_EOSsouthPolarArea.txt'
+
+BeginMissionSequence
+
+Propagate Prop(EOS) {EOS.ElapsedDays = 1.0}</code></pre></div><div class="informalexample"><p>Generate report over only part of the <span class="bold"><strong>Observers</strong></span> Orbit:</p><pre class="programlisting"><code class="code">Create Spacecraft Fermi
+Fermi.DateFormat                   = UTCGregorian;
+Fermi.Epoch                        = '16 Mar 2010 00:00:00.000';
+Fermi.CoordinateSystem             = EarthMJ2000Eq;
+Fermi.DisplayStateType             = Cartesian;
+Fermi.X                            = 1861.715588    
+Fermi.Y                            = -6097.672271    
+Fermi.Z                            = -2687.893642       
+Fermi.VX                           = 7.278672       
+Fermi.VY                           = 1.600198       
+Fermi.VZ                           = 1.424786
+Fermi.DryMass                      = 4357.33
+Fermi.Cd                           = 2.1
+Fermi.CdSigma                      = 0.21
+Fermi.AtmosDensityScaleFactor      = 1.0;
+Fermi.AtmosDensityScaleFactorSigma = 1.0;
+Fermi.Cr                           = 0.75
+Fermi.CrSigma                      = 0.1
+Fermi.DragArea                     = 14.18
+Fermi.SRPArea                      = 14.18
+Fermi.Id                           = 'Fermi'
+
+Create ForceModel FM
+FM.CentralBody            = Earth
+FM.PointMasses            = {Earth}
+FM.RelativisticCorrection = Off
+FM.SRP                    = Off
+FM.ErrorControl           = None
+
+Create Propagator Prop
+Prop.FM   = FM
+Prop.Type = RungeKutta89
+
+Create PlanetographicRegion SAA
+SAA.CentralBody = Earth
+SAA.Latitude  = [ 20,  20, -20, -20]
+SAA.Longitude = [ 20, -20, -20,  20]
+
+Create ContactLocator CL
+CL.Observers = {Fermi}
+CL.Target    = SAA
+CL.Filename  = 'Contacts_PlanetoRegion_DelayStartTime.txt'
+
+CL.UseEntireInterval = false
+CL.InputEpochFormat = UTCGregorian;
+CL.InitialEpoch     = '16 Mar 2010 04:30:00.000';
+CL.FinalEpoch       = '17 Mar 2010 00:00:00.000';
+
+BeginMissionSequence
+
+Propagate Prop(Fermi) {Fermi.ElapsedDays = 1.0}</code></pre></div></div></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="NuclearPowerSystem.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="ch18.html#N15B4D">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="Plate.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">NuclearPowerSystem&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;Plate</td></tr></table></div></body></html>

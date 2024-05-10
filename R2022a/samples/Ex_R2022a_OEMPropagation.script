@@ -1,0 +1,48 @@
+
+%
+%   Ex_R2022a_OEMPropagation
+%
+%   Use a precomputed CCSDS OEM Ephemeris file for orbit visualization and 
+%   reporting.
+%
+
+Create Spacecraft EphSat;
+
+EphSat.EphemerisName = '../data/vehicle/ephem/ccsds/SampleOEMEphem.oem';
+
+%
+%   Propagator
+%
+
+Create Propagator EphProp;
+
+EphProp.Type     = 'CCSDS-OEM';
+EphProp.StepSize = 60
+
+%
+%   Output 
+%
+
+Create OpenFramesInterface OF;
+OF.Add = {EphSat, Earth};
+
+Create GroundTrackPlot GroundTrack;
+GroundTrack.Add = {EphSat};
+
+Create ReportFile KeplerianElements
+
+KeplerianElements.Filename = 'KeplerianElements.txt'
+KeplerianElements.Add      = {EphSat.UTCGregorian, ...
+    EphSat.SMA, EphSat.ECC, EphSat.INC, EphSat.RAAN, EphSat.AOP, EphSat.TA}
+	 
+%
+%   Mission Sequence
+%
+
+BeginMissionSequence
+
+While EphSat.ElapsedDays <= 2
+      
+   Propagate EphProp(EphSat);
+
+EndWhile;

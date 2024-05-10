@@ -1,0 +1,146 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Create and configure the spacecraft, spacecraft hardware, and related parameters</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="Tut_Simulate_and_Estimate_Inter_Spacecraft_DSN_Range_and_Doppler_Data.html" title="Chapter&nbsp;16.&nbsp;Simulate and Estimate Inter-Spacecraft Measurements"><link rel="prev" href="Tut_Simulate_and_Estimate_Inter_Spacecraft_DSN_Range_and_Doppler_Data.html" title="Chapter&nbsp;16.&nbsp;Simulate and Estimate Inter-Spacecraft Measurements"><link rel="next" href="Define_the_types_of_measurements_to_be_simulated_and_their_associated_Error_models.html" title="Define the types of measurements to be simulated and their associated Error models"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">Create and configure the spacecraft, spacecraft hardware, and
+    related parameters</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="Tut_Simulate_and_Estimate_Inter_Spacecraft_DSN_Range_and_Doppler_Data.html">Prev</a>&nbsp;</td><th align="center" width="60%">Chapter&nbsp;16.&nbsp;Simulate and Estimate Inter-Spacecraft Measurements</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="Define_the_types_of_measurements_to_be_simulated_and_their_associated_Error_models.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="Create_and_configure_the_spacecraft_spacecraft_hardware_and_related_parameters"></a>Create and configure the spacecraft, spacecraft hardware, and
+    related parameters</h2></div></div></div><p>For this tutorial, you will need GMAT open, with a new empty script
+    open. To create a new script, click <span class="guibutton">New Script</span>,
+    (<span class="inlinemediaobject"><img src="../files/images/icons/NewScript.png" align="middle" height="11"></span>)</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="N1565D"></a>Create
+      the simulation satellites, set their epoch and Cartesian
+      coordinates</h3></div></div></div><p>First, we create a new spacecraft for simulation,
+      <span class="guilabel">SimSat</span> and <span class="guilabel">SimMeasureSat</span>, and
+      set their epoch and Cartesian coordinates.</p><pre class="programlisting">%
+%   Simulated Spacecraft
+%
+
+Create Spacecraft SimSat;
+
+SimSat.DateFormat          = UTCGregorian;
+SimSat.Epoch               = '10 Jun 2010 00:00:00.000';
+SimSat.CoordinateSystem    = EarthMJ2000Eq;
+SimSat.DisplayStateType    = Cartesian;
+SimSat.X                   =   576.86955
+SimSat.Y                   = -5701.14276
+SimSat.Z                   = -4170.59369
+SimSat.VX                  = -1.76450794
+SimSat.VY                  =  4.18128798
+SimSat.VZ                  = -5.96578986
+SimSat.Id                  = 'ObservedSat';
+
+Create Spacecraft SimMeasureSat;
+
+SimMeasureSat.DateFormat          = UTCGregorian;
+SimMeasureSat.Epoch               = '10 Jun 2010 00:00:00.000';
+SimMeasureSat.CoordinateSystem    = EarthMJ2000Eq;
+SimMeasureSat.DisplayStateType    = Cartesian;
+SimMeasureSat.X                   =   469.90796
+SimMeasureSat.Y                   = -5438.94786
+SimMeasureSat.Z                   = -4519.89814	
+SimMeasureSat.VX                  = -1.79968026
+SimMeasureSat.VY                  =  4.55560101
+SimMeasureSat.VZ                  = -5.67378491
+SimMeasureSat.Id                  = 'MeasureSat';</pre><p>Note that, in addition to setting <span class="guilabel">Sat&rsquo;s</span>
+      coordinates, we also assigned it an ID. This is the label that will be
+      written to the GMAT Measurement Data (GMD) file that we will discuss
+      later.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="N15670"></a>Create
+      the estimation satellites, set their epoch and Cartesian
+      coordinates</h3></div></div></div><p>Next, we create new spacecraft for the estimation,
+      <span class="guilabel">EstSat</span> and <span class="guilabel">EstMeasureSat</span>, and
+      set their epoch and Cartesian coordinates.</p><pre class="programlisting">%
+%   Estimator Spacecraft
+%
+
+Create Spacecraft EstSat;
+
+EstSat.DateFormat          = UTCGregorian;
+EstSat.Epoch               = '10 Jun 2010 00:00:00.000';
+EstSat.CoordinateSystem    = EarthMJ2000Eq;
+EstSat.DisplayStateType    = Cartesian;
+EstSat.X                   = 576.87
+EstSat.Y                   = -5701.14
+EstSat.Z                   = -4170.59
+EstSat.VX                  = -1.764508
+EstSat.VY                  = 4.181288
+EstSat.VZ                  = -5.965790
+EstSat.Id                  = 'ObservedSat';
+EstSat.AddHardware         = {Transponder1, SpacecraftAntenna};
+EstSat.SolveFors           = {CartesianState};    
+
+
+Create Spacecraft EstMeasureSat;
+
+EstMeasureSat.DateFormat          = UTCGregorian;
+EstMeasureSat.Epoch               = '10 Jun 2010 00:00:00.000';
+EstMeasureSat.CoordinateSystem    = EarthMJ2000Eq;
+EstMeasureSat.DisplayStateType    = Cartesian;
+EstMeasureSat.X                   =   469.90796
+EstMeasureSat.Y                   = -5438.94786
+EstMeasureSat.Z                   = -4519.89814
+EstMeasureSat.VX                  = -1.79968026
+EstMeasureSat.VY                  =  4.55560101
+EstMeasureSat.VZ                  = -5.67378491
+EstMeasureSat.Id                  = 'MeasureSat';
+EstMeasureSat.NAIFId              = 78;</pre><p>Note that in this example we are assuming that the location of the
+      MeasurementSat has been determined already, either through estimation
+      from GroundStation measurement or otherwise. As such the coordinates for
+      the<span class="guilabel"> SimMeasureSat </span>and the
+      <span class="guilabel">EstMeasureSat</span> the exact same.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="N15686"></a>Create
+      a Transponder object and attach it to the spacecraft</h3></div></div></div><p>To simulate navigation measurements for a given spacecraft, GMAT
+      requires that a <span class="guilabel">Transponder</span> object, which receives
+      the uplink signal and re-transmits it, be attached to the spacecraft.
+      Below, we create the <span class="guilabel">Transponder</span> object and attach
+      it to our spacecraft. After we create the
+      <span class="guilabel">Transponder</span> object, there are three fields,
+      <span class="guilabel">PrimaryAntenna</span>, <span class="guilabel">HardwareDelay</span>,
+      and <span class="guilabel">TurnAroundRatio</span> that must be set.</p><pre class="programlisting">%
+%   Spacecraft hardware
+%
+
+Create Antenna SpacecraftAntenna;
+Create Transponder HGA;
+
+HGA.PrimaryAntenna  = SpacecraftAntenna;
+HGA.HardwareDelay   = 1e-06;
+HGA.TurnAroundRatio = '880/749' 
+
+
+SimSat.AddHardware         = {HGA,SpacecraftAntenna};
+EstSat.AddHardware         = {HGA,SpacecraftAntenna};
+</pre><p>The <span class="guilabel">PrimaryAntenna</span> is the antenna that the
+      spacecraft transponder, <span class="guilabel">SatTransponder</span>, uses to
+      receive and retransmit RF signals. In the example above, we set this
+      field to <span class="guilabel">HGA</span> which is an
+      <span class="guilabel">Antenna</span> object we have created. Currently the
+      <span class="guilabel">Antenna</span> resource has no function but in a future
+      release, it may have a function. <span class="guilabel">HardwareDelay</span>, the
+      transponder signal delay in seconds, is set to one micro-second. We set
+      <span class="guilabel">TurnAroundRatio</span>, which is the ratio of the
+      retransmitted to the input signal, to '880/749.' See the
+      <span class="guilabel">FRC-21_RunSimulator </span>Help and <span class="emphasis"><em><a class="xref" href="Appendix_A_Determination_of_Measurement_Noise_Values.html" title="Appendix A &ndash; Determination of Measurement Noise Values">Appendix A &ndash; Determination of Measurement Noise Values</a></em></span> for a discussion on how GMAT uses
+      this input field. As described in the Help, if our DSN data does not use
+      a ramp table, this turn around ratio is used directly to calculate the
+      Doppler measurements.</p><p>Note that in the last script commands above, we attach our newly
+      created <span class="guilabel">Transponder</span> and its related
+      <span class="guilabel">Antenna</span> object to each of the observed
+      spacecraft.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="Create_a_Receiver_object_and_attach_it_to_the_measurement_spacecraft"></a>Create
+      a Receiver object and attach it to the measurement spacecraft</h3></div></div></div><p>To perform measurements with a given spacecraft, GMAT requires
+      that a <span class="guilabel">Transmitter</span> and a
+      <span class="guilabel">Receiver</span> object, which send and receive the uplink
+      and downlink signals, be attached to the spacecraft. Below, we create
+      the objects and attach them to our spacecraft.</p><pre class="programlisting">%
+%   Measurement Spacecraft hardware
+%
+
+Create Transmitter MeasurementTransmitter;
+Create Receiver MeasurementReceiver;
+
+MeasurementTransmitter.PrimaryAntenna = SpacecraftAntenna;
+MeasurementTransmitter.Frequency      = 7200;
+MeasurementReceiver.PrimaryAntenna = SpacecraftAntenna;
+
+
+SimMeasureSat.AddHardware         = {HGA,SpacecraftAntenna,MeasurementTransmitter, MeasurementReceiver};
+EstMeasureSat.AddHardware         = {HGA,SpacecraftAntenna,MeasurementTransmitter, MeasurementReceiver};
+</pre><p>We set <span class="guilabel">Frequency</span>, which is the frequency of
+      the uplink signal, to 7200 MHz.</p><p>Note that in the last script commands above, we attach our newly
+      created <span class="guilabel">Transmitter</span> and
+      <span class="guilabel">Receiver</span> objects to the spacecraft performing
+      measurements.</p></div></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="Tut_Simulate_and_Estimate_Inter_Spacecraft_DSN_Range_and_Doppler_Data.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="Tut_Simulate_and_Estimate_Inter_Spacecraft_DSN_Range_and_Doppler_Data.html">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="Define_the_types_of_measurements_to_be_simulated_and_their_associated_Error_models.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">Chapter&nbsp;16.&nbsp;Simulate and Estimate Inter-Spacecraft Measurements&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;Define the types of measurements to be simulated and their
+    associated Error models</td></tr></table></div></body></html>

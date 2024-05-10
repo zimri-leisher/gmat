@@ -1,0 +1,118 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>EstimatedParameter</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="ch21.html#N2714D" title="Resources"><link rel="prev" href="ErrorModel.html" title="ErrorModel"><link rel="next" href="ExtendedKalmanFilter.html" title="ExtendedKalmanFilter"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">EstimatedParameter</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="ErrorModel.html">Prev</a>&nbsp;</td><th align="center" width="60%">Resources</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="ExtendedKalmanFilter.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="EstimatedParameter"></a><div class="titlepage"></div><a name="N28054" class="indexterm"></a><a name="N28057" class="indexterm"></a><a name="N2805C" class="indexterm"></a><div class="refnamediv"><h2><span class="refentrytitle">EstimatedParameter</span></h2><p>EstimatedParameter &mdash; Used for modeling of dynamically estimated parameters in the
+    Extended Kalman Filter.</p></div><div class="refsection"><a name="N2806F"></a><h2>Description</h2><p>The <span class="guilabel">EstimatedParameter</span> resource allows the user
+    to model dynamic parameters such as coefficient of drag (Cd), coefficient
+    of solar radiation pressure (Cr), as well as observation biases as random
+    processes in the Kalman filter. This resource currently implements only a
+    first-order Gauss-Markov process. A user-configured instance of
+    <span class="guilabel">EstimatedParameter</span> resource is assigned to the
+    <span class="guilabel">Spacecraft.SolveFors</span> list to enable estimation using
+    the modeled process.</p><p>The only solve-fors currently supported are spacecraft coefficient
+    of drag (Cd) and atmospheric density scale factor
+    (AtmosDensityScaleFactor). The <span class="guilabel">EstimatedParameter</span>
+    resource is for the Kalman filter only and may not be used with the
+    BatchEstimator.</p><p>See Also <a class="xref" href="ExtendedKalmanFilter.html" title="ExtendedKalmanFilter"><span class="refentrytitle">ExtendedKalmanFilter</span></a>, <a class="xref" href="SpacecraftBallisticMass.html" title="Spacecraft Ballistic/Mass Properties"><span class="refentrytitle">Spacecraft Ballistic/Mass Properties</span></a></p></div><div class="refsection"><a name="N28089"></a><h2>Fields</h2><div class="informaltable"><table border="1"><colgroup><col width="25%"><col width="75%"></colgroup><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td><span class="guilabel">HalfLife</span></td><td><p>The half-life in seconds for propagation of both the
+            estimated parameter value and sigma (uncertainty). The model
+            process noise is derived from the steady-state sigma and
+            half-life. See the remarks below for more
+            details.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real &gt; 0</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any positive Real number</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>Set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">7200</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>Seconds</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>Script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">Model</span></td><td><p>Name of the random process model.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>String</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>FirstOrderGaussMarkov</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>Set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">FirstOrderGaussMarkov</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>None</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>Script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">SolveFor</span></td><td><p>Name of the parameter to which the random process
+            applies.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>String</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Cd, AtmosDensityScaleFactor</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>Set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">None</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>None</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>Script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">SteadyStateSigma</span></td><td><p>The steady-state parameter uncertainty. In the
+            absence of measurements, the parameter uncertainty will return to
+            this value. The model process noise is derived from the
+            steady-state sigma and half-life. See the remarks below for more
+            details.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real &gt; 0</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>Set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">0.1</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>None</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>Script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">SteadyStateValue</span></td><td><p>The steady-state parameter value. In the absence of
+            measurements, the parameter value will return to this value. This
+            value may be different from the initial value of the parameter,
+            which will be taken from the value of the chosen solve-for as
+            assigned on the Spacecraft object. See Remarks below for more
+            details.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real &gt;= 0</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>Set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">1.0</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>None</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>Script</p></td></tr></tbody></table></div></td></tr></tbody></table></div></div><div class="refsection"><a name="N2817D"></a><h2>Remarks</h2><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Creating an instance of <span class="guilabel">EstimatedParameter</span>
+      that has the same name as a built-in solve for is not permitted. See
+      <span class="guilabel">SolveFors</span> in <a class="xref" href="SpacecraftNavigation.html" title="Spacecraft Navigation"><span class="refentrytitle">Spacecraft Navigation</span></a>
+      for the list of built-in solve-for names.</p></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>When creating an instance of
+      <span class="guilabel">EstimatedParameter</span>, the <span class="guilabel">Model</span>
+      parameter must be assigned first, before any other parameters of the
+      estimated parameter. See the example below for a demonstration.</p></div><p>Selection of spacecraft dynamic solve-fors is specified in the
+    <span class="guilabel">Spacecraft</span> resource <span class="guilabel">SolveFors</span>
+    list. As noted under <a class="xref" href="SpacecraftNavigation.html" title="Spacecraft Navigation"><span class="refentrytitle">Spacecraft Navigation</span></a>, there are
+    specific keywords available to invoke estimation of dynamic parameters in
+    both the batch estimator and filter. Using any of those predefined
+    parameter names in the <span class="guibutton">SolveFors</span> list for a Kalman
+    filter run invokes modeling of the parameter as a "random constant". In
+    the random constant model, the estimated parameter and its uncertainty
+    (sigma) both remain constant at their last estimated values during filter
+    time updates. The random constant model does not add any process noise
+    during propagation of the parameter estimate, and using this model can
+    cause problems in the filter over time.</p><p>To instead model the parameter as a first-order Gauss-Markov
+    process, the user should configure an instance of
+    <span class="guibutton">EstimatedParameter</span> for the desired dynamic
+    solve-for, and assign the instance of
+    <span class="guibutton">EstimatedParameter</span> in the
+    <span class="guibutton">Spacecraft</span> <span class="guibutton">SolveFors</span> list,
+    instead of using one of the predefined parameter names. See the Examples
+    section below for details.</p><p>When running the filter in cold-start mode, the nominal (a-priori)
+    value and uncertainty of the selected estimated parameter are the values
+    specified on the Spacecraft object. For example, if
+    <span class="guilabel">EstimatedParameter.SolveFor = 'Cd'</span> is chosen, the
+    initial value of Cd is the value assigned on the
+    <span class="guilabel">Spacecraft.Cd</span> parameter and the initial uncertainty
+    of Cd is assigned on the <span class="guilabel">Spacecraft.CdSigma</span>
+    parameter. The parameter then propagates forward in time according to a
+    first-order Gauss-Markov random process. When running the filter in
+    warm-start mode (using a filter <span class="guilabel">InputWarmStartFile</span>),
+    the initial parameter value and covariance are retrieved from the
+    specified record in the warm start file.</p></div><div class="refsection"><a name="N281BF"></a><h2>First-order Gauss-Markov Modeling</h2><p>The variance of the parameter process noise is derived from the
+    user-specified <span class="guilabel">SteadyStateSigma</span> and
+    <span class="guilabel">HalfLife</span>. The variance of the Gauss-Markov process
+    noise, <m:math xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" display="inline">
+          <m:msubsup>
+            <m:mi>&#963;</m:mi>
+
+            <m:mn>u</m:mn>
+
+            <m:mn>2</m:mn>
+          </m:msubsup>
+        </m:math> is related to the
+    <span class="guilabel">EstimatedParameter</span>
+    <span class="guilabel">SteadyStateSigma</span> by the following equation:  </p><div class="screenshot"><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" style="cellpadding: 0; cellspacing: 0;" width="100%"><tr><td align="center"><img src="../files/images/Resource_EstimatedParameter_SteadyStateSigma.png" align="middle" height="58"></td></tr></table></div></div><p>where <span class="emphasis"><em>&#964;</em></span> is related to the
+    <span class="guilabel">EstimatedParameter</span> <span class="guilabel">HalfLife</span> by
+    </p><div class="screenshot"><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" style="cellpadding: 0; cellspacing: 0;" width="100%"><tr><td align="center"><img src="../files/images/Resource_EstimatedParameter_TauHalfLife.png" align="middle" height="67"></td></tr></table></div></div></div><div class="refsection"><a name="N281FF"></a><h2>Examples</h2><div class="informalexample"><p>This example illustrates how to configure estimation of the
+      spacecraft coefficient of drag as a first-order Gauss-Markov
+      process.</p><pre class="programlisting">%
+%   Configure estimation of spacecraft coefficient of drag (Cd) 
+%   as a first-order Gauss-Markov process.
+%
+
+Create EstimatedParameter FogmCd
+ 
+FogmCd.Model            = 'FirstOrderGaussMarkov'; % Must be assigned first, before any other options
+FogmCd.SolveFor         = 'Cd'
+FogmCd.SteadyStateSigma = 0.1
+FogmCd.HalfLife         = 7200
+
+%
+%   Use the configured instance of FogmCd in the spacecraft
+%   SolveFors list, instead of the built-in 'Cd'
+%
+
+Create Spacecraft EstSat;
+
+EstSat.DateFormat        = UTCGregorian;
+EstSat.Epoch             = '10 Jun 2010 00:00:00.000'
+EstSat.CoordinateSystem  = EarthMJ2000Eq
+EstSat.DisplayStateType  = Cartesian
+EstSat.X                 = 576.8
+EstSat.Y                 = -5701.1
+EstSat.Z                 = -4170.5
+EstSat.VX                = -1.7645
+EstSat.VY                = 4.1813
+EstSat.VZ                = -5.9658
+EstSat.DryMass           = 10
+EstSat.Cd                = 1.75
+EstSat.CdSigma           = 0.1
+EstSat.Cr                = 1.8
+EstSat.DragArea          = 100
+EstSat.SRPArea           = 100
+EstSat.Id                = 'LEOSat'
+EstSat.AddHardware       = {GpsReceiver, GpsAntenna}
+EstSat.SolveFors         = {CartesianState, FogmCd}
+EstSat.ProcessNoiseModel = SNC
+</pre></div></div></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="ErrorModel.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="ch21.html#N2714D">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="ExtendedKalmanFilter.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">ErrorModel&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;ExtendedKalmanFilter</td></tr></table></div></body></html>

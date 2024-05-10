@@ -1,0 +1,143 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>ThrustSegment</title><link href="../files/style.css" type="text/css" rel="stylesheet"><meta content="DocBook XSL Stylesheets V1.78.1" name="generator"><link rel="home" href="index.html" title="General Mission Analysis Tool (GMAT)"><link rel="up" href="ch18.html#N15B4D" title="Resources"><link rel="prev" href="ThrustHistoryFile.html" title="ThrustHistoryFile"><link rel="next" href="ch18s02.html" title="Commands"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table summary="Navigation header" width="100%"><tr><th align="center" colspan="3">ThrustSegment</th></tr><tr><td align="left" width="20%"><a accesskey="p" href="ThrustHistoryFile.html">Prev</a>&nbsp;</td><th align="center" width="60%">Resources</th><td align="right" width="20%">&nbsp;<a accesskey="n" href="ch18s02.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="ThrustSegment"></a><div class="titlepage"></div><a name="N2136B" class="indexterm"></a><div class="refnamediv"><h2><span class="refentrytitle">ThrustSegment</span></h2><p>ThrustSegment &mdash; One or more <span class="guilabel">ThrustSegments</span> define how
+    data in a thrust history file are used.</p></div><div class="refsection"><a name="N2137F"></a><h2>Description</h2><p>A <span class="guilabel">ThrustSegment</span> resource is used to define how
+    a portion of data, encapsulated between the "BeginThrust
+    {<span class="guilabel">ThrustSegment</span> object name}" and "EndThrust
+    {<span class="guilabel">ThrustSegment</span> object name}" keywords, in a thrust
+    history file is used.</p><p><span class="ref_seealso">See Also</span>: <a class="xref" href="ThrustSegment.html" title="ThrustSegment"><span class="refentrytitle">ThrustSegment</span></a>, <a class="xref" href="BeginFileThrust.html" title="BeginFileThrust"><span class="refentrytitle">BeginFileThrust</span></a>, <a class="xref" href="EndFileThrust.html" title="EndFileThrust"><span class="refentrytitle">EndFileThrust</span></a></p></div><div class="refsection"><a name="ThrustSegment_Resource_Fields"></a><h2>Fields</h2><div class="informaltable"><table border="1"><colgroup><col width="38%"><col width="62%"></colgroup><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td><span class="guilabel">ApplyThrustScaleToMassFlow</span></td><td><p>Flag specifying if the thrust/acceleration
+            <span class="guilabel">ThrustScaleFactor</span> should also be applied to
+            the mass flow rate. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Boolean</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>True, False</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">False</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">MassFlowScaleFactor </span></td><td><p>Multiplicative scale factor applied to mass flow rate
+            data in the thrust history file. Only used if mass flow rate is
+            being modeled in the thrust history file. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any Real number</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">1.0</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">MassSource</span></td><td><p>Fuel tank holding the propellant used when modeling
+            the finite burn described in the thrust segment. GMAT will
+            decrement the fuel mass contained in this tank according to the
+            user-selected mass flow modeling options. If more than one tank is
+            specified, only the first one is used.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>ChemicalTank</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>{} or any user defined
+                    <span class="guilabel">ChemicalTank</span> resource</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">{}</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">SolveFors</span></td><td><p>List of parameters to estimate.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>String</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>{} or any combination of ThrustScaleFactor,
+                    ThrustAngle1, and/or ThrustAngle2</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">{}</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ThrustAngle1</span></td><td><p>Coefficients for the first angle correction to the
+            thrust or acceleration vector. See Remarks below for more
+            details.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real array</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any Real number(s)</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">[ 0.0 ] </span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>deg, deg/sec, deg/sec^2 , ... (See Remarks
+                    section)</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ThrustAngle1Sigma</span></td><td><p>Standard deviation(s) of
+            <span class="guilabel">ThrustAngle1</span>. Only used if
+            <span class="guilabel">ThrustAngle1</span> is defined as a solve-for (using
+            the <span class="guilabel">SolveFors</span> parameter defined above). See
+            Remarks below for more details.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real array</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Positive real number(s)</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">[ 1e70 ] </span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>deg, deg/sec, deg/sec^2 , ... (See Remarks
+                    section)</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ThrustAngle2</span></td><td><p>Coefficients for the second angle correction to the
+            thrust or acceleration vector. See Remarks below for more
+            details.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real array</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any Real number(s)</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">[ 0.0 ] </span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>deg, deg/sec, deg/sec^2 , ... (See Remarks
+                    section)</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ThrustAngle2Sigma</span></td><td><p>Standard deviation(s) of
+            <span class="guilabel">ThrustAngle2</span>. Only used if
+            <span class="guilabel">ThrustAngle2</span> is defined as a solve-for (using
+            the <span class="guilabel">SolveFors</span> parameter defined above). See
+            Remarks below for more details.</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real array</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Positive real number(s)</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">[ 1e70 ] </span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>deg, deg/sec, deg/sec^2 , ... (See Remarks
+                    section)</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ThrustAngleConstraintVector</span></td><td><p>Vector which is used along with a vector in the
+            direction of the thrust from the THF to define the coordinate
+            system for the thrust angle rotations. See Remarks below for more
+            details. </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real array</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Real array (length three)</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">[ 0 0 1 ] </span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ThrustScaleFactor </span></td><td><p>Multiplicative scale factor applied to
+            thrust/acceleration data in the thrust history
+            file</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Any Real number</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p>1.0</p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr><tr><td><span class="guilabel">ThrustScaleFactorSigma</span></td><td><p>Standard deviation of
+            <span class="guilabel">ThrustScaleFactor</span>. Only used if
+            <span class="guilabel">ThrustScaleFactor</span> is defined as a solve-for
+            (using the <span class="guilabel">SolveFors</span> parameter defined above)
+            </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col valign="top" align="left"><col></colgroup><tbody><tr><td><p><span class="term">Data Type</span></p></td><td><p>Real</p></td></tr><tr><td><p><span class="term">Allowed Values</span></p></td><td><p>Positive real number</p></td></tr><tr><td><p><span class="term">Access</span></p></td><td><p>set</p></td></tr><tr><td><p><span class="term">Default Value</span></p></td><td><p><span class="guilabel">1e70</span></p></td></tr><tr><td><p><span class="term">Units</span></p></td><td><p>N/A</p></td></tr><tr><td><p><span class="term">Interfaces</span></p></td><td><p>script</p></td></tr></tbody></table></div></td></tr></tbody></table></div></div><div class="refsection"><a name="N215BD"></a><h2>Remarks</h2><div class="refsection"><a name="ThrustSegment_Remarks_ThrustAngleEstimation"></a><h3>Overview of Thrust Angle Corrections</h3><p>The ThrustSegment supports small angle corrections to account for
+      a misalignment in the thrust or acceleration vector defined in the
+      thrust history file. The correction is applied by a two angle rotation
+      about a coordinate system. Each angle is defined by a time varying
+      polynomial: &#952; = a<sub>0</sub> + a<sub>1</sub>t +
+      a<sub>2</sub>t<sup>2</sup> + ... +
+      a<sub>n</sub>t<sup>n</sup>, with
+      coefficients provided by the user via the fields
+      <span class="guilabel">ThrustAngle1</span>, and
+      <span class="guilabel">ThrustAngle2</span>, and time is measured as the seconds
+      after the initial epoch of the <span class="guilabel">ThrustSegment</span>. The
+      order of the polynomial is determined by the length of the arrays
+      <span class="guilabel">ThrustAngle1</span>, and
+      <span class="guilabel">ThrustAngle2</span>, and the user has a free choice in the
+      length of this array.</p><p>The angle corrections are applied as two subsequent rotations to
+      the thrust or acceleration vector about two orthogonal axes. All vectors
+      are defined in the coordinate system specified in the
+      <span class="guilabel">ThrustSegment</span> in the thrust history file. The first
+      rotation is applied about the axis formed by the cross product of the
+      vector aligned with the thrust or acceleration vector and the vector
+      specified by <span class="guilabel">ThrustAngleConstraintVector</span>. The
+      second rotation axis is aligned with the vector defined by the cross
+      product of the first rotation axis vector and the direction the thrust
+      vector points after the first angle rotation. For example, if the thrust
+      history file specifies a thrust along the +X axis in the spacecraft body
+      frame, choosing a constraint vector of [ 0 0 1 ] (also taken to be in
+      body coordinates) will map <span class="guilabel">ThrustAngle1</span> to a
+      rotation about the body -Y axis (equivalent to a pitch angle), and
+      <span class="guilabel">ThrustAngle2</span> will map to a rotation about the body
+      +Z axis (equivalent to a yaw angle).</p><div class="refsection"><a name="N215F5"></a><h4>Solving for Thrust Angles</h4><p>When solving for a thrust angle, GMAT will solve for each
+        polynomial coefficient specified in <span class="guilabel">ThrustAngle1</span>
+        or <span class="guilabel">ThrustAngle2</span>, provided they are listed in the
+        <span class="guilabel">SolveFors</span> field. The
+        <span class="guilabel">ThrustAngle1Sigma</span> and
+        <span class="guilabel">ThrustAngle2Sigma</span> fields contain the arrays of
+        the a priori standard deviations for each coefficient in the
+        corresponding angles field. When using the
+        <span class="guilabel">BatchEstimator</span>, the user must also set the
+        <span class="guilabel">BatchEstimator</span>
+        <span class="guilabel">UseInitialCovariance</span> parameter to
+        <span class="guilabel">True</span> for the thrust angle sigmas to be applied.
+        The user can confirm the sigmas are applied by looking at the
+        Estimation Initial Conditions report in the batch estimator output
+        report file. The specified thrust angle sigmas are always
+        automatically used by the
+        <span class="guilabel">ExtendedKalmanFilter</span>.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>The partial derivatives with respect to the angle coefficients
+          are highly non-linear. When solving for thrust angles, care needs to
+          be taken with respect to the order of the polynomials, the thrust
+          angle uncertainties, and a priori values chosen. Convergence can
+          become difficult if too high a polynomial order is used, if there
+          are an insufficient number of observations during the thrust
+          segment, or if the a priori angles are too far from the true
+          misalignment angles. Using too large a value for the thrust angle
+          sigmas can give too much freedom to the estimator to converge on for
+          the coefficient values. Constraining the estimation by using the
+          ThrustAngle sigmas (and setting <span class="guilabel">BatchEstimator</span>
+          <span class="guilabel">UseInitialCovariance</span> to
+          <span class="guilabel">True</span>) can aid convergence by restricting the
+          freedom of the estimator, but this generally requires that the user
+          have a good a priori knowledge of the thrust angles and their
+          coefficients. These effects are additionally compounded by the
+          periodic nature of angles such that an angle of 360 degrees is
+          equivalent to an angle of 0 degrees.</p></div></div><div class="refsection"><a name="N21624"></a><h4>Units for Thrust Angles and Thrust Angle Sigmas</h4><p>Because the values for <span class="guilabel">ThrustAngle1</span>,
+        <span class="guilabel">ThrustAngle2</span>,
+        <span class="guilabel">ThrustAngle1Sigma</span>, and
+        <span class="guilabel">ThrustAngle2Sigma</span> are coefficients for a
+        polynomial, the units depend on what element they are in the array.
+        The first element in each array has units of degrees, and the next
+        element has units of degrees/seconds. Each additional element has an
+        additional "seconds" in the denominator.</p></div></div></div><div class="refsection"><a name="N21635"></a><h2>Examples</h2><div class="informalexample"><p>Create a <span class="guilabel">ThrustSegment</span> where the thrust scale
+      factor, with a value of 2.0, will also be applied to the mass flow
+      rate.</p><pre class="programlisting"><code class="code">Create Spacecraft aSat
+Create ChemicalTank aTank
+aSat.Tanks = {aTank}
+
+Create ThrustSegment aThrustSegment;  
+aThrustSegment.ThrustScaleFactor = 2.0;
+aThrustSegment.ApplyThrustScaleToMassFlow = True; 
+aThrustSegment.MassFlowScaleFactor = 1.5;
+aThrustSegment.MassSource={aTank};
+
+BeginMissionSequence</code></pre><p>If you use the script snippet above to create a full script, you
+      will need to create a thrust/acceleration and mass flow rate input file.
+      Suppose the mass flow rate for a given instant of time is set to 1 kg/s
+      in the file, what is the actual mass flow rate applied to the
+      spacecraft? We need to take into account the values of
+      <code class="code">ThrustScaleFactor</code>, <code class="code">MassFlowScaleFactor</code>, and
+      <code class="code">ApplyThrustScaleToMassFlow</code> before we can answer this
+      question. In all cases, <code class="code">MassFlowScaleFactor</code> is applied to
+      the mass flow rate value given in the file. In this example, since
+      <code class="code">ApplyThrustScaleToMassFlow</code> is set to <code class="code">True</code>, the
+      <code class="code">ThrustScaleFactor</code> will also be applied to the mass flow
+      rate value given in the file. Thus, to answer our question, in this
+      example, the actual mass flow rate applied to the spacecraft is
+      <code class="code">MassFlowScaleFactor</code>*<code class="code">ThrustScaleFactor</code>*1 kg/s
+      equals 3 kg/s. In the example above, the actual thrust/acceleration
+      profile actually applied to the spacecraft is
+      <code class="code">(ThrustScaleFactor</code> = 2.0) times the thrust/acceleration
+      given in the input file.</p><p>For a complete example of how the
+      <span class="guilabel">ThrustHistoryFile</span> and
+      <span class="guilabel">ThrustSegment</span> resources are used to apply a
+      thrust/acceleration and mass flow rate profile to a spacecraft, see the
+      first example in the <a class="xref" href="BeginFileThrust.html" title="BeginFileThrust"><span class="refentrytitle">BeginFileThrust</span></a> Help.</p></div></div></div><div class="navfooter"><hr><table summary="Navigation footer" width="100%"><tr><td align="left" width="40%"><a accesskey="p" href="ThrustHistoryFile.html">Prev</a>&nbsp;</td><td align="center" width="20%"><a accesskey="u" href="ch18.html#N15B4D">Up</a></td><td align="right" width="40%">&nbsp;<a accesskey="n" href="ch18s02.html">Next</a></td></tr><tr><td valign="top" align="left" width="40%">ThrustHistoryFile&nbsp;</td><td align="center" width="20%"><a accesskey="h" href="index.html">Home</a></td><td valign="top" align="right" width="40%">&nbsp;Commands</td></tr></table></div></body></html>

@@ -1,0 +1,317 @@
+%  Script Mission - Constellation Propagation Example  
+%
+%  This script demonstrates how to propagate a 
+%  constellation as a formation.
+%
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft Sat11;
+GMAT Sat11.DateFormat = TAIModJulian;
+GMAT Sat11.Epoch = '21545';
+GMAT Sat11.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat11.DisplayStateType = Cartesian;
+GMAT Sat11.X = 688.5272682812904;
+GMAT Sat11.Y = -688.5272682812873;
+GMAT Sat11.Z = 6928.410542950397;
+GMAT Sat11.VX = -5.338534050664235;
+GMAT Sat11.VY = -5.338534050664234;
+GMAT Sat11.VZ = 2.287982201885771e-15;
+
+Create Spacecraft Sat12;
+GMAT Sat12.DateFormat = TAIModJulian;
+GMAT Sat12.Epoch = '21545';
+GMAT Sat12.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat12.DisplayStateType = Cartesian;
+GMAT Sat12.X = -4862.607377560832;
+GMAT Sat12.Y = -5035.377343525906;
+GMAT Sat12.Z = 8.488817860573396e-13;
+GMAT Sat12.VX = -0.7580772104932414;
+GMAT Sat12.VY = 0.726821527686825;
+GMAT Sat12.VZ = -7.472616549480826;
+
+Create Spacecraft Sat13;
+GMAT Sat13.DateFormat = TAIModJulian;
+GMAT Sat13.Epoch = '21545';
+GMAT Sat13.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat13.DisplayStateType = Cartesian;
+GMAT Sat13.X = -712.8495845396725;
+GMAT Sat13.Y = 664.7429917302072;
+GMAT Sat13.Z = -6935.342419431587;
+GMAT Sat13.VX = 5.143823411855427;
+GMAT Sat13.VY = 5.516075276766165;
+GMAT Sat13.VZ = -1.372423280583216e-15;
+
+Create Spacecraft Sat14;
+GMAT Sat14.DateFormat = TAIModJulian;
+GMAT Sat14.Epoch = '21545';
+GMAT Sat14.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat14.DisplayStateType = Cartesian;
+GMAT Sat14.X = 4683.913073533447;
+GMAT Sat14.Y = 5202.012477838315;
+GMAT Sat14.Z = -1.697763572114679e-12;
+GMAT Sat14.VX = 0.7779318200050955;
+GMAT Sat14.VY = -0.7055300656965543;
+GMAT Sat14.VZ = 7.472616549480826;
+
+Create Spacecraft Sat21;
+GMAT Sat21.DateFormat = TAIModJulian;
+GMAT Sat21.Epoch = '21545';
+GMAT Sat21.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat21.DisplayStateType = Cartesian;
+GMAT Sat21.X = 973.7246008670973;
+GMAT Sat21.Y = 2.082368121974815e-12;
+GMAT Sat21.Z = 6928.410542950397;
+GMAT Sat21.VX = -1.407233930611204e-16;
+GMAT Sat21.VY = -7.549827257639936;
+GMAT Sat21.VZ = 2.287982201885771e-15;
+
+Create Spacecraft Sat22;
+GMAT Sat22.DateFormat = TAIModJulian;
+GMAT Sat22.Epoch = '21545';
+GMAT Sat22.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat22.DisplayStateType = Cartesian;
+GMAT Sat22.X = 122.1668145192732;
+GMAT Sat22.Y = -6998.932116361272;
+GMAT Sat22.Z = 8.488817860573396e-13;
+GMAT Sat22.VX = -1.049981967142473;
+GMAT Sat22.VY = -0.02210110526303279;
+GMAT Sat22.VZ = -7.472616549480826;
+
+Create Spacecraft Sat23;
+GMAT Sat23.DateFormat = TAIModJulian;
+GMAT Sat23.Epoch = '21545';
+GMAT Sat23.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat23.DisplayStateType = Cartesian;
+GMAT Sat23.X = -974.1050523926782;
+GMAT Sat23.Y = -34.01649799535283;
+GMAT Sat23.Z = -6935.342419431587;
+GMAT Sat23.VX = -0.2632218179877218;
+GMAT Sat23.VY = 7.537686649485913;
+GMAT Sat23.VZ = -1.372423280583216e-15;
+
+Create Spacecraft Sat24;
+GMAT Sat24.DateFormat = TAIModJulian;
+GMAT Sat24.Epoch = '21545';
+GMAT Sat24.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat24.DisplayStateType = Cartesian;
+GMAT Sat24.X = -366.3516021126837;
+GMAT Sat24.Y = 6990.404995680331;
+GMAT Sat24.Z = -1.697763572114679e-12;
+GMAT Sat24.VX = 1.04896595901142;
+GMAT Sat24.VY = 0.05119577144137196;
+GMAT Sat24.VZ = 7.472616549480826;
+
+Create Spacecraft Sat31;
+GMAT Sat31.DateFormat = TAIModJulian;
+GMAT Sat31.Epoch = '21545';
+GMAT Sat31.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat31.DisplayStateType = Cartesian;
+GMAT Sat31.X = 688.5272682812873;
+GMAT Sat31.Y = 688.5272682812904;
+GMAT Sat31.Z = 6928.410542950397;
+GMAT Sat31.VX = 5.338534050664234;
+GMAT Sat31.VY = -5.338534050664235;
+GMAT Sat31.VZ = 2.287982201885771e-15;
+
+Create Spacecraft Sat32;
+GMAT Sat32.DateFormat = TAIModJulian;
+GMAT Sat32.Epoch = '21545';
+GMAT Sat32.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat32.DisplayStateType = Cartesian;
+GMAT Sat32.X = 5035.377343525907;
+GMAT Sat32.Y = -4862.607377560831;
+GMAT Sat32.Z = 8.488817860573396e-13;
+GMAT Sat32.VX = -0.7268215276868248;
+GMAT Sat32.VY = -0.7580772104932415;
+GMAT Sat32.VZ = -7.472616549480826;
+
+Create Spacecraft Sat33;
+GMAT Sat33.DateFormat = TAIModJulian;
+GMAT Sat33.Epoch = '21545';
+GMAT Sat33.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat33.DisplayStateType = Cartesian;
+GMAT Sat33.X = -664.7429917302073;
+GMAT Sat33.Y = -712.8495845396725;
+GMAT Sat33.Z = -6935.342419431587;
+GMAT Sat33.VX = -5.516075276766165;
+GMAT Sat33.VY = 5.143823411855427;
+GMAT Sat33.VZ = -1.372423280583216e-15;
+
+Create Spacecraft Sat34;
+GMAT Sat34.DateFormat = TAIModJulian;
+GMAT Sat34.Epoch = '21545';
+GMAT Sat34.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat34.DisplayStateType = Cartesian;
+GMAT Sat34.X = -5202.012477838313;
+GMAT Sat34.Y = 4683.913073533448;
+GMAT Sat34.Z = -1.697763572114679e-12;
+GMAT Sat34.VX = 0.7055300656965544;
+GMAT Sat34.VY = 0.7779318200050953;
+GMAT Sat34.VZ = 7.472616549480826;
+
+Create Spacecraft Sat41;
+GMAT Sat41.DateFormat = TAIModJulian;
+GMAT Sat41.Epoch = '21545';
+GMAT Sat41.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat41.DisplayStateType = Cartesian;
+GMAT Sat41.X = -2.022746655320065e-12;
+GMAT Sat41.Y = 973.7246008670973;
+GMAT Sat41.Z = 6928.410542950397;
+GMAT Sat41.VX = 7.549827257639936;
+GMAT Sat41.VY = -6.030017145594824e-16;
+GMAT Sat41.VZ = 2.287982201885771e-15;
+
+Create Spacecraft Sat42;
+GMAT Sat42.DateFormat = TAIModJulian;
+GMAT Sat42.Epoch = '21545';
+GMAT Sat42.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat42.DisplayStateType = Cartesian;
+GMAT Sat42.X = 6998.932116361272;
+GMAT Sat42.Y = 122.1668145192743;
+GMAT Sat42.Z = 8.488817860573396e-13;
+GMAT Sat42.VX = 0.02210110526303296;
+GMAT Sat42.VY = -1.049981967142473;
+GMAT Sat42.VZ = -7.472616549480826;
+
+Create Spacecraft Sat43;
+GMAT Sat43.DateFormat = TAIModJulian;
+GMAT Sat43.Epoch = '21545';
+GMAT Sat43.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat43.DisplayStateType = Cartesian;
+GMAT Sat43.X = 34.01649799535277;
+GMAT Sat43.Y = -974.1050523926782;
+GMAT Sat43.Z = -6935.342419431587;
+GMAT Sat43.VX = -7.537686649485913;
+GMAT Sat43.VY = -0.2632218179877214;
+GMAT Sat43.VZ = -1.372423280583216e-15;
+
+Create Spacecraft Sat44;
+GMAT Sat44.DateFormat = TAIModJulian;
+GMAT Sat44.Epoch = '21545';
+GMAT Sat44.CoordinateSystem = EarthMJ2000Eq;
+GMAT Sat44.DisplayStateType = Cartesian;
+GMAT Sat44.X = -6990.404995680331;
+GMAT Sat44.Y = -366.3516021126818;
+GMAT Sat44.Z = -1.697763572114679e-12;
+GMAT Sat44.VX = -0.05119577144137168;
+GMAT Sat44.VY = 1.04896595901142;
+GMAT Sat44.VZ = 7.472616549480826;
+
+%----------------------------------------
+%---------- Formation
+%----------------------------------------
+
+Create Formation form;
+GMAT form.Add = {Sat11, Sat12, Sat13, Sat14, Sat21, Sat22, Sat23, Sat24, Sat31, Sat32, Sat33, Sat34, Sat41, Sat42, Sat43, Sat44};
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel fm;
+GMAT fm.CentralBody = Earth;
+GMAT fm.PointMasses = {Earth, Sun, Luna};
+GMAT fm.Drag = None;
+GMAT fm.SRP = Off;
+GMAT fm.RelativisticCorrection = Off;
+GMAT fm.ErrorControl = RSSStep;
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator prop;
+GMAT prop.FM = fm;
+GMAT prop.Type = RungeKutta89;
+GMAT prop.InitialStepSize = 60;
+GMAT prop.Accuracy = 1.0e-11;
+GMAT prop.MinStep = 0.001;
+GMAT prop.MaxStep = 2700;
+GMAT prop.MaxStepAttempts = 50;
+GMAT prop.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OpenFramesInterface a3Dplot;
+GMAT a3Dplot.SolverIterations = Current;
+GMAT a3Dplot.UpperLeft = [ 0.15 0.07 ];
+GMAT a3Dplot.Size = [ 0.7 0.86 ];
+GMAT a3Dplot.Maximized = false;
+GMAT a3Dplot.Add = {Sat11, Earth, Sat21, Sat31, Sat41, Sat12, Sat22, Sat32, Sat42, Sat13, Sat23, Sat33, Sat43, Sat14, Sat24, Sat34, Sat44, Sun};
+GMAT a3Dplot.DrawObject = [ true true true true true true true true true true true true true true true true true ];
+GMAT a3Dplot.View = {CoordinateSystemView1, EarthView1};
+GMAT a3Dplot.CoordinateSystem = EarthMJ2000Eq;
+GMAT a3Dplot.DrawObject = [ true true ];
+GMAT a3Dplot.DrawTrajectory = [ true true ];
+GMAT a3Dplot.DrawAxes = [ false false ];
+GMAT a3Dplot.DrawXYPlane = [ false false ];
+GMAT a3Dplot.DrawLabel = [ true true ];
+GMAT a3Dplot.DrawUsePropLabel = [ false false ];
+GMAT a3Dplot.DrawCenterPoint = [ true true ];
+GMAT a3Dplot.DrawEndPoints = [ true true ];
+GMAT a3Dplot.DrawVelocity = [ false false ];
+GMAT a3Dplot.DrawGrid = [ false false ];
+GMAT a3Dplot.DrawLineWidth = [ 2 2 ];
+GMAT a3Dplot.DrawMarkerSize = [ 10 10 ];
+GMAT a3Dplot.Axes = On;
+GMAT a3Dplot.AxesLabels = On;
+GMAT a3Dplot.FrameLabel = Off;
+GMAT a3Dplot.XYPlane = On;
+GMAT a3Dplot.EclipticPlane = Off;
+GMAT a3Dplot.EnableStars = On;
+GMAT a3Dplot.StarCount = 40000;
+GMAT a3Dplot.MinStarMag = -2;
+GMAT a3Dplot.MaxStarMag = 6;
+GMAT a3Dplot.MinStarPixels = 1;
+GMAT a3Dplot.MaxStarPixels = 10;
+GMAT a3Dplot.MinStarDimRatio = 0.5;
+GMAT a3Dplot.ShowPlot = true;
+GMAT a3Dplot.ShowToolbar = true;
+GMAT a3Dplot.SolverIterLastN = 0;
+GMAT a3Dplot.ShowVR = false;
+GMAT a3Dplot.PlaybackTimeScale = 3600;
+GMAT a3Dplot.MultisampleAntiAliasing = On;
+GMAT a3Dplot.MSAASamples = 2;
+
+%----------------------------------------
+%---------- View Objects
+%----------------------------------------
+
+Create OpenFramesView CoordinateSystemView1;
+GMAT CoordinateSystemView1.ViewFrame = CoordinateSystem;
+GMAT CoordinateSystemView1.ViewTrajectory = Off;
+GMAT CoordinateSystemView1.InertialFrame = Off;
+GMAT CoordinateSystemView1.SetDefaultLocation = Off;
+GMAT CoordinateSystemView1.SetCurrentLocation = On;
+GMAT CoordinateSystemView1.CurrentEye = [ 1000 -18000 10000 ];
+GMAT CoordinateSystemView1.CurrentCenter = [ 0 0 0 ];
+GMAT CoordinateSystemView1.CurrentUp = [ 0 0 1 ];
+
+Create OpenFramesView EarthView1;
+GMAT EarthView1.ViewFrame = Earth;
+GMAT EarthView1.ViewTrajectory = Off;
+GMAT EarthView1.InertialFrame = Off;
+GMAT EarthView1.SetDefaultLocation = Off;
+GMAT EarthView1.SetCurrentLocation = On;
+GMAT EarthView1.CurrentEye = [ 4000 -20000 3000 ];
+GMAT EarthView1.CurrentCenter = [ 0 0 0 ];
+GMAT EarthView1.CurrentUp = [ 0 0 1 ];
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+
+BeginMissionSequence;
+
+Propagate 'Prop 1 Day' prop(form) {Sat11.ElapsedSecs = 86400.0};
+
+
+
+

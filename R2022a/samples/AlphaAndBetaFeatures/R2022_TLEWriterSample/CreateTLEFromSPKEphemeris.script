@@ -1,0 +1,72 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2021-07-16
+%
+% This script allows for various user inputs to fit a TLE to an SPICE ephemeris file
+% This is an alpha capability and should not be used for operations or critical analysis
+%
+% Author: Jairus Elarbee 7/16/2021
+% Updated: Ravi Mathur   11/11/2022
+% 				
+
+#Include './Utilities/tle_import_prep_sequence.txt'
+
+%----------------------------------------
+%---------- TLE Parameters
+%----------------------------------------
+scName 											= 'ExampleSat';								% Input as string
+scIdentifier 									= 'A5214';										% Input as 5 character string
+scClassification 								= 'U';											% Input as single character string ('C' or 'U')
+launchDesignator 								= '84089A';										% Input in full as string (Max size 8 characters)
+
+%----------------------------------------
+%---------- BSTAR Parameters
+%----------------------------------------
+CoefficientOfDrag 							= 2.2;											% Input Coefficient of Drag
+CrossSectionalArea							= 15;												% Input the cross-sectional drag (m^2)
+TotalMass										= 850;											% Input the total Mass of the object (kg)
+
+%----------------------------------------
+%---------- Ephemeris Parameters 
+%----------------------------------------
+
+EphemSatellite.NAIFId						= -123456789;
+EphemSatellite.NAIFIdReferenceFrame 	= -123456789; 
+EphemSatellite.OrbitSpiceKernelName		= '../SupportFiles/TLEfromSPICE.bsp';	% Path to STK ephemeris file relative from script or absolute
+
+%----------------------------------------
+%---------- Optimization Parameters 
+%----------------------------------------
+
+NLPSolver.FeasibilityTolerance 			= 1e-3;
+NLPSolver.FunctionTolerance 				= 1e-3;
+NLPSolver.OptimalityTolerance 			= 1e-3;
+NLPSolver.MaximumIterations 				= 1000;
+NLPSolver.UseCentralDifferences       = true;
+PointsToEvaluate 					 			= 15;								 				% Points to evaluate per evaluation. Must be between 1 and 999, default is 15.
+%----------------------------------------
+%---------- Optional Settings
+%----------------------------------------
+
+UseCustomFitSpan 								= 0;												% Flag to use modified dates. Set to 1 to use a custom StartDate, 2 for a custom EndDate, and 3 for both
+FitSpanStart  									= '22 Jul 2014 12:28:10.811';				% UTCGregorianDate    (E.G. '04 May 2002 11:45:16.000')
+FitSpanEnd  									= '22 Jul 2014 22:29:10.811';				% UTCGregorianDate    (E.G. '04 May 2002 11:45:16.000')
+
+UseAnchorEpoch 								= 0;												% Flag to use modified dates. Set to 1 to Specify a specific Epoch at which to generate the TLE
+AnchorEpoch 									= '22 Jul 2014 17:28:10.811';				% UTCGregorianDate    (E.G. '04 May 2002 11:45:16.000')
+
+%UseCustomName 								= 1; 												% Uncomment to use a custom file name for the TLE output
+%CustomTLEName 								= 'SomeRandomTLESPK.txt';					% Alternate filename for TLE output. Recommended to have '.txt' suffix.
+%UseCustomDirectory 							= 1;											   % Uncomment to use a custom diretory path for the TLE output. May be absolute or relative to the script directory.
+%OutputDirectory 								= '/Some/Full/Path/';						% Alternate path for TLE output. Path must be absolute.
+
+
+%Ndot												= 0.0;											% Uncomment to pass through a Ndot parameter. GMAT/SGP4 does not solve for or use this parameter.
+%Ndotdot 										= 0.0;								 			% Uncomment to pass through a Ndotdot parameter. GMAT/SGP4 does not solve for or use this parameter.
+
+OpenFrames1.ShowPlot							= true;                               % Show or hide 3D visualization
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+#Include './Utilities/tle_import_mission_sequence_SPK.txt'

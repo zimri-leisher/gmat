@@ -1,0 +1,428 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2010-09-01 05:15:44
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft Leader;
+GMAT Leader.DateFormat = TAIModJulian;
+GMAT Leader.Epoch = '21545';
+GMAT Leader.CoordinateSystem = EarthMJ2000Eq;
+GMAT Leader.DisplayStateType = Keplerian;
+GMAT Leader.SMA = 6715.500000000013;
+GMAT Leader.ECC = 0.000536199999998763;
+GMAT Leader.INC = 51.64180000000003;
+GMAT Leader.RAAN = 23.22380000000003;
+GMAT Leader.AOP = 345.5258999997542;
+GMAT Leader.TA = 167.2043000002454;
+GMAT Leader.DryMass = 850;
+GMAT Leader.Cd = 2.2;
+GMAT Leader.Cr = 1.8;
+GMAT Leader.DragArea = 15;
+GMAT Leader.SRPArea = 1;
+GMAT Leader.SPADDragScaleFactor = 1;
+GMAT Leader.SPADSRPScaleFactor = 1;
+GMAT Leader.NAIFId = -123456789;
+GMAT Leader.NAIFIdReferenceFrame = -123456789;
+GMAT Leader.OrbitColor = Red;
+GMAT Leader.TargetColor = Teal;
+GMAT Leader.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT Leader.CdSigma = 1e+070;
+GMAT Leader.CrSigma = 1e+070;
+GMAT Leader.Id = 'SatId';
+GMAT Leader.Attitude = CoordinateSystemFixed;
+GMAT Leader.SPADSRPInterpolationMethod = Bilinear;
+GMAT Leader.SPADSRPScaleFactorSigma = 1e+070;
+GMAT Leader.SPADDragInterpolationMethod = Bilinear;
+GMAT Leader.SPADDragScaleFactorSigma = 1e+070;
+GMAT Leader.ModelFile = '../data/vehicle/models/aura.3ds';
+GMAT Leader.ModelOffsetX = 0;
+GMAT Leader.ModelOffsetY = 0;
+GMAT Leader.ModelOffsetZ = 0;
+GMAT Leader.ModelRotationX = 0;
+GMAT Leader.ModelRotationY = 0;
+GMAT Leader.ModelRotationZ = 0;
+GMAT Leader.ModelScale = 1;
+GMAT Leader.AttitudeDisplayStateType = 'Quaternion';
+GMAT Leader.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT Leader.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT Leader.EulerAngleSequence = '321';
+
+Create Spacecraft Follower;
+GMAT Follower.DateFormat = TAIModJulian;
+GMAT Follower.Epoch = '21545';
+GMAT Follower.CoordinateSystem = EarthMJ2000Eq;
+GMAT Follower.DisplayStateType = Keplerian;
+GMAT Follower.SMA = 6710.499999999966;
+GMAT Follower.ECC = 0.02534862000000019;
+GMAT Follower.INC = 51.54150000000005;
+GMAT Follower.RAAN = 25.32429999999992;
+GMAT Follower.AOP = 344.5258999998272;
+GMAT Follower.TA = 162.2043000001724;
+GMAT Follower.DryMass = 850;
+GMAT Follower.Cd = 2.2;
+GMAT Follower.Cr = 1.8;
+GMAT Follower.DragArea = 15;
+GMAT Follower.SRPArea = 0.5;
+GMAT Follower.SPADDragScaleFactor = 1;
+GMAT Follower.SPADSRPScaleFactor = 1;
+GMAT Follower.NAIFId = -123456789;
+GMAT Follower.NAIFIdReferenceFrame = -123456789;
+GMAT Follower.OrbitColor = Green;
+GMAT Follower.TargetColor = LightGray;
+GMAT Follower.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT Follower.CdSigma = 1e+070;
+GMAT Follower.CrSigma = 1e+070;
+GMAT Follower.Id = 'SatId';
+GMAT Follower.Attitude = CoordinateSystemFixed;
+GMAT Follower.SPADSRPInterpolationMethod = Bilinear;
+GMAT Follower.SPADSRPScaleFactorSigma = 1e+070;
+GMAT Follower.SPADDragInterpolationMethod = Bilinear;
+GMAT Follower.SPADDragScaleFactorSigma = 1e+070;
+GMAT Follower.ModelFile = '../data/vehicle/models/aura.3ds';
+GMAT Follower.ModelOffsetX = 0;
+GMAT Follower.ModelOffsetY = 0;
+GMAT Follower.ModelOffsetZ = 0;
+GMAT Follower.ModelRotationX = 0;
+GMAT Follower.ModelRotationY = 0;
+GMAT Follower.ModelRotationZ = 0;
+GMAT Follower.ModelScale = 0.1;
+GMAT Follower.AttitudeDisplayStateType = 'EulerAngles';
+GMAT Follower.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT Follower.AttitudeCoordinateSystem = LeaderVNB;
+GMAT Follower.EulerAngleSequence = '321';
+
+
+
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create ForceModel DefaultProp_ForceModel;
+GMAT DefaultProp_ForceModel.CentralBody = Earth;
+GMAT DefaultProp_ForceModel.PrimaryBodies = {Earth};
+GMAT DefaultProp_ForceModel.Drag = None;
+GMAT DefaultProp_ForceModel.SRP = Off;
+GMAT DefaultProp_ForceModel.RelativisticCorrection = Off;
+GMAT DefaultProp_ForceModel.ErrorControl = RSSStep;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Degree = 4;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Order = 4;
+GMAT DefaultProp_ForceModel.GravityField.Earth.StmLimit = 100;
+GMAT DefaultProp_ForceModel.GravityField.Earth.PotentialFile = 'JGM2.cof';
+GMAT DefaultProp_ForceModel.GravityField.Earth.TideModel = 'None';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator DefaultProp;
+GMAT DefaultProp.FM = DefaultProp_ForceModel;
+GMAT DefaultProp.Type = RungeKutta89;
+GMAT DefaultProp.InitialStepSize = 60;
+GMAT DefaultProp.Accuracy = 9.999999999999999e-012;
+GMAT DefaultProp.MinStep = 0.001;
+GMAT DefaultProp.MaxStep = 5;
+GMAT DefaultProp.MaxStepAttempts = 50;
+GMAT DefaultProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem LeaderLVLH;
+GMAT LeaderLVLH.Origin = Leader;
+GMAT LeaderLVLH.Axes = ObjectReferenced;
+GMAT LeaderLVLH.YAxis = N;
+GMAT LeaderLVLH.ZAxis = R;
+GMAT LeaderLVLH.Primary = Earth;
+GMAT LeaderLVLH.Secondary = Leader;
+
+Create CoordinateSystem LeaderVNB;
+GMAT LeaderVNB.Origin = Leader;
+GMAT LeaderVNB.Axes = ObjectReferenced;
+GMAT LeaderVNB.XAxis = V;
+GMAT LeaderVNB.YAxis = N;
+GMAT LeaderVNB.Primary = Earth;
+GMAT LeaderVNB.Secondary = Leader;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OrbitView VbarView;
+GMAT VbarView.SolverIterations = None;
+GMAT VbarView.UpperLeft = [ 0.3305882352941176 0.4940476190476191 ];
+GMAT VbarView.Size = [ 0.3323529411764706 0.4976190476190476 ];
+GMAT VbarView.RelativeZOrder = 337;
+GMAT VbarView.Maximized = false;
+GMAT VbarView.Add = {Follower, Earth};
+GMAT VbarView.CoordinateSystem = LeaderVNB;
+GMAT VbarView.DrawObject = [ true true ];
+GMAT VbarView.DataCollectFrequency = 1;
+GMAT VbarView.UpdatePlotFrequency = 50;
+GMAT VbarView.NumPointsToRedraw = 500;
+GMAT VbarView.ShowPlot = true;
+GMAT VbarView.MaxPlotPoints = 20000;
+GMAT VbarView.ShowLabels = true;
+GMAT VbarView.ViewPointReference = Leader;
+GMAT VbarView.ViewPointVector = [ -2000 0 0 ];
+GMAT VbarView.ViewDirection = Leader;
+GMAT VbarView.ViewScaleFactor = 1;
+GMAT VbarView.ViewUpCoordinateSystem = LeaderVNB;
+GMAT VbarView.ViewUpAxis = Z;
+GMAT VbarView.EclipticPlane = Off;
+GMAT VbarView.XYPlane = Off;
+GMAT VbarView.WireFrame = Off;
+GMAT VbarView.Axes = On;
+GMAT VbarView.Grid = Off;
+GMAT VbarView.SunLine = Off;
+GMAT VbarView.UseInitialView = Off;
+GMAT VbarView.StarCount = 7000;
+GMAT VbarView.EnableStars = On;
+GMAT VbarView.EnableConstellations = On;
+
+Create OrbitView ViewFromAbove;
+GMAT ViewFromAbove.SolverIterations = None;
+GMAT ViewFromAbove.UpperLeft = [ 0.6635294117647059 0 ];
+GMAT ViewFromAbove.Size = [ 0.3323529411764706 0.4976190476190476 ];
+GMAT ViewFromAbove.RelativeZOrder = 324;
+GMAT ViewFromAbove.Maximized = false;
+GMAT ViewFromAbove.Add = {Follower, Earth};
+GMAT ViewFromAbove.CoordinateSystem = LeaderVNB;
+GMAT ViewFromAbove.DrawObject = [ true true ];
+GMAT ViewFromAbove.DataCollectFrequency = 1;
+GMAT ViewFromAbove.UpdatePlotFrequency = 50;
+GMAT ViewFromAbove.NumPointsToRedraw = 500;
+GMAT ViewFromAbove.ShowPlot = true;
+GMAT ViewFromAbove.MaxPlotPoints = 20000;
+GMAT ViewFromAbove.ShowLabels = true;
+GMAT ViewFromAbove.ViewPointReference = Leader;
+GMAT ViewFromAbove.ViewPointVector = [ 0 0 2000 ];
+GMAT ViewFromAbove.ViewDirection = Leader;
+GMAT ViewFromAbove.ViewScaleFactor = 1;
+GMAT ViewFromAbove.ViewUpCoordinateSystem = LeaderVNB;
+GMAT ViewFromAbove.ViewUpAxis = X;
+GMAT ViewFromAbove.EclipticPlane = Off;
+GMAT ViewFromAbove.XYPlane = Off;
+GMAT ViewFromAbove.WireFrame = Off;
+GMAT ViewFromAbove.Axes = On;
+GMAT ViewFromAbove.Grid = Off;
+GMAT ViewFromAbove.SunLine = Off;
+GMAT ViewFromAbove.UseInitialView = Off;
+GMAT ViewFromAbove.StarCount = 7000;
+GMAT ViewFromAbove.EnableStars = On;
+GMAT ViewFromAbove.EnableConstellations = On;
+
+Create OrbitView InertialView;
+GMAT InertialView.SolverIterations = None;
+GMAT InertialView.UpperLeft = [ 0.3311764705882353 0 ];
+GMAT InertialView.Size = [ 0.3323529411764706 0.4976190476190476 ];
+GMAT InertialView.RelativeZOrder = 329;
+GMAT InertialView.Maximized = false;
+GMAT InertialView.Add = {Follower, Earth};
+GMAT InertialView.CoordinateSystem = EarthMJ2000Eq;
+GMAT InertialView.DrawObject = [ true true ];
+GMAT InertialView.DataCollectFrequency = 1;
+GMAT InertialView.UpdatePlotFrequency = 50;
+GMAT InertialView.NumPointsToRedraw = 0;
+GMAT InertialView.ShowPlot = true;
+GMAT InertialView.MaxPlotPoints = 20000;
+GMAT InertialView.ShowLabels = true;
+GMAT InertialView.ViewPointReference = Earth;
+GMAT InertialView.ViewPointVector = [ 0 0 30000 ];
+GMAT InertialView.ViewDirection = Earth;
+GMAT InertialView.ViewScaleFactor = 0.5;
+GMAT InertialView.ViewUpCoordinateSystem = EarthMJ2000Eq;
+GMAT InertialView.ViewUpAxis = Z;
+GMAT InertialView.EclipticPlane = Off;
+GMAT InertialView.XYPlane = Off;
+GMAT InertialView.WireFrame = Off;
+GMAT InertialView.Axes = Off;
+GMAT InertialView.Grid = Off;
+GMAT InertialView.SunLine = Off;
+GMAT InertialView.UseInitialView = Off;
+GMAT InertialView.StarCount = 7000;
+GMAT InertialView.EnableStars = On;
+GMAT InertialView.EnableConstellations = On;
+
+Create OrbitView SideView;
+GMAT SideView.SolverIterations = None;
+GMAT SideView.UpperLeft = [ 0.6635294117647059 0.4952380952380953 ];
+GMAT SideView.Size = [ 0.3323529411764706 0.4976190476190476 ];
+GMAT SideView.RelativeZOrder = 319;
+GMAT SideView.Maximized = false;
+GMAT SideView.Add = {Follower, Earth};
+GMAT SideView.CoordinateSystem = LeaderVNB;
+GMAT SideView.DrawObject = [ true true ];
+GMAT SideView.DataCollectFrequency = 1;
+GMAT SideView.UpdatePlotFrequency = 50;
+GMAT SideView.NumPointsToRedraw = 500;
+GMAT SideView.ShowPlot = true;
+GMAT SideView.MaxPlotPoints = 20000;
+GMAT SideView.ShowLabels = true;
+GMAT SideView.ViewPointReference = Leader;
+GMAT SideView.ViewPointVector = [ 0 200 0 ];
+GMAT SideView.ViewDirection = Leader;
+GMAT SideView.ViewScaleFactor = 10;
+GMAT SideView.ViewUpCoordinateSystem = LeaderVNB;
+GMAT SideView.ViewUpAxis = Z;
+GMAT SideView.EclipticPlane = Off;
+GMAT SideView.XYPlane = Off;
+GMAT SideView.WireFrame = Off;
+GMAT SideView.Axes = On;
+GMAT SideView.Grid = Off;
+GMAT SideView.SunLine = Off;
+GMAT SideView.UseInitialView = Off;
+GMAT SideView.StarCount = 7000;
+GMAT SideView.EnableStars = On;
+GMAT SideView.EnableConstellations = On;
+
+Create OpenFramesInterface LeaderVNBPlot;
+GMAT LeaderVNBPlot.SolverIterations = Current;
+GMAT LeaderVNBPlot.UpperLeft = [ 0 0.4952380952380953 ];
+GMAT LeaderVNBPlot.Size = [ 0.3311764705882353 0.4952380952380953 ];
+GMAT LeaderVNBPlot.RelativeZOrder = 377;
+GMAT LeaderVNBPlot.Maximized = false;
+GMAT LeaderVNBPlot.Add = {Follower, Earth};
+GMAT LeaderVNBPlot.View = {LeaderVbarView, LeaderViewFromAbove, LeaderSideView};
+GMAT LeaderVNBPlot.CoordinateSystem = LeaderVNB;
+GMAT LeaderVNBPlot.DrawObject = [ true true ];
+GMAT LeaderVNBPlot.DrawTrajectory = [ true true ];
+GMAT LeaderVNBPlot.DrawAxes = [ false false ];
+GMAT LeaderVNBPlot.DrawXYPlane = [ false false ];
+GMAT LeaderVNBPlot.DrawLabel = [ true true ];
+GMAT LeaderVNBPlot.DrawUsePropLabel = [ false false ];
+GMAT LeaderVNBPlot.DrawCenterPoint = [ false true ];
+GMAT LeaderVNBPlot.DrawEndPoints = [ false true ];
+GMAT LeaderVNBPlot.DrawVelocity = [ false false ];
+GMAT LeaderVNBPlot.DrawGrid = [ false false ];
+GMAT LeaderVNBPlot.DrawLineWidth = [ 2 2 ];
+GMAT LeaderVNBPlot.DrawMarkerSize = [ 10 10 ];
+GMAT LeaderVNBPlot.DrawFontSize = [ 14 14 ];
+GMAT LeaderVNBPlot.Axes = On;
+GMAT LeaderVNBPlot.AxesLength = 1;
+GMAT LeaderVNBPlot.AxesLabels = On;
+GMAT LeaderVNBPlot.FrameLabel = Off;
+GMAT LeaderVNBPlot.XYPlane = Off;
+GMAT LeaderVNBPlot.EclipticPlane = Off;
+GMAT LeaderVNBPlot.EnableStars = On;
+GMAT LeaderVNBPlot.StarCatalog = 'inp_StarsHYGv3.txt';
+GMAT LeaderVNBPlot.StarCount = 40000;
+GMAT LeaderVNBPlot.MinStarMag = -2;
+GMAT LeaderVNBPlot.MaxStarMag = 6;
+GMAT LeaderVNBPlot.MinStarPixels = 1;
+GMAT LeaderVNBPlot.MaxStarPixels = 10;
+GMAT LeaderVNBPlot.MinStarDimRatio = 0.5;
+GMAT LeaderVNBPlot.ShowPlot = true;
+GMAT LeaderVNBPlot.ShowToolbar = true;
+GMAT LeaderVNBPlot.SolverIterLastN = 1;
+GMAT LeaderVNBPlot.ShowVR = false;
+GMAT LeaderVNBPlot.PlaybackTimeScale = 3600;
+GMAT LeaderVNBPlot.MultisampleAntiAliasing = On;
+GMAT LeaderVNBPlot.MSAASamples = 2;
+GMAT LeaderVNBPlot.DrawFontPosition = {'Top-Right', 'Top-Right'};
+
+Create OpenFramesInterface EarthInertial;
+GMAT EarthInertial.SolverIterations = Current;
+GMAT EarthInertial.UpperLeft = [ 0 0 ];
+GMAT EarthInertial.Size = [ 0.3311764705882353 0.4952380952380953 ];
+GMAT EarthInertial.RelativeZOrder = 342;
+GMAT EarthInertial.Maximized = false;
+GMAT EarthInertial.Add = {Follower, Earth, Sun};
+GMAT EarthInertial.View = {EarthMJ2000EqView};
+GMAT EarthInertial.CoordinateSystem = EarthMJ2000Eq;
+GMAT EarthInertial.DrawObject = [ true true true ];
+GMAT EarthInertial.DrawTrajectory = [ true true true ];
+GMAT EarthInertial.DrawAxes = [ false false false ];
+GMAT EarthInertial.DrawXYPlane = [ false false false ];
+GMAT EarthInertial.DrawLabel = [ true true true ];
+GMAT EarthInertial.DrawUsePropLabel = [ false false false ];
+GMAT EarthInertial.DrawCenterPoint = [ false false true ];
+GMAT EarthInertial.DrawEndPoints = [ false false true ];
+GMAT EarthInertial.DrawVelocity = [ false false false ];
+GMAT EarthInertial.DrawGrid = [ false false false ];
+GMAT EarthInertial.DrawLineWidth = [ 2 2 2 ];
+GMAT EarthInertial.DrawMarkerSize = [ 10 10 10 ];
+GMAT EarthInertial.DrawFontSize = [ 14 14 14 ];
+GMAT EarthInertial.Axes = Off;
+GMAT EarthInertial.AxesLength = 1;
+GMAT EarthInertial.AxesLabels = Off;
+GMAT EarthInertial.FrameLabel = Off;
+GMAT EarthInertial.XYPlane = Off;
+GMAT EarthInertial.EclipticPlane = Off;
+GMAT EarthInertial.EnableStars = On;
+GMAT EarthInertial.StarCatalog = 'inp_StarsHYGv3.txt';
+GMAT EarthInertial.StarCount = 40000;
+GMAT EarthInertial.MinStarMag = -2;
+GMAT EarthInertial.MaxStarMag = 6;
+GMAT EarthInertial.MinStarPixels = 1;
+GMAT EarthInertial.MaxStarPixels = 10;
+GMAT EarthInertial.MinStarDimRatio = 0.5;
+GMAT EarthInertial.ShowPlot = true;
+GMAT EarthInertial.ShowToolbar = true;
+GMAT EarthInertial.SolverIterLastN = 1;
+GMAT EarthInertial.ShowVR = false;
+GMAT EarthInertial.PlaybackTimeScale = 3600;
+GMAT EarthInertial.MultisampleAntiAliasing = On;
+GMAT EarthInertial.MSAASamples = 2;
+GMAT EarthInertial.DrawFontPosition = {'Top-Right', 'Top-Right', 'Top-Right'};
+
+%----------------------------------------
+%---------- User Objects
+%----------------------------------------
+
+Create OpenFramesView EarthMJ2000EqView;
+GMAT EarthMJ2000EqView.ViewFrame = CoordinateSystem;
+GMAT EarthMJ2000EqView.ViewTrajectory = Off;
+GMAT EarthMJ2000EqView.InertialFrame = Off;
+GMAT EarthMJ2000EqView.SetDefaultLocation = On;
+GMAT EarthMJ2000EqView.DefaultEye = [ -136.39310462 964.00410673 16877.8000991 ];
+GMAT EarthMJ2000EqView.DefaultCenter = [ 0 0 0 ];
+GMAT EarthMJ2000EqView.DefaultUp = [ 1 0 0 ];
+GMAT EarthMJ2000EqView.SetCurrentLocation = Off;
+GMAT EarthMJ2000EqView.FOVy = 45;
+
+Create OpenFramesView LeaderVbarView;
+GMAT LeaderVbarView.ViewFrame = CoordinateSystem;
+GMAT LeaderVbarView.ViewTrajectory = Off;
+GMAT LeaderVbarView.InertialFrame = Off;
+GMAT LeaderVbarView.SetDefaultLocation = On;
+GMAT LeaderVbarView.DefaultEye = [ -1824.70414741 0 0 ];
+GMAT LeaderVbarView.DefaultCenter = [ 0 0 0 ];
+GMAT LeaderVbarView.DefaultUp = [ 0 0 1 ];
+GMAT LeaderVbarView.SetCurrentLocation = Off;
+GMAT LeaderVbarView.FOVy = 45;
+
+Create OpenFramesView LeaderViewFromAbove;
+GMAT LeaderViewFromAbove.ViewFrame = CoordinateSystem;
+GMAT LeaderViewFromAbove.ViewTrajectory = Off;
+GMAT LeaderViewFromAbove.InertialFrame = Off;
+GMAT LeaderViewFromAbove.SetDefaultLocation = On;
+GMAT LeaderViewFromAbove.DefaultEye = [ 0 0 2000 ];
+GMAT LeaderViewFromAbove.DefaultCenter = [ 0 0 0 ];
+GMAT LeaderViewFromAbove.DefaultUp = [ 1 0 0 ];
+GMAT LeaderViewFromAbove.SetCurrentLocation = Off;
+GMAT LeaderViewFromAbove.FOVy = 45;
+
+Create OpenFramesView LeaderSideView;
+GMAT LeaderSideView.ViewFrame = CoordinateSystem;
+GMAT LeaderSideView.ViewTrajectory = Off;
+GMAT LeaderSideView.InertialFrame = Off;
+GMAT LeaderSideView.SetDefaultLocation = On;
+GMAT LeaderSideView.DefaultEye = [ 0 2000 0 ];
+GMAT LeaderSideView.DefaultCenter = [ 0 0 0 ];
+GMAT LeaderSideView.DefaultUp = [ 0 0 1 ];
+GMAT LeaderSideView.SetCurrentLocation = Off;
+GMAT LeaderSideView.FOVy = 45;
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+
+%   Propagate to until circling the leader
+Propagate 'Prop 1 Day' DefaultProp(Leader, Follower) {Follower.ElapsedDays = 1};

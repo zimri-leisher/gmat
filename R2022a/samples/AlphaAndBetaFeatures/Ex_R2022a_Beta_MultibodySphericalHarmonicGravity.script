@@ -1,0 +1,70 @@
+%
+%   Ex_R2022a_Beta_MultibodySphericalHarmonicGravity
+%
+%   This script demonstrates use of multiple spherical harmonic gravity models 
+%   in a single force model. The trajectory is LEO to a lunar swingby. 
+%
+%   WARNING: This is a "beta" capability in R2022a and is only available in 
+%   TESTING mode. This feature should not be used for operational mission 
+%   support.
+%
+
+Create Spacecraft PropSat
+
+PropSat.DateFormat       = UTCGregorian;
+PropSat.CoordinateSystem = EarthMJ2000Eq;
+PropSat.DisplayStateType = Cartesian;
+PropSat.Epoch            = '23 Jul 2014 20:48:49.867';
+PropSat.X                =  7482.8543588238
+PropSat.Y                = -4114.9383148094
+PropSat.Z                = -1171.2583196957
+PropSat.VX               =  4.4360466952333 
+PropSat.VY               =  8.2685908903498 
+PropSat.VZ               = -1.5696078133161
+PropSat.DryMass          = 130;
+PropSat.Cd               = 2.2;
+PropSat.Cr               = 1.8;
+PropSat.DragArea         = 15;
+PropSat.SRPArea          = 1;
+
+Create ForceModel FM
+
+FM.CentralBody                      = Earth;
+FM.PrimaryBodies                    = {Earth, Luna};
+FM.GravityField.Earth.Degree        = 12;
+FM.GravityField.Earth.Order         = 12;
+FM.GravityField.Earth.TideModel     = 'None';
+FM.GravityField.Earth.PotentialFile = 'JGM2.cof';
+FM.GravityField.Luna.Degree         = 16;
+FM.GravityField.Luna.Order          = 16;
+FM.GravityField.Luna.PotentialFile  = '../data/gravity/luna/grgm900c.cof';
+FM.GravityField.Luna.TideFile       = '../data/gravity/luna/grgm900c.tide';
+FM.GravityField.Luna.TideModel      = 'Solid';
+FM.SRP                              = Off
+FM.ErrorControl                     = 'RSSStep'
+
+Create Propagator Prop;
+
+Prop.Type            = RungeKutta89
+Prop.FM              = FM
+Prop.Accuracy        = 1e-13;
+Prop.InitialStepSize = 60;
+Prop.MinStep         = 0;
+Prop.MaxStep         = 60;
+Prop.MaxStepAttempts = 50;
+
+Create EphemerisFile Ephem;
+
+Ephem.Spacecraft   = PropSat;
+Ephem.Filename     = 'Ex_R2022a_Beta_MultibodySphericalHarmonicGravity.oem';
+Ephem.FileFormat   = 'CCSDS-OEM';
+Ephem.EpochFormat  = UTCGregorian;
+Ephem.StepSize     = 60;
+
+%
+%   Run the mission sequence
+%
+
+BeginMissionSequence
+
+Propagate Prop(PropSat) {PropSat.ElapsedDays = 10};

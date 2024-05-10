@@ -1,0 +1,207 @@
+%
+% Simulated Spacecraft
+%
+
+Create Spacecraft SimSat;
+
+SimSat.DateFormat = UTCGregorian;
+SimSat.Epoch = '10 Jun 2010 00:00:00.000';
+SimSat.CoordinateSystem = EarthMJ2000Eq;
+SimSat.DisplayStateType = Cartesian;
+SimSat.X = 576.86955
+SimSat.Y = -5701.14276
+SimSat.Z = -4170.59369
+SimSat.VX = -1.76450794
+SimSat.VY = 4.18128798
+SimSat.VZ = -5.96578986
+SimSat.Id = 'ObservedSat';
+
+Create Spacecraft SimMeasureSat;
+
+SimMeasureSat.DateFormat = UTCGregorian;
+SimMeasureSat.Epoch = '10 Jun 2010 00:00:00.000';
+SimMeasureSat.CoordinateSystem = EarthMJ2000Eq;
+SimMeasureSat.DisplayStateType = Cartesian;
+SimMeasureSat.X = 469.90796
+SimMeasureSat.Y = -5438.94786
+SimMeasureSat.Z = -4519.89814
+SimMeasureSat.VX = -1.79968026
+SimMeasureSat.VY = 4.55560101
+SimMeasureSat.VZ = -5.67378491
+SimMeasureSat.Id = 'MeasureSat';
+
+%
+% Estimator Spacecraft
+%
+
+Create Spacecraft EstSat;
+
+EstSat.DateFormat = UTCGregorian;
+EstSat.Epoch = '10 Jun 2010 00:00:00.000';
+EstSat.CoordinateSystem = EarthMJ2000Eq;
+EstSat.DisplayStateType = Cartesian;
+EstSat.X = 576.87
+EstSat.Y = -5701.14
+EstSat.Z = -4170.59
+EstSat.VX = -1.764508
+EstSat.VY = 4.181288
+EstSat.VZ = -5.965790
+EstSat.Id = 'ObservedSat';
+EstSat.AddHardware = {Transponder1, SpacecraftAntenna};
+EstSat.SolveFors = {CartesianState};
+
+Create Spacecraft EstMeasureSat;
+
+EstMeasureSat.DateFormat = UTCGregorian;
+EstMeasureSat.Epoch = '10 Jun 2010 00:00:00.000';
+EstMeasureSat.CoordinateSystem = EarthMJ2000Eq;
+EstMeasureSat.DisplayStateType = Cartesian;
+EstMeasureSat.X = 469.90796
+EstMeasureSat.Y = -5438.94786
+EstMeasureSat.Z = -4519.89814
+EstMeasureSat.VX = -1.79968026
+EstMeasureSat.VY = 4.55560101
+EstMeasureSat.VZ = -5.67378491
+EstMeasureSat.Id = 'MeasureSat';
+EstMeasureSat.NAIFId = 78;
+
+%
+% Spacecraft hardware
+%
+
+Create Antenna SpacecraftAntenna;
+Create Transponder HGA;
+
+HGA.PrimaryAntenna = SpacecraftAntenna;
+HGA.HardwareDelay = 1e-06;
+HGA.TurnAroundRatio = '880/749'
+
+SimSat.AddHardware = {HGA,SpacecraftAntenna};
+EstSat.AddHardware = {HGA,SpacecraftAntenna};
+
+%
+% Measurement Spacecraft hardware
+%
+
+Create Transmitter MeasurementTransmitter;
+Create Receiver MeasurementReceiver;
+
+MeasurementTransmitter.PrimaryAntenna = SpacecraftAntenna;
+MeasurementTransmitter.Frequency = 7200;
+MeasurementReceiver.PrimaryAntenna = SpacecraftAntenna;
+
+SimMeasureSat.AddHardware = {HGA,SpacecraftAntenna,MeasurementTransmitter, MeasurementReceiver};
+EstMeasureSat.AddHardware = {HGA,SpacecraftAntenna,MeasurementTransmitter, MeasurementReceiver};
+
+%
+% Tracking file sets
+%
+
+Create TrackingFileSet simData;
+
+simData.AddTrackingConfig = {{SimMeasureSat, SimSat, SimMeasureSat}, 'DSN_SeqRange','DSN_TCP'};
+simData.FileName = {'InterSpacecraft_DSN_Range_and_DSN_TCP_Measurement.gmd'};
+simData.RampTable = {};
+simData.UseLightTime = True;
+simData.UseRelativityCorrection = True;
+simData.UseETminusTAI = True;
+simData.SimRangeModuloConstant = 33554432;
+simData.SimDopplerCountInterval = 10.;
+simData.DataFilters = {};
+
+Create TrackingFileSet estData;
+
+estData.AddTrackingConfig = {{EstMeasureSat, EstSat, EstMeasureSat}, 'DSN_SeqRange','DSN_TCP'};
+estData.FileName = {'InterSpacecraft_DSN_Range_and_DSN_TCP_Measurement.gmd'};
+estData.RampTable = {};
+estData.UseLightTime = True;
+estData.UseRelativityCorrection = True;
+estData.UseETminusTAI = True;
+estData.DataFilters = {};
+
+%
+% Spacecraft Error models
+%
+
+Create ErrorModel DSNRange;
+
+DSNRange.Type = 'DSN_SeqRange';
+DSNRange.NoiseSigma = 10.63;
+DSNRange.Bias = 0.0;
+DSNRange.SolveFors = {};
+
+Create ErrorModel DSNdoppler;
+
+DSNdoppler.Type = 'DSN_TCP';
+DSNdoppler.NoiseSigma = 0.001;
+DSNdoppler.Bias = 0.0;
+DSNdoppler.SolveFors = {};
+
+MeasurementReceiver.ErrorModels = {DSNRange,DSNdoppler};
+
+%
+% Propagators
+%
+
+Create ForceModel ODProp_ForceModel;
+
+ODProp_ForceModel.CentralBody = Earth;
+ODProp_ForceModel.PointMasses = {Earth};
+ODProp_ForceModel.Drag = None;
+ODProp_ForceModel.SRP = Off;
+ODProp_ForceModel.ErrorControl = None;
+
+Create Propagator ODProp;
+
+ODProp.FM = ODProp_ForceModel;
+ODProp.Type = 'RungeKutta56';
+ODProp.InitialStepSize = 60;
+ODProp.Accuracy = 1e-13;
+ODProp.MinStep = 0;
+ODProp.MaxStep = 60;
+ODProp.MaxStepAttempts = 50;
+
+%
+% Simulator
+%
+
+Create Simulator sim;
+
+sim.AddData = {simData};
+sim.EpochFormat = 'UTCGregorian';
+sim.InitialEpoch = '10 Jun 2010 00:00:00.000';
+sim.FinalEpoch = '12 Jun 2010 00:00:00.000';
+sim.MeasurementTimeStep = 60;
+sim.Propagator = ODProp;
+sim.AddNoise = On;
+
+%
+% Estimator
+%
+
+Create BatchEstimator bat
+
+bat.ShowProgress = true;
+bat.Measurements = {estData}
+bat.AbsoluteTol = 0.000001;
+bat.RelativeTol = 0.001;
+bat.MaximumIterations = 10;
+bat.MaxConsecutiveDivergences = 3;
+bat.Propagator = ODProp;
+bat.ShowAllResiduals = On;
+bat.OLSEInitialRMSSigma = 3000;
+bat.OLSEMultiplicativeConstant = 3;
+bat.OLSEAdditiveConstant = 0;
+bat.UseInnerLoopEditing = True;
+bat.ILSEMaximumIterations = 15;
+bat.ILSEMultiplicativeConstant = 3;
+bat.InversionAlgorithm = 'Internal';
+bat.EstimationEpochFormat = 'FromParticipants';
+bat.EstimationEpoch = 'FromParticipants';
+bat.ReportStyle = 'Normal';
+bat.ReportFile = 'InterSpacecraft_DSN_Range_and_DSN_TCP.txt';
+
+BeginMissionSequence
+
+RunSimulator sim;
+RunEstimator bat;

@@ -1,0 +1,265 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2018-03-21 09:01:15
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft DefaultSC;
+GMAT DefaultSC.DateFormat = UTCGregorian;
+GMAT DefaultSC.Epoch = '15 Dec 2017 14:56:42.200';
+GMAT DefaultSC.CoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultSC.DisplayStateType = Cartesian;
+GMAT DefaultSC.X = -15015.40312811781;
+GMAT DefaultSC.Y = -23568.97680091111;
+GMAT DefaultSC.Z = 2241.504923500546;
+GMAT DefaultSC.VX = -0.485537892208224;
+GMAT DefaultSC.VY = -5.048763191594085;
+GMAT DefaultSC.VZ = -0.8799883161637991;
+GMAT DefaultSC.DryMass = 7;
+GMAT DefaultSC.Cd = 2.2;
+GMAT DefaultSC.Cr = 1.8;
+GMAT DefaultSC.DragArea = 15;
+GMAT DefaultSC.SRPArea = 1;
+GMAT DefaultSC.Tanks = {ElectricTank1};
+GMAT DefaultSC.Thrusters = {ElectricThruster1};
+GMAT DefaultSC.PowerSystem = SolarPowerSystem1;
+
+%----------------------------------------
+%---------- Hardware Components
+%----------------------------------------
+
+Create ElectricTank ElectricTank1;
+GMAT ElectricTank1.AllowNegativeFuelMass = false;
+GMAT ElectricTank1.FuelMass = 5;
+
+Create ElectricThruster ElectricThruster1;
+GMAT ElectricThruster1.CoordinateSystem = Local;
+GMAT ElectricThruster1.Origin = Earth;
+GMAT ElectricThruster1.Axes = VNB;
+GMAT ElectricThruster1.ThrustDirection1 = -1;
+GMAT ElectricThruster1.ThrustDirection2 = 0;
+GMAT ElectricThruster1.ThrustDirection3 = 0;
+GMAT ElectricThruster1.DutyCycle = 1;
+GMAT ElectricThruster1.ThrustScaleFactor = 0.9;
+GMAT ElectricThruster1.DecrementMass = false;
+GMAT ElectricThruster1.Tank = {ElectricTank1};
+GMAT ElectricThruster1.MixRatio = [1];
+GMAT ElectricThruster1.GravitationalAccel = 9.810000000000001;
+GMAT ElectricThruster1.ThrustModel = ConstantThrustAndIsp;
+GMAT ElectricThruster1.MaximumUsablePower = 7.266;
+GMAT ElectricThruster1.MinimumUsablePower = 0.01;
+GMAT ElectricThruster1.ThrustCoeff1 = -5.19082;
+GMAT ElectricThruster1.ThrustCoeff2 = 2.96519;
+GMAT ElectricThruster1.ThrustCoeff3 = -14.4789;
+GMAT ElectricThruster1.ThrustCoeff4 = 54.05382;
+GMAT ElectricThruster1.ThrustCoeff5 = -0.00100092;
+GMAT ElectricThruster1.MassFlowCoeff1 = -0.004776;
+GMAT ElectricThruster1.MassFlowCoeff2 = 0.05717;
+GMAT ElectricThruster1.MassFlowCoeff3 = -0.09956;
+GMAT ElectricThruster1.MassFlowCoeff4 = 0.03211;
+GMAT ElectricThruster1.MassFlowCoeff5 = 2.13781;
+GMAT ElectricThruster1.FixedEfficiency = 0.7;
+GMAT ElectricThruster1.Isp = 2800;
+GMAT ElectricThruster1.ConstantThrust = 0.0012;
+
+Create SolarPowerSystem SolarPowerSystem1;
+GMAT SolarPowerSystem1.EpochFormat = 'UTCGregorian';
+GMAT SolarPowerSystem1.InitialEpoch = ''01 Jan 2000 11:59:28.000'';
+GMAT SolarPowerSystem1.InitialMaxPower = 1.2;
+GMAT SolarPowerSystem1.AnnualDecayRate = 5;
+GMAT SolarPowerSystem1.Margin = 5;
+GMAT SolarPowerSystem1.BusCoeff1 = 0.3;
+GMAT SolarPowerSystem1.BusCoeff2 = 0;
+GMAT SolarPowerSystem1.BusCoeff3 = 0;
+GMAT SolarPowerSystem1.ShadowModel = 'DualCone';
+GMAT SolarPowerSystem1.ShadowBodies = {'Luna'};
+GMAT SolarPowerSystem1.SolarCoeff1 = 1.32077;
+GMAT SolarPowerSystem1.SolarCoeff2 = -0.10848;
+GMAT SolarPowerSystem1.SolarCoeff3 = -0.11665;
+GMAT SolarPowerSystem1.SolarCoeff4 = 0.10843;
+GMAT SolarPowerSystem1.SolarCoeff5 = -0.01279;
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel DefaultProp_ForceModel;
+GMAT DefaultProp_ForceModel.CentralBody = Luna;
+GMAT DefaultProp_ForceModel.PointMasses = {Earth, Luna, Sun};
+GMAT DefaultProp_ForceModel.Drag = None;
+GMAT DefaultProp_ForceModel.SRP = Off;
+GMAT DefaultProp_ForceModel.RelativisticCorrection = Off;
+GMAT DefaultProp_ForceModel.ErrorControl = RSSStep;
+
+Create ForceModel LunarProp_ForceModel;
+GMAT LunarProp_ForceModel.CentralBody = Luna;
+GMAT LunarProp_ForceModel.PrimaryBodies = {Luna};
+GMAT LunarProp_ForceModel.PointMasses = {Earth, Sun};
+GMAT LunarProp_ForceModel.Drag = None;
+GMAT LunarProp_ForceModel.SRP = Off;
+GMAT LunarProp_ForceModel.RelativisticCorrection = Off;
+GMAT LunarProp_ForceModel.ErrorControl = RSSStep;
+GMAT LunarProp_ForceModel.GravityField.Luna.Degree = 4;
+GMAT LunarProp_ForceModel.GravityField.Luna.Order = 4;
+GMAT LunarProp_ForceModel.GravityField.Luna.PotentialFile = 'LP165P.cof';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator DefaultProp;
+GMAT DefaultProp.FM = DefaultProp_ForceModel;
+GMAT DefaultProp.Type = RungeKutta89;
+GMAT DefaultProp.InitialStepSize = 60;
+GMAT DefaultProp.Accuracy = 9.999999999999999e-012;
+GMAT DefaultProp.MinStep = 0.001;
+GMAT DefaultProp.MaxStep = 86400;
+GMAT DefaultProp.MaxStepAttempts = 50;
+GMAT DefaultProp.StopIfAccuracyIsViolated = true;
+
+Create Propagator LunarProp;
+GMAT LunarProp.FM = LunarProp_ForceModel;
+GMAT LunarProp.Type = RungeKutta89;
+GMAT LunarProp.InitialStepSize = 60;
+GMAT LunarProp.Accuracy = 9.999999999999999e-012;
+GMAT LunarProp.MinStep = 0.001;
+GMAT LunarProp.MaxStep = 2700;
+GMAT LunarProp.MaxStepAttempts = 50;
+GMAT LunarProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Burns
+%----------------------------------------
+
+Create FiniteBurn FiniteBurn1;
+GMAT FiniteBurn1.Thrusters = {ElectricThruster1};
+GMAT FiniteBurn1.ThrottleLogicAlgorithm = 'MaxNumberOfThrusters';
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem MoonJ2k;
+GMAT MoonJ2k.Origin = Luna;
+GMAT MoonJ2k.Axes = MJ2000Eq;
+
+Create CoordinateSystem CS_ESRotating;
+GMAT CS_ESRotating.Origin = Earth;
+GMAT CS_ESRotating.Axes = ObjectReferenced;
+GMAT CS_ESRotating.XAxis = -R;
+GMAT CS_ESRotating.ZAxis = N;
+GMAT CS_ESRotating.Primary = Earth;
+GMAT CS_ESRotating.Secondary = Sun;
+
+Create CoordinateSystem CS_EMRotating;
+GMAT CS_EMRotating.Origin = Earth;
+GMAT CS_EMRotating.Axes = ObjectReferenced;
+GMAT CS_EMRotating.XAxis = R;
+GMAT CS_EMRotating.ZAxis = N;
+GMAT CS_EMRotating.Primary = Earth;
+GMAT CS_EMRotating.Secondary = Luna;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OpenFramesInterface MoonInertialView;
+GMAT MoonInertialView.SolverIterations = Current;
+GMAT MoonInertialView.UpperLeft = [ 0.35 0.3 ];
+GMAT MoonInertialView.Size = [ 0.45 0.66 ];
+GMAT MoonInertialView.RelativeZOrder = 3;
+GMAT MoonInertialView.Maximized = false;
+GMAT MoonInertialView.Add = {DefaultSC, Luna, Sun, Earth};
+GMAT MoonInertialView.View = {MoonInertialViewCSView, DefaultSCView1};
+GMAT MoonInertialView.CoordinateSystem = MoonJ2k;
+GMAT MoonInertialView.DrawObject = [ true true true true ];
+GMAT MoonInertialView.DrawTrajectory = [ true true true true ];
+
+Create OpenFramesInterface EarthMoonRotatingView;
+GMAT EarthMoonRotatingView.SolverIterations = Current;
+GMAT EarthMoonRotatingView.UpperLeft = [ 0.63 0 ];
+GMAT EarthMoonRotatingView.Size = [ 0.32 0.52 ];
+GMAT EarthMoonRotatingView.RelativeZOrder = 2;
+GMAT EarthMoonRotatingView.Maximized = false;
+GMAT EarthMoonRotatingView.Add = {DefaultSC, Earth, Sun, Luna};
+GMAT EarthMoonRotatingView.CoordinateSystem = CS_EMRotating;
+GMAT EarthMoonRotatingView.View = {EarthMoonRotatingViewCSView};
+GMAT EarthMoonRotatingView.DrawObject = [ true true true true ];
+GMAT EarthMoonRotatingView.DrawTrajectory = [ true true true true ];
+
+Create OpenFramesInterface EarthSunRotatingView;
+GMAT EarthSunRotatingView.SolverIterations = Current;
+GMAT EarthSunRotatingView.UpperLeft = [ 0.25 0 ];
+GMAT EarthSunRotatingView.Size = [ 0.37 0.52 ];
+GMAT EarthSunRotatingView.RelativeZOrder = 1;
+GMAT EarthSunRotatingView.Maximized = true;
+GMAT EarthSunRotatingView.Add = {DefaultSC, Earth, Sun, Luna};
+GMAT EarthSunRotatingView.View = {EarthSunRotatingViewCSView};
+GMAT EarthSunRotatingView.CoordinateSystem = CS_ESRotating;
+GMAT EarthSunRotatingView.DrawObject = [ true true true true ];
+GMAT EarthSunRotatingView.DrawTrajectory = [ true true true true ];
+
+%----------------------------------------
+%---------- View Objects
+%----------------------------------------
+
+Create OpenFramesView MoonInertialViewCSView;
+GMAT MoonInertialViewCSView.ViewFrame = CoordinateSystem;
+GMAT MoonInertialViewCSView.ViewTrajectory = Off;
+GMAT MoonInertialViewCSView.InertialFrame = Off;
+GMAT MoonInertialViewCSView.SetDefaultLocation = Off;
+GMAT MoonInertialViewCSView.SetCurrentLocation = On;
+GMAT MoonInertialViewCSView.CurrentEye = [ 0 0 50000 ];
+GMAT MoonInertialViewCSView.CurrentCenter = [ 0 0 0 ];
+GMAT MoonInertialViewCSView.CurrentUp = [ 1 0 0 ];
+
+Create OpenFramesView DefaultSCView1;
+GMAT DefaultSCView1.ViewFrame = DefaultSC;
+GMAT DefaultSCView1.ViewTrajectory = Off;
+GMAT DefaultSCView1.InertialFrame = Off;
+GMAT DefaultSCView1.SetDefaultLocation = Off;
+GMAT DefaultSCView1.SetCurrentLocation = Off;
+
+Create OpenFramesView EarthMoonRotatingViewCSView;
+GMAT EarthMoonRotatingViewCSView.ViewFrame = CoordinateSystem;
+GMAT EarthMoonRotatingViewCSView.ViewTrajectory = Off;
+GMAT EarthMoonRotatingViewCSView.InertialFrame = Off;
+GMAT EarthMoonRotatingViewCSView.SetDefaultLocation = Off;
+GMAT EarthMoonRotatingViewCSView.SetCurrentLocation = On;
+GMAT EarthMoonRotatingViewCSView.CurrentEye = [ 0 0 1800000 ];
+GMAT EarthMoonRotatingViewCSView.CurrentCenter = [ 0 0 0 ];
+GMAT EarthMoonRotatingViewCSView.CurrentUp = [ 0 0 1 ];
+
+Create OpenFramesView EarthSunRotatingViewCSView;
+GMAT EarthSunRotatingViewCSView.ViewFrame = CoordinateSystem;
+GMAT EarthSunRotatingViewCSView.ViewTrajectory = Off;
+GMAT EarthSunRotatingViewCSView.InertialFrame = Off;
+GMAT EarthSunRotatingViewCSView.SetDefaultLocation = Off;
+GMAT EarthSunRotatingViewCSView.SetCurrentLocation = On;
+GMAT EarthSunRotatingViewCSView.CurrentEye = [ 0 0 1500000 ];
+GMAT EarthSunRotatingViewCSView.CurrentCenter = [ 0 0 0 ];
+GMAT EarthSunRotatingViewCSView.CurrentUp = [ 0 0 1 ];
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+
+
+Propagate 'Coast for 2 Hours' DefaultProp(DefaultSC) {DefaultSC.ElapsedSecs = 7200};
+%  Turn on the electric propulsion system
+BeginFiniteBurn FiniteBurn1(DefaultSC);
+Propagate 'Prop Through Burn' DefaultProp(DefaultSC) {DefaultSC.ElapsedDays = 1.98, OrbitColor = Red};
+%  Turn off the electric propulsion system
+EndFiniteBurn FiniteBurn1(DefaultSC);
+Propagate 'Lunar Periapsis' DefaultProp(DefaultSC) {DefaultSC.Luna.Periapsis, OrbitColor = Green};
+Propagate 'Earth Apoapsis' DefaultProp(DefaultSC) {DefaultSC.Earth.Apoapsis, OrbitColor = Green};
+Propagate 'Earth Periapsis' DefaultProp(DefaultSC) {DefaultSC.Earth.Periapsis, OrbitColor = Green};
+Propagate 'Earth RMAG = 400000' DefaultProp(DefaultSC) {DefaultSC.Earth.RMAG = 400000, StopTolerance = 1e-05, OrbitColor = Green};
+Propagate 'Earth Apoapsis' DefaultProp(DefaultSC) {DefaultSC.Earth.Apoapsis, OrbitColor = Green};
+
+
+
+
