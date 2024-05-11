@@ -158,9 +158,8 @@ GMAT DefaultOrbitView.EnableConstellations = On;
 %---------- Arrays, Variables, Strings
 %----------------------------------------
 Create Variable LeoTime MoonDistance StartEpoch;
-StartEpoch = -0.5;
-
-LeoTime = 5400;
+GMAT LeoTime = 1900;
+GMAT StartEpoch = 0.1666666666666667;
 
 %----------------------------------------
 %---------- Mission Sequence
