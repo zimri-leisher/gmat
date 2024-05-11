@@ -26,7 +26,7 @@ class ScenarioOutput:
         fig.update_layout(title_text="Mass over time of crewed spacecraft to Luna")
         fig.update_xaxes(title_text="Time (s)")
         fig.update_yaxes(title_text="Mass (kg)")
-        fig.add_trace(go.Line(x=x, y=y))
+        fig.add_trace(go.Scatter(x=x, y=y))
         fig.show()
 
 
@@ -72,11 +72,12 @@ def run_scenario(scenario: Scenario) -> ScenarioOutput:
     tank = gmat.GetObject("FuelTank1")
     fuel_mass = tank.GetField("FuelMass")
 
-    # TODO... figure out how to advance the simulation in steps and get fuel mass
+    # TODO... figure out how to advance the simulation in increments instead of all
+    # at once, get fuel mass at each time
 
-    final_time = sat.GetField("ElapsedSecs")
+    final_time = 1900 + 8 * 24 * 60 * 60
 
-    mass_timeseries.append([(final_time, fuel_mass)])
+    mass_timeseries.append((final_time, fuel_mass))
 
     return ScenarioOutput(mass_timeseries)
 
