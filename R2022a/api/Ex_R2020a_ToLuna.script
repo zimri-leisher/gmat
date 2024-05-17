@@ -2,6 +2,55 @@
 %Created: 2019-04-26 09:25:18
 
 
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft Sat;
+GMAT Sat.DateFormat = UTCGregorian;
+GMAT Sat.Epoch = '26 Apr 2019 12:00:00.000';
+GMAT Sat.CoordinateSystem = EarthFixed;
+GMAT Sat.DisplayStateType = Cartesian;
+GMAT Sat.X = 639.2234690795908;
+GMAT Sat.Y = -3854.671035535996;
+GMAT Sat.Z = 5348.791562420619;
+GMAT Sat.VX = -0.1652938147345514;
+GMAT Sat.VY = 6.129069442591823;
+GMAT Sat.VZ = 4.669570395189814;
+GMAT Sat.DryMass = 850;
+GMAT Sat.Cd = 2.2;
+GMAT Sat.Cr = 1.8;
+GMAT Sat.DragArea = 15;
+GMAT Sat.SRPArea = 1;
+GMAT Sat.SPADDragScaleFactor = 1;
+GMAT Sat.SPADSRPScaleFactor = 1;
+GMAT Sat.NAIFId = -10001001;
+GMAT Sat.NAIFIdReferenceFrame = -9001001;
+GMAT Sat.OrbitColor = Red;
+GMAT Sat.TargetColor = Teal;
+GMAT Sat.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
+GMAT Sat.CdSigma = 1e+70;
+GMAT Sat.CrSigma = 1e+70;
+GMAT Sat.Id = 'SatId';
+GMAT Sat.Attitude = CoordinateSystemFixed;
+GMAT Sat.SPADSRPInterpolationMethod = Bilinear;
+GMAT Sat.SPADSRPScaleFactorSigma = 1e+70;
+GMAT Sat.SPADDragInterpolationMethod = Bilinear;
+GMAT Sat.SPADDragScaleFactorSigma = 1e+70;
+GMAT Sat.ModelFile = 'aura.3ds';
+GMAT Sat.ModelOffsetX = 0;
+GMAT Sat.ModelOffsetY = 0;
+GMAT Sat.ModelOffsetZ = 0;
+GMAT Sat.ModelRotationX = 0;
+GMAT Sat.ModelRotationY = 0;
+GMAT Sat.ModelRotationZ = 0;
+GMAT Sat.ModelScale = 1;
+GMAT Sat.AttitudeDisplayStateType = 'Quaternion';
+GMAT Sat.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT Sat.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT Sat.EulerAngleSequence = '321';
+
+
 
 %----------------------------------------
 %---------- ForceModels
@@ -42,135 +91,16 @@ GMAT DefaultProp.StopIfAccuracyIsViolated = true;
 %---------- Burns
 %----------------------------------------
 
-%  Create a fuel tank and name it tank1
-%          Here we create a fuel tank and set up its physical properties
-%          including Temperature, Fuel Mass, Fuel Density etc.
-Create ChemicalTank tank1;
-GMAT tank1.AllowNegativeFuelMass = false;
-GMAT tank1.FuelMass = 725;
-GMAT tank1.Pressure = 1200;
-GMAT tank1.Temperature = 20;
-GMAT tank1.RefTemperature = 12;
-GMAT tank1.Volume = 0.8;
-GMAT tank1.FuelDensity = 1029;
-GMAT tank1.PressureModel = PressureRegulated;
-
-%  Create a thruster
-%         Here we create a thruster and tell the thruster which tank to
-%         draw fuel from.  We also set up the direction of the thruster.
-%         Currently, you specify the thruster orientation with respect to
-%         the spacecraft VNB or EarthMJ2000Eq systems.  This will change
-%         when attitude capabilities are added to GMAT.
-Create ChemicalThruster engine1;
-GMAT engine1.CoordinateSystem = Local;
-GMAT engine1.Origin = Earth;
-GMAT engine1.Axes = VNB;
-GMAT engine1.ThrustDirection1 = 1;
-GMAT engine1.ThrustDirection2 = 0;
-GMAT engine1.ThrustDirection3 = 0;
-GMAT engine1.DutyCycle = 1;
-GMAT engine1.ThrustScaleFactor = 1;
-GMAT engine1.DecrementMass = false;
-GMAT engine1.Tank = {tank1};
-GMAT engine1.MixRatio = [1];
-GMAT engine1.GravitationalAccel = 9.810000000000001;
-GMAT engine1.C1 = 70;
-GMAT engine1.C2 = 0;
-GMAT engine1.C3 = 0;
-GMAT engine1.C4 = 0;
-GMAT engine1.C5 = 0;
-GMAT engine1.C6 = 0;
-GMAT engine1.C7 = 0;
-GMAT engine1.C8 = 0;
-GMAT engine1.C9 = 0;
-GMAT engine1.C10 = 0;
-GMAT engine1.C11 = 0;
-GMAT engine1.C12 = 0;
-GMAT engine1.C13 = 0;
-GMAT engine1.C14 = 0;
-GMAT engine1.C15 = 0;
-GMAT engine1.C16 = 0;
-GMAT engine1.K1 = 1500;
-GMAT engine1.K2 = 0;
-GMAT engine1.K3 = 0;
-GMAT engine1.K4 = 0;
-GMAT engine1.K5 = 0;
-GMAT engine1.K6 = 0;
-GMAT engine1.K7 = 0;
-GMAT engine1.K8 = 0;
-GMAT engine1.K9 = 0;
-GMAT engine1.K10 = 0;
-GMAT engine1.K11 = 0;
-GMAT engine1.K12 = 0;
-GMAT engine1.K13 = 0;
-GMAT engine1.K14 = 0;
-GMAT engine1.K15 = 0;
-GMAT engine1.K16 = 0;
-
-Create FiniteBurn fb;
-GMAT fb.Thrusters = {engine1};
-GMAT fb.ThrottleLogicAlgorithm = 'MaxNumberOfThrusters';
-GMAT fb.CoordinateSystem = Local;
-GMAT fb.Origin = Earth;
-GMAT fb.Axes = VNB;
-GMAT fb.Element1 = 3.1;
-GMAT fb.Element2 = 0;
-GMAT fb.Element3 = 0;
-GMAT fb.DecrementMass = true;
-GMAT fb.Isp = 300;
-GMAT fb.Tank = {tank1};
-GMAT fb.GravitationalAccel = 9.81;
-%----------------------------------------
-%---------- Spacecraft
-%----------------------------------------
-
-Create Spacecraft Sat;
-GMAT Sat.DateFormat = UTCGregorian;
-GMAT Sat.Epoch = '26 Apr 2019 12:00:00.000';
-GMAT Sat.CoordinateSystem = EarthFixed;
-GMAT Sat.DisplayStateType = Cartesian;
-GMAT Sat.X = 639.2234690795908;
-GMAT Sat.Y = -3854.671035535996;
-GMAT Sat.Z = 5348.791562420619;
-GMAT Sat.VX = -0.1652938147345514;
-GMAT Sat.VY = 6.129069442591823;
-GMAT Sat.VZ = 4.669570395189814;
-GMAT Sat.DryMass = 850;
-GMAT Sat.Cd = 2.2;
-GMAT Sat.Cr = 1.8;
-GMAT Sat.DragArea = 15;
-GMAT Sat.SRPArea = 1;
-GMAT Sat.Tanks = {tank1};
-GMAT Sat.Thrusters = {engine1};
-GMAT Sat.SPADDragScaleFactor = 1;
-GMAT Sat.SPADSRPScaleFactor = 1;
-GMAT Sat.NAIFId = -10001001;
-GMAT Sat.NAIFIdReferenceFrame = -9001001;
-GMAT Sat.OrbitColor = Red;
-GMAT Sat.TargetColor = Teal;
-GMAT Sat.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
-GMAT Sat.CdSigma = 1e+70;
-GMAT Sat.CrSigma = 1e+70;
-GMAT Sat.Id = 'SatId';
-GMAT Sat.Attitude = CoordinateSystemFixed;
-GMAT Sat.SPADSRPInterpolationMethod = Bilinear;
-GMAT Sat.SPADSRPScaleFactorSigma = 1e+70;
-GMAT Sat.SPADDragInterpolationMethod = Bilinear;
-GMAT Sat.SPADDragScaleFactorSigma = 1e+70;
-GMAT Sat.ModelFile = 'aura.3ds';
-GMAT Sat.ModelOffsetX = 0;
-GMAT Sat.ModelOffsetY = 0;
-GMAT Sat.ModelOffsetZ = 0;
-GMAT Sat.ModelRotationX = 0;
-GMAT Sat.ModelRotationY = 0;
-GMAT Sat.ModelRotationZ = 0;
-GMAT Sat.ModelScale = 1;
-GMAT Sat.AttitudeDisplayStateType = 'Quaternion';
-GMAT Sat.AttitudeRateDisplayStateType = 'AngularVelocity';
-GMAT Sat.AttitudeCoordinateSystem = EarthMJ2000Eq;
-GMAT Sat.EulerAngleSequence = '321';
-
-
+Create ImpulsiveBurn TOI;
+GMAT TOI.CoordinateSystem = Local;
+GMAT TOI.Origin = Earth;
+GMAT TOI.Axes = VNB;
+GMAT TOI.Element1 = 3.1;
+GMAT TOI.Element2 = 0;
+GMAT TOI.Element3 = 0;
+GMAT TOI.DecrementMass = false;
+GMAT TOI.Isp = 300;
+GMAT TOI.GravitationalAccel = 9.81;
 
 %----------------------------------------
 %---------- Subscribers
@@ -233,6 +163,6 @@ Sat.EarthFixed.VZ = 4.669570395189814;
 
 
 Propagate DefaultProp(Sat) {Sat.ElapsedSecs = LeoTime};
-Maneuver fb(Sat);
+Maneuver TOI(Sat);
 Propagate DefaultProp(Sat) {Sat.Earth.Apoapsis, Sat.Luna.Periapsis, Sat.ElapsedDays = 8};
 GMAT MoonDistance = Sat.Luna.RMAG;
