@@ -65,19 +65,47 @@ def run_scenario(scenario: Scenario) -> ScenarioOutput:
 
     sat.SetField("DryMass", dry_mass)
 
-    mass_timeseries = [(0, dry_mass)]
+    start_time = 0
+    stop_time = 1900 + 8 * 24 * 60 * 60
+
+    tank = gmat.GetObject("FuelTank1")
+
+    mass_timeseries = [(start_time, sat.GetField("TotalMass"))]
+
+
+    print("\n".join(dir(sat)))
 
     gmat.RunScript()
 
-    tank = gmat.GetObject("FuelTank1")
-    fuel_mass = tank.GetField("FuelMass")
+    # prop = gmat.GetObject("DefaultProp")
+    # prop.AddPropObject(sat)
+
+    # toi = gmat.GetObject("TOI")
+
+    # toi.Help()
+
+    # toi.Initialize()
+
+    # gmat.Initialize()
+    # prop.PrepareInternals()
+
+    # integrator = prop.GetPropagator()
+
+
+    # step = 60 * 60 # s
+    # for time in range(start_time, stop_time, step):
+    #     integrator.Step(step)
+    #     mass = tank.GetField("FuelMass")
+    #     mass_timeseries.append((time, mass))
+
+
 
     # TODO... figure out how to advance the simulation in increments instead of all
     # at once, get fuel mass at each time
 
     final_time = 1900 + 8 * 24 * 60 * 60
 
-    mass_timeseries.append((final_time, fuel_mass))
+    mass_timeseries.append((final_time, sat.GetField("TotalMass")))
 
     return ScenarioOutput(mass_timeseries)
 

@@ -40,6 +40,7 @@ GMAT Sat.SRPArea = 1;
 GMAT Sat.SPADDragScaleFactor = 1;
 GMAT Sat.SPADSRPScaleFactor = 1;
 GMAT Sat.NAIFId = -10001001;
+GMAT Sat.DecrementMass = true;
 GMAT Sat.NAIFIdReferenceFrame = -9001001;
 GMAT Sat.OrbitColor = Red;
 GMAT Sat.TargetColor = Teal;
@@ -119,49 +120,6 @@ GMAT TOI.Tank = {FuelTank1};
 GMAT TOI.GravitationalAccel = 9.81;
 
 %----------------------------------------
-%---------- Subscribers
-%----------------------------------------
-
-Create OrbitView DefaultOrbitView;
-GMAT DefaultOrbitView.SolverIterations = Current;
-GMAT DefaultOrbitView.UpperLeft = [ 0.06818822203437588 0.01508844953173777 ];
-GMAT DefaultOrbitView.Size = [ 0.998872921949845 0.9838709677419355 ];
-GMAT DefaultOrbitView.RelativeZOrder = 36;
-GMAT DefaultOrbitView.Maximized = true;
-GMAT DefaultOrbitView.Add = {Sat, Earth, Luna};
-GMAT DefaultOrbitView.CoordinateSystem = EarthMJ2000Eq;
-GMAT DefaultOrbitView.DrawObject = [ true true true ];
-GMAT DefaultOrbitView.DataCollectFrequency = 1;
-GMAT DefaultOrbitView.UpdatePlotFrequency = 50;
-GMAT DefaultOrbitView.NumPointsToRedraw = 0;
-GMAT DefaultOrbitView.ShowPlot = true;
-GMAT DefaultOrbitView.MaxPlotPoints = 20000;
-GMAT DefaultOrbitView.ShowLabels = true;
-GMAT DefaultOrbitView.ViewPointReference = Earth;
-GMAT DefaultOrbitView.ViewPointVector = [ 0 0 1500000 ];
-GMAT DefaultOrbitView.ViewDirection = Earth;
-GMAT DefaultOrbitView.ViewScaleFactor = 1;
-GMAT DefaultOrbitView.ViewUpCoordinateSystem = EarthMJ2000Eq;
-GMAT DefaultOrbitView.ViewUpAxis = Y;
-GMAT DefaultOrbitView.EclipticPlane = Off;
-GMAT DefaultOrbitView.XYPlane = On;
-GMAT DefaultOrbitView.WireFrame = Off;
-GMAT DefaultOrbitView.Axes = On;
-GMAT DefaultOrbitView.Grid = Off;
-GMAT DefaultOrbitView.SunLine = Off;
-GMAT DefaultOrbitView.UseInitialView = On;
-GMAT DefaultOrbitView.StarCount = 7000;
-GMAT DefaultOrbitView.EnableStars = On;
-GMAT DefaultOrbitView.EnableConstellations = On;
-
-%----------------------------------------
-%---------- Arrays, Variables, Strings
-%----------------------------------------
-Create Variable LeoTime MoonDistance StartEpoch;
-GMAT LeoTime = 1900;
-GMAT StartEpoch = 0.1666666666666667;
-
-%----------------------------------------
 %---------- Mission Sequence
 %----------------------------------------
 
@@ -177,7 +135,7 @@ Sat.EarthFixed.VY = 6.129069442591823;
 Sat.EarthFixed.VZ = 4.669570395189814;
 
 
-Propagate DefaultProp(Sat) {Sat.ElapsedSecs = LeoTime};
+Propagate DefaultProp(Sat) {Sat.ElapsedSecs = 1900};
 Maneuver TOI(Sat);
 Propagate DefaultProp(Sat) {Sat.ElapsedDays = 8};
 GMAT MoonDistance = Sat.Luna.RMAG;
