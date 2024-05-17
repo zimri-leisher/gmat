@@ -48,9 +48,11 @@ for i in range(10) :
             dt = Time.GetNumber("Value")
             dv = burn.GetNumber("Element1")
             startTime = start.GetNumber("Value")
+            end_mass = gmat.GetRuntimeObject("EndMass").GetNumber("Value")
 
             # Report intermediate results if they are better than previous values
             print(closest, "Launch ", startTime, " Coast time: ", dt, "   Delta-V: ", dv, "   Moon Distance: ", theRange)
+            print("End total mass: ", end_mass)
 
 # Build the name for the solution script
 theSolution = theScript + "_solution.script"
