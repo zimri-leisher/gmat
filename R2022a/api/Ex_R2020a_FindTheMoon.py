@@ -19,7 +19,7 @@ theScript = "Ex_R2020a_ToLuna"
 gmat.LoadScript(theScript + ".script")
 
 # Set up the objects used to scan for a solution
-burn = gmat.GetObject("TOI")
+burn = gmat.GetObject("fb")
 Time = gmat.GetObject("LeoTime")
 start = gmat.GetObject("StartEpoch")
 
