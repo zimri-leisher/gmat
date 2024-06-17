@@ -1,11 +1,6 @@
 %General Mission Analysis Tool(GMAT) Script
 %Created: 2019-04-26 09:25:18
 
-
-%----------------------------------------
-%---------- Burns
-%----------------------------------------
-
 %  Create a fuel tank and name it tank1
 %          Here we create a fuel tank and set up its physical properties
 %          including Temperature, Fuel Mass, Fuel Density etc.
@@ -34,7 +29,7 @@ GMAT engine1.ThrustDirection2 = 0;
 GMAT engine1.ThrustDirection3 = 0;
 GMAT engine1.DutyCycle = 1;
 GMAT engine1.ThrustScaleFactor = 1;
-GMAT engine1.DecrementMass = false;
+GMAT engine1.DecrementMass = true;
 GMAT engine1.Tank = {tank1};
 GMAT engine1.MixRatio = [1];
 GMAT engine1.GravitationalAccel = 9.810000000000001;
@@ -80,24 +75,8 @@ GMAT fb.Axes = VNB;
 GMAT fb.Element1 = 3.1;
 GMAT fb.Element2 = 0;
 GMAT fb.Element3 = 0;
-GMAT fb.DecrementMass = true;
-GMAT fb.Isp = 300;
-GMAT fb.Tank = {tank1};
-GMAT fb.GravitationalAccel = 9.81;
 
 
-%Propagate 'Prop LeoTime Seconds' prop(Sat) {Sat.ElapsedSecs = LeoTime};
-
-%BeginFiniteBurn 'Turn on Thruster' fb(Sat);
-
-%Propagate 'Prop 1 day' DefaultProp(Sat) {Sat.ElapsedDays = 1};
-
-%EndFiniteBurn 'Turn off Thruster' fb(Sat);
-
-%Propagate 'Prop 1 Day' DefaultProp(Sat) {Sat.ElapsedDays = 1};
-
-%Propagate DefaultProp(Sat) {Sat.ElapsedDays = 8};
-%GMAT MoonDistance = Sat.Luna.RMAG;
 
 
 %----------------------------------------
@@ -105,8 +84,8 @@ GMAT fb.GravitationalAccel = 9.81;
 %----------------------------------------
 
 Create Spacecraft Sat;
-GMAT Sat.Thrusters = {Thruster1};
-GMAT Sat.Tanks = {FuelTank1};
+GMAT Sat.Thrusters = {engine1};
+GMAT Sat.Tanks = {tank1};
 GMAT Sat.DateFormat = UTCGregorian;
 GMAT Sat.Epoch = '26 Apr 2019 12:00:00.000';
 GMAT Sat.CoordinateSystem = EarthFixed;
@@ -125,7 +104,6 @@ GMAT Sat.SRPArea = 1;
 GMAT Sat.SPADDragScaleFactor = 1;
 GMAT Sat.SPADSRPScaleFactor = 1;
 GMAT Sat.NAIFId = -10001001;
-GMAT Sat.DecrementMass = true;
 GMAT Sat.NAIFIdReferenceFrame = -9001001;
 GMAT Sat.OrbitColor = Red;
 GMAT Sat.TargetColor = Teal;
@@ -199,9 +177,8 @@ GMAT TOI.Axes = VNB;
 GMAT TOI.Element1 = 3.1;
 GMAT TOI.Element2 = 0;
 GMAT TOI.Element3 = 0;
-GMAT TOI.DecrementMass = true;
+GMAT TOI.DecrementMass = false;
 GMAT TOI.Isp = 300;
-GMAT TOI.Tank = {FuelTank1};
 GMAT TOI.GravitationalAccel = 9.81;
 
 %----------------------------------------
@@ -240,10 +217,18 @@ GMAT DefaultOrbitView.StarCount = 7000;
 GMAT DefaultOrbitView.EnableStars = On;
 GMAT DefaultOrbitView.EnableConstellations = On;
 
+% Reports
+Create ReportFile Mass;
+GMAT Mass.Filename = ./output/mass.txt;
+GMAT Mass.Precision = 16
+GMAT Mass.WriteHeaders = On;
+GMAT Mass.ColumnWidth = 20;
+
 %----------------------------------------
 %---------- Arrays, Variables, Strings
 %----------------------------------------
-Create Variable LeoTime MoonDistance StartEpoch;
+Create Variable LeoTime MoonDistance StartEpoch FuelMass;
+Create Variable i step totalDuration nSteps
 StartEpoch = -0.5;
 
 LeoTime = 5400;
@@ -262,9 +247,25 @@ Sat.EarthFixed.Z = 5348.791562420619;
 Sat.EarthFixed.VX = -0.1652938147345514;
 Sat.EarthFixed.VY = 6.129069442591823;
 Sat.EarthFixed.VZ = 4.669570395189814;
+step = 60
+totalDuration = 24*60 % one day
+nSteps = totalDuration / step
 
 
-Propagate DefaultProp(Sat) {Sat.ElapsedSecs = LeoTime};
-Maneuver TOI(Sat);
-Propagate DefaultProp(Sat) {Sat.Earth.Apoapsis, Sat.Luna.Periapsis, Sat.ElapsedDays = 8};
+Propagate 'Prop LeoTime Seconds' DefaultProp(Sat) {Sat.ElapsedSecs = LeoTime};
+
+BeginFiniteBurn 'Turn on Thruster' fb(Sat);
+
+Propagate 'Prop 1 day' DefaultProp(Sat) {Sat.ElapsedDays = 1};
+For i=1:nSteps
+Propagate DefaultProp(Sat) {Sat.ElapsedSecs = step}
+Report Mass Sat.ElapsedSecs Sat.tank1.FuelMass
+EndFor
+
+EndFiniteBurn 'Turn off Thruster' fb(Sat);
+
+Propagate 'Prop 1 Day' DefaultProp(Sat) {Sat.ElapsedDays = 1};
+
+
+Propagate DefaultProp(Sat) {Sat.ElapsedDays = 8};
 GMAT MoonDistance = Sat.Luna.RMAG;

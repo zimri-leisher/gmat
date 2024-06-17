@@ -1,3 +1,4 @@
+import inspect
 import plotly
 import plotly.graph_objects as go
 from types import ModuleType
@@ -29,6 +30,14 @@ class ScenarioOutput:
         fig.add_trace(go.Scatter(x=x, y=y))
         fig.show()
 
+    @staticmethod
+    def from_gmat_report(path) -> "ScenarioOutput":
+        path = Path(path)
+        text = path.read_text()
+        text = text.splitlines()
+        text = [line.strip().split() for line in text[1:]]
+        return ScenarioOutput([(float(line[0]), float(line[1])) for line in text])
+
 
 def load_gmat() -> ModuleType:
     gmat_install = Path("/workspaces/gmat/R2022a")
@@ -55,59 +64,12 @@ def run_scenario(scenario: Scenario) -> ScenarioOutput:
 
     gmat = load_gmat()
 
-    # Use a core script file to drive the analysis
+    gmat.UseLogFile("log.txt")
     gmat.LoadScript(str(scenario.script.resolve()))
-
-    # Set up the objects used to scan for a solution
-    sat = gmat.GetObject("Sat")
-    dry_mass = float(sat.GetField("DryMass"))
-    dry_mass += scenario.crew_average_mass * scenario.crew_count
-
-    sat.SetField("DryMass", dry_mass)
-
-    start_time = 0
-    stop_time = 1900 + 8 * 24 * 60 * 60
-
-    tank = gmat.GetObject("FuelTank1")
-
-    mass_timeseries = [(start_time, sat.GetField("TotalMass"))]
-
-
-    print("\n".join(dir(sat)))
 
     gmat.RunScript()
 
-    # prop = gmat.GetObject("DefaultProp")
-    # prop.AddPropObject(sat)
-
-    # toi = gmat.GetObject("TOI")
-
-    # toi.Help()
-
-    # toi.Initialize()
-
-    # gmat.Initialize()
-    # prop.PrepareInternals()
-
-    # integrator = prop.GetPropagator()
-
-
-    # step = 60 * 60 # s
-    # for time in range(start_time, stop_time, step):
-    #     integrator.Step(step)
-    #     mass = tank.GetField("FuelMass")
-    #     mass_timeseries.append((time, mass))
-
-
-
-    # TODO... figure out how to advance the simulation in increments instead of all
-    # at once, get fuel mass at each time
-
-    final_time = 1900 + 8 * 24 * 60 * 60
-
-    mass_timeseries.append((final_time, sat.GetField("TotalMass")))
-
-    return ScenarioOutput(mass_timeseries)
+    return ScenarioOutput.from_gmat_report("/workspaces/gmat/R2022a/output/Mass.txt")
 
 
 def main():
@@ -140,6 +102,8 @@ def main():
     output = run_scenario(scenario)
 
     output.plot()
+
+    # print(Path("/workspaces/gmat/R2022a/output/log.txt").read_text())
 
 
 if __name__ == "__main__":
