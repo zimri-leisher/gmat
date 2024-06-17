@@ -1,26 +1,111 @@
 %General Mission Analysis Tool(GMAT) Script
 %Created: 2019-04-26 09:25:18
 
-Create ChemicalTank FuelTank1;
-GMAT FuelTank1.AllowNegativeFuelMass = false
-GMAT FuelTank1.FuelMass = 756
-GMAT FuelTank1.Pressure = 1500
-GMAT FuelTank1.Temperature = 20
-GMAT FuelTank1.RefTemperature = 20
-GMAT FuelTank1.Volume = 0.75
-GMAT FuelTank1.FuelDensity = 1260
-GMAT FuelTank1.PressureModel = PressureRegulated
 
-%Create ChemicalThruster Thruster1;
-%GMAT Thruster1.DecrementMass = true;
-%GMAT Thruster1.Tank = {FuelTank1};
+%----------------------------------------
+%---------- Burns
+%----------------------------------------
+
+%  Create a fuel tank and name it tank1
+%          Here we create a fuel tank and set up its physical properties
+%          including Temperature, Fuel Mass, Fuel Density etc.
+Create ChemicalTank tank1;
+GMAT tank1.AllowNegativeFuelMass = false;
+GMAT tank1.FuelMass = 725;
+GMAT tank1.Pressure = 1200;
+GMAT tank1.Temperature = 20;
+GMAT tank1.RefTemperature = 12;
+GMAT tank1.Volume = 0.8;
+GMAT tank1.FuelDensity = 1029;
+GMAT tank1.PressureModel = PressureRegulated;
+
+%  Create a thruster
+%         Here we create a thruster and tell the thruster which tank to
+%         draw fuel from.  We also set up the direction of the thruster.
+%         Currently, you specify the thruster orientation with respect to
+%         the spacecraft VNB or EarthMJ2000Eq systems.  This will change
+%         when attitude capabilities are added to GMAT.
+Create ChemicalThruster engine1;
+GMAT engine1.CoordinateSystem = Local;
+GMAT engine1.Origin = Earth;
+GMAT engine1.Axes = VNB;
+GMAT engine1.ThrustDirection1 = 1;
+GMAT engine1.ThrustDirection2 = 0;
+GMAT engine1.ThrustDirection3 = 0;
+GMAT engine1.DutyCycle = 1;
+GMAT engine1.ThrustScaleFactor = 1;
+GMAT engine1.DecrementMass = false;
+GMAT engine1.Tank = {tank1};
+GMAT engine1.MixRatio = [1];
+GMAT engine1.GravitationalAccel = 9.810000000000001;
+GMAT engine1.C1 = 70;
+GMAT engine1.C2 = 0;
+GMAT engine1.C3 = 0;
+GMAT engine1.C4 = 0;
+GMAT engine1.C5 = 0;
+GMAT engine1.C6 = 0;
+GMAT engine1.C7 = 0;
+GMAT engine1.C8 = 0;
+GMAT engine1.C9 = 0;
+GMAT engine1.C10 = 0;
+GMAT engine1.C11 = 0;
+GMAT engine1.C12 = 0;
+GMAT engine1.C13 = 0;
+GMAT engine1.C14 = 0;
+GMAT engine1.C15 = 0;
+GMAT engine1.C16 = 0;
+GMAT engine1.K1 = 1500;
+GMAT engine1.K2 = 0;
+GMAT engine1.K3 = 0;
+GMAT engine1.K4 = 0;
+GMAT engine1.K5 = 0;
+GMAT engine1.K6 = 0;
+GMAT engine1.K7 = 0;
+GMAT engine1.K8 = 0;
+GMAT engine1.K9 = 0;
+GMAT engine1.K10 = 0;
+GMAT engine1.K11 = 0;
+GMAT engine1.K12 = 0;
+GMAT engine1.K13 = 0;
+GMAT engine1.K14 = 0;
+GMAT engine1.K15 = 0;
+GMAT engine1.K16 = 0;
+
+Create FiniteBurn fb;
+GMAT fb.Thrusters = {engine1};
+GMAT fb.ThrottleLogicAlgorithm = 'MaxNumberOfThrusters';
+GMAT fb.CoordinateSystem = Local;
+GMAT fb.Origin = Earth;
+GMAT fb.Axes = VNB;
+GMAT fb.Element1 = 3.1;
+GMAT fb.Element2 = 0;
+GMAT fb.Element3 = 0;
+GMAT fb.DecrementMass = true;
+GMAT fb.Isp = 300;
+GMAT fb.Tank = {tank1};
+GMAT fb.GravitationalAccel = 9.81;
+
+
+%Propagate 'Prop LeoTime Seconds' prop(Sat) {Sat.ElapsedSecs = LeoTime};
+
+%BeginFiniteBurn 'Turn on Thruster' fb(Sat);
+
+%Propagate 'Prop 1 day' DefaultProp(Sat) {Sat.ElapsedDays = 1};
+
+%EndFiniteBurn 'Turn off Thruster' fb(Sat);
+
+%Propagate 'Prop 1 Day' DefaultProp(Sat) {Sat.ElapsedDays = 1};
+
+%Propagate DefaultProp(Sat) {Sat.ElapsedDays = 8};
+%GMAT MoonDistance = Sat.Luna.RMAG;
+
 
 %----------------------------------------
 %---------- Spacecraft
 %----------------------------------------
 
 Create Spacecraft Sat;
-%GMAT Sat.Thrusters = {Thruster1};
+GMAT Sat.Thrusters = {Thruster1};
 GMAT Sat.Tanks = {FuelTank1};
 GMAT Sat.DateFormat = UTCGregorian;
 GMAT Sat.Epoch = '26 Apr 2019 12:00:00.000';
@@ -120,6 +205,50 @@ GMAT TOI.Tank = {FuelTank1};
 GMAT TOI.GravitationalAccel = 9.81;
 
 %----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OrbitView DefaultOrbitView;
+GMAT DefaultOrbitView.SolverIterations = Current;
+GMAT DefaultOrbitView.UpperLeft = [ 0.06818822203437588 0.01508844953173777 ];
+GMAT DefaultOrbitView.Size = [ 0.998872921949845 0.9838709677419355 ];
+GMAT DefaultOrbitView.RelativeZOrder = 36;
+GMAT DefaultOrbitView.Maximized = true;
+GMAT DefaultOrbitView.Add = {Sat, Earth, Luna};
+GMAT DefaultOrbitView.CoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultOrbitView.DrawObject = [ true true true ];
+GMAT DefaultOrbitView.DataCollectFrequency = 1;
+GMAT DefaultOrbitView.UpdatePlotFrequency = 50;
+GMAT DefaultOrbitView.NumPointsToRedraw = 0;
+GMAT DefaultOrbitView.ShowPlot = true;
+GMAT DefaultOrbitView.MaxPlotPoints = 20000;
+GMAT DefaultOrbitView.ShowLabels = true;
+GMAT DefaultOrbitView.ViewPointReference = Earth;
+GMAT DefaultOrbitView.ViewPointVector = [ 0 0 1500000 ];
+GMAT DefaultOrbitView.ViewDirection = Earth;
+GMAT DefaultOrbitView.ViewScaleFactor = 1;
+GMAT DefaultOrbitView.ViewUpCoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultOrbitView.ViewUpAxis = Y;
+GMAT DefaultOrbitView.EclipticPlane = Off;
+GMAT DefaultOrbitView.XYPlane = On;
+GMAT DefaultOrbitView.WireFrame = Off;
+GMAT DefaultOrbitView.Axes = On;
+GMAT DefaultOrbitView.Grid = Off;
+GMAT DefaultOrbitView.SunLine = Off;
+GMAT DefaultOrbitView.UseInitialView = On;
+GMAT DefaultOrbitView.StarCount = 7000;
+GMAT DefaultOrbitView.EnableStars = On;
+GMAT DefaultOrbitView.EnableConstellations = On;
+
+%----------------------------------------
+%---------- Arrays, Variables, Strings
+%----------------------------------------
+Create Variable LeoTime MoonDistance StartEpoch;
+StartEpoch = -0.5;
+
+LeoTime = 5400;
+
+%----------------------------------------
 %---------- Mission Sequence
 %----------------------------------------
 
@@ -135,7 +264,7 @@ Sat.EarthFixed.VY = 6.129069442591823;
 Sat.EarthFixed.VZ = 4.669570395189814;
 
 
-Propagate DefaultProp(Sat) {Sat.ElapsedSecs = 1900};
+Propagate DefaultProp(Sat) {Sat.ElapsedSecs = LeoTime};
 Maneuver TOI(Sat);
-Propagate DefaultProp(Sat) {Sat.ElapsedDays = 8};
+Propagate DefaultProp(Sat) {Sat.Earth.Apoapsis, Sat.Luna.Periapsis, Sat.ElapsedDays = 8};
 GMAT MoonDistance = Sat.Luna.RMAG;
