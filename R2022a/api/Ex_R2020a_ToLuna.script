@@ -1,65 +1,6 @@
 %General Mission Analysis Tool(GMAT) Script
 %Created: 2019-04-26 09:25:18
 
-Create ChemicalThruster engine1;
-GMAT engine1.CoordinateSystem = Local;
-GMAT engine1.Origin = Earth;
-GMAT engine1.Axes = VNB;
-GMAT engine1.ThrustDirection1 = 1;
-GMAT engine1.ThrustDirection2 = 0;
-GMAT engine1.ThrustDirection3 = 0;
-GMAT engine1.DutyCycle = 1;
-GMAT engine1.ThrustScaleFactor = 1;
-GMAT engine1.DecrementMass = false;
-GMAT engine1.Tank = {tank1};
-GMAT engine1.MixRatio = [1];
-GMAT engine1.GravitationalAccel = 9.810000000000001;
-GMAT engine1.C1 = 70;
-GMAT engine1.C2 = 0;
-GMAT engine1.C3 = 0;
-GMAT engine1.C4 = 0;
-GMAT engine1.C5 = 0;
-GMAT engine1.C6 = 0;
-GMAT engine1.C7 = 0;
-GMAT engine1.C8 = 0;
-GMAT engine1.C9 = 0;
-GMAT engine1.C10 = 0;
-GMAT engine1.C11 = 0;
-GMAT engine1.C12 = 0;
-GMAT engine1.C13 = 0;
-GMAT engine1.C14 = 0;
-GMAT engine1.C15 = 0;
-GMAT engine1.C16 = 0;
-GMAT engine1.K1 = 1500;
-GMAT engine1.K2 = 0;
-GMAT engine1.K3 = 0;
-GMAT engine1.K4 = 0;
-GMAT engine1.K5 = 0;
-GMAT engine1.K6 = 0;
-GMAT engine1.K7 = 0;
-GMAT engine1.K8 = 0;
-GMAT engine1.K9 = 0;
-GMAT engine1.K10 = 0;
-GMAT engine1.K11 = 0;
-GMAT engine1.K12 = 0;
-GMAT engine1.K13 = 0;
-GMAT engine1.K14 = 0;
-GMAT engine1.K15 = 0;
-GMAT engine1.K16 = 0;
-
-
-%  Create a fuel tank and name it tank1
-%          Here we create a fuel tank and set up its physical properties
-%          including Temperature, Fuel Mass, Fuel Density etc.
-Create ChemicalTank tank1;
-GMAT tank1.AllowNegativeFuelMass = false;
-GMAT tank1.FuelMass = 725;
-GMAT tank1.Pressure = 1200;
-GMAT tank1.Temperature = 20;
-GMAT tank1.RefTemperature = 12;
-GMAT tank1.Volume = 0.8;
-GMAT tank1.FuelDensity = 1029;
-GMAT tank1.PressureModel = PressureRegulated;
 
 %----------------------------------------
 %---------- Spacecraft
@@ -87,8 +28,6 @@ GMAT Sat.NAIFId = -10001001;
 GMAT Sat.NAIFIdReferenceFrame = -9001001;
 GMAT Sat.OrbitColor = Red;
 GMAT Sat.TargetColor = Teal;
-GMAT Sat.Tanks = {tank1};
-GMAT Sat.Thrusters = {engine1};
 GMAT Sat.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
 GMAT Sat.CdSigma = 1e+70;
 GMAT Sat.CrSigma = 1e+70;
@@ -152,20 +91,6 @@ GMAT DefaultProp.StopIfAccuracyIsViolated = true;
 %---------- Burns
 %----------------------------------------
 
-Create FiniteBurn fb;
-GMAT fb.Thrusters = {engine1};
-%GMAT fb.ThrottleLogicAlgorithm = 'MaxNumberOfThrusters';
-%GMAT fb.CoordinateSystem = Local;
-%GMAT fb.Origin = Earth;
-%GMAT fb.Axes = VNB;
-%GMAT fb.Element1 = 3.1;
-%GMAT fb.Element2 = 0;
-%GMAT fb.Element3 = 0;
-GMAT fb.DecrementMass = true;
-%GMAT fb.Isp = 300;
-GMAT fb.Tank = {tank1};
-%GMAT fb.GravitationalAccel = 9.81;
-
 Create ImpulsiveBurn TOI;
 GMAT TOI.CoordinateSystem = Local;
 GMAT TOI.Origin = Earth;
@@ -216,7 +141,7 @@ GMAT DefaultOrbitView.EnableConstellations = On;
 %----------------------------------------
 %---------- Arrays, Variables, Strings
 %----------------------------------------
-Create Variable LeoTime MoonDistance StartEpoch EndMass;
+Create Variable LeoTime MoonDistance StartEpoch;
 StartEpoch = -0.5;
 
 LeoTime = 5400;
@@ -238,13 +163,6 @@ Sat.EarthFixed.VZ = 4.669570395189814;
 
 
 Propagate DefaultProp(Sat) {Sat.ElapsedSecs = LeoTime};
-
-BeginFiniteBurn 'Turn on Thruster' fb(Sat);
-
-Propagate 'Prop 1 day' DefaultProp(Sat) {Sat.ElapsedDays = 1};
-GMAT EndMass = Sat.tank1.FuelMass;
-
-EndFiniteBurn 'Turn off Thruster' fb(Sat);
-
+Maneuver TOI(Sat);
 Propagate DefaultProp(Sat) {Sat.Earth.Apoapsis, Sat.Luna.Periapsis, Sat.ElapsedDays = 8};
 GMAT MoonDistance = Sat.Luna.RMAG;
